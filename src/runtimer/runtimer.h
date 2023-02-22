@@ -16,6 +16,9 @@ public:
     void start() override;
 
     bool isRunning() override;
+
+    private:
+        bool running;
 };
 
 
