@@ -3,9 +3,20 @@
 
 struct ITimer
 {
-    virtual void Start() = 0;
-    virtual void Stop() = 0;
-    virtual void getElapsedTime() = 0;
+    virtual void start() = 0;
+
+    virtual bool isRunning() = 0;
 };
+
+class RunTimer : public ITimer
+{
+public:
+    RunTimer();
+
+    void start() override;
+
+    bool isRunning() override;
+};
+
 
 #endif // RUNTIMER_HPP
