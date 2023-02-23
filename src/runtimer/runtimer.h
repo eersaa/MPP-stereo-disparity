@@ -1,25 +1,28 @@
 #ifndef RUNTIMER_HPP
 #define RUNTIMER_HPP
 
-struct ITimer
+struct IClock
 {
-    virtual void start() = 0;
-
-    virtual bool isRunning() = 0;
+    
 };
 
-class RunTimer : public ITimer
+struct IProgram
 {
-public:
-    RunTimer();
+    
+};
 
-    void start() override;
+class RunTimer
+{
+    public:
+    RunTimer(IProgram* program, IClock* clock);
 
-    bool isRunning() override;
+    int getElapsedTime();
 
     private:
-        bool running;
+    IProgram* mProgram;
+    IClock* mClock;
 };
+
 
 
 #endif // RUNTIMER_HPP

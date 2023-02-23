@@ -1,13 +1,12 @@
 #include "runtimer.h"
 
-RunTimer::RunTimer(){}
-
-void RunTimer::start()
+RunTimer::RunTimer(IProgram* program, IClock* clock)
+    : mProgram(program), mClock(clock)
 {
-    running = true;
+    ;
 }
 
-bool RunTimer::isRunning()
+int RunTimer::getElapsedTime()
 {
-    return running;
+    return 1;
 }
