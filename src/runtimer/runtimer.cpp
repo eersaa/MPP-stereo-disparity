@@ -8,5 +8,5 @@ RunTimer::RunTimer(IProgram* program, IClock* clock)
 
 int RunTimer::getElapsedTime()
 {
-    return 1;
+    return 0;
 }
