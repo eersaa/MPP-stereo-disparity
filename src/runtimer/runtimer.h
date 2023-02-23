@@ -17,6 +17,7 @@ class RunTimer
     RunTimer(IProgram* program, IClock* clock);
 
     int getElapsedTime();
+    int runProgram();
 
     private:
     IProgram* mProgram;

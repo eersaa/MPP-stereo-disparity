@@ -50,6 +50,17 @@ TEST_F(RunTimerTestFixture, ShouldReturnZeroElapsedTime)
     ASSERT_EQ(rt->getElapsedTime(), 0);
 }
 
+TEST_F(RunTimerTestFixture, ShouldReturnZeroAfterSuccessfulProgramRun)
+{
+    FakeClock fakeClock(0);
+    rt = new RunTimer(&fakeProgram, &fakeClock);
+    ASSERT_EQ(rt->runProgram(), 0);
+}
+
+// TEST(ProgramRunnerTest, ShouldReturnNonZeroAfterFailingProgramRun)
+// {
+// }
+
 // TEST_F(RunTimerTestFixture, ShouldReturnElapsedTime)
 // {
 //     rt.getElapsedTime();

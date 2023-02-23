@@ -10,3 +10,8 @@ int RunTimer::getElapsedTime()
 {
     return 0;
 }
+
+int RunTimer::runProgram()
+{
+    ;
+}
