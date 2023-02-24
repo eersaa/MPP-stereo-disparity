@@ -4,13 +4,6 @@
 
 using namespace ::testing;
 
-// TEST(RunTimerTest, ShouldStartTimer)
-// {
-//     RunTimer rt;
-//     rt.start();
-//     ASSERT_TRUE(rt.isRunning());    
-// }
-
 class FakeClock : public IClock
 {
     public:
@@ -88,4 +81,14 @@ TEST_F(StopWatchTest, ShouldAlwaysReturnPositiveElapsedTime)
     stopWatch->saveEndPoint();
     stopWatch->saveStartPoint();
     ASSERT_GE(stopWatch->getElapsedTime(), 0);
+}
+
+
+TEST(RunTimerTest, ShouldReturnZeroAfterSuccessfulRun)
+{
+    FakeProgram fakeProgram;
+    FakeClock fakeClock(1, 3);
+    StopWatch stopWatch(fakeClock);
+    RunTimer runTimer(fakeProgram, stopWatch);
+    ASSERT_EQ(runTimer.timeProgram(), 0);
 }
