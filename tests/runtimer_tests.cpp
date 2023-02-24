@@ -25,10 +25,12 @@ class FakeClock : public IClock
         {
             if (!mIsRunning)
             {
+                mIsRunning = true;
                 return mStartTime;
             }
             else
             {
+                mIsRunning = false;
                 return mEndTime;
             }            
         }
@@ -36,7 +38,7 @@ class FakeClock : public IClock
     private:
         int mStartTime;
         int mEndTime;
-        bool mIsRunning;
+        bool mIsRunning = false;
 };
 
 class FakeProgram : public IProgram
@@ -82,23 +84,23 @@ class FakeProgram : public IProgram
 //         }
 // };
 
-class RunTimerTestFixture : public ::testing::Test
-{
-    protected:
-        RunTimer* runTimer;
-        FakeProgram fakeProgram;
-        StopWatch* stopWatch;
+// class RunTimerTestFixture : public ::testing::Test
+// {
+//     protected:
+//         RunTimer* runTimer;
+//         FakeProgram fakeProgram;
+//         StopWatch* stopWatch;
 
-        void SetUp() override
-        {
-        }
+//         void SetUp() override
+//         {
+//         }
 
-        void TearDown() override
-        {
-            delete runTimer;
-            delete stopWatch;
-        }
-};
+//         void TearDown() override
+//         {
+//             delete runTimer;
+//             delete stopWatch;
+//         }
+// };
 
 // TEST_F(RunTimerTestFixture, ShouldReturnZeroElapsedTime)
 // {
@@ -116,18 +118,35 @@ class RunTimerTestFixture : public ::testing::Test
 //     ASSERT_EQ(runTimer->timeProgram(), 2);
 // }
 
-TEST(StopWatchTest, ShouldReturnStartTimePoint)
+class StopWatchTest : public ::testing::Test
+{
+    protected:
+        StopWatch* stopWatch;
+
+        void SetUp() override
+        {
+
+        }
+
+        void TearDown() override
+        {
+            
+        }
+};
+
+TEST_F(StopWatchTest, ShouldReturnStartTimePoint)
 {
     FakeClock fakeClock(1, 3);
-    StopWatch stopWatch(fakeClock);
-    ASSERT_EQ(stopWatch.saveStartPoint(), 1);
+    stopWatch = new StopWatch(fakeClock);
+    ASSERT_EQ(stopWatch->saveStartPoint(), 1);
 }
 
-TEST(StopWatchTest, ShouldReturnEndTimePoint)
+TEST_F(StopWatchTest, ShouldReturnEndTimePoint)
 {
     FakeClock fakeClock(1, 3);
-    StopWatch stopWatch(fakeClock);
-    ASSERT_EQ(stopWatch.saveEndPoint(), 3);
+    stopWatch = new StopWatch(fakeClock);
+    stopWatch->saveStartPoint();
+    ASSERT_EQ(stopWatch->saveEndPoint(), 3);
 }
 
 // TEST(TimerTest, ShouldReturnElapsedTimeOfTwoTimePoints)

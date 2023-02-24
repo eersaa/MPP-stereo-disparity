@@ -20,10 +20,10 @@ StopWatch::StopWatch(IClock& clock)
 
 int StopWatch::saveStartPoint()
 {
-    return 1;
+    return mClock.now();
 }
 
 int StopWatch::saveEndPoint()
 {
-    return 3;
+    return mClock.now();
 }
