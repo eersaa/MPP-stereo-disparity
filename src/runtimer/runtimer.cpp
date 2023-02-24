@@ -20,5 +20,5 @@ StopWatch::StopWatch(IClock& clock)
 
 int StopWatch::saveStartPoint()
 {
-    return 0;
+    return 1;
 }
