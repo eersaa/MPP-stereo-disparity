@@ -39,6 +39,7 @@ class RunTimer
     RunTimer(IStopWatch& stopWatch);
 
     int runProgram(IProgram& program);
+    int getElapsedTime();
 
     private:
     IStopWatch& mStopWatch;

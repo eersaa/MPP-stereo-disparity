@@ -14,6 +14,12 @@ int RunTimer::runProgram(IProgram& program)
     return result;
 }
 
+int RunTimer::getElapsedTime()
+{
+    return mStopWatch.getElapsedTime();
+}
+
+
 StopWatch::StopWatch(IClock& clock) 
     : mClock(clock)
 {

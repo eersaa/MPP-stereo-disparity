@@ -115,5 +115,5 @@ TEST(RunTimerTest, ShouldReturnElapsedTimeAfterRun)
     StopWatch stopWatch(fakeClock);
     RunTimer runTimer(stopWatch);
     runTimer.runProgram(fakeProgram);
-    ASSERT_EQ(stopWatch.getElapsedTime(), 2);
+    ASSERT_EQ(runTimer.getElapsedTime(), 2);
 }
