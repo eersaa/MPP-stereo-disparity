@@ -1,16 +1,15 @@
 #include "runtimer.h"
 
-RunTimer::RunTimer(IProgram& program, IStopWatch& stopWatch)
-    : mProgram(program)
-    , mStopWatch(stopWatch)
+RunTimer::RunTimer(IStopWatch& stopWatch)
+    : mStopWatch(stopWatch)
 {
     ;
 }
 
-int RunTimer::timeProgram()
+int RunTimer::runProgram(IProgram& program)
 {
     mStopWatch.saveStartPoint();
-    int result = mProgram.run();
+    int result = program.run();
     mStopWatch.saveEndPoint();
     return result;
 }

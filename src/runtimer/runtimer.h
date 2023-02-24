@@ -36,12 +36,11 @@ class StopWatch : public IStopWatch
 class RunTimer
 {
     public:
-    RunTimer(IProgram& program, IStopWatch& stopWatch);
+    RunTimer(IStopWatch& stopWatch);
 
-    int timeProgram();
+    int runProgram(IProgram& program);
 
     private:
-    IProgram& mProgram;
     IStopWatch& mStopWatch;
 };
 

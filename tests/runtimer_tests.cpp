@@ -95,8 +95,8 @@ TEST(RunTimerTest, ShouldReturnZeroAfterSuccessfulRun)
     FakeProgram fakeProgram(0);
     FakeClock fakeClock(1, 3);
     StopWatch stopWatch(fakeClock);
-    RunTimer runTimer(fakeProgram, stopWatch);
-    ASSERT_EQ(runTimer.timeProgram(), 0);
+    RunTimer runTimer(stopWatch);
+    ASSERT_EQ(runTimer.runProgram(fakeProgram), 0);
 }
 
 TEST(RunTimerTest, ShouldReturnValueOfProgramAfterRun)
@@ -104,8 +104,8 @@ TEST(RunTimerTest, ShouldReturnValueOfProgramAfterRun)
     FakeProgram fakeProgram(1);
     FakeClock fakeClock(1, 3);
     StopWatch stopWatch(fakeClock);
-    RunTimer runTimer(fakeProgram, stopWatch);
-    ASSERT_EQ(runTimer.timeProgram(), 1);
+    RunTimer runTimer(stopWatch);
+    ASSERT_EQ(runTimer.runProgram(fakeProgram), 1);
 }
 
 TEST(RunTimerTest, ShouldReturnElapsedTimeAfterRun)
@@ -113,7 +113,7 @@ TEST(RunTimerTest, ShouldReturnElapsedTimeAfterRun)
     FakeProgram fakeProgram(0);
     FakeClock fakeClock(1, 3);
     StopWatch stopWatch(fakeClock);
-    RunTimer runTimer(fakeProgram, stopWatch);
-    runTimer.timeProgram();
+    RunTimer runTimer(stopWatch);
+    runTimer.runProgram(fakeProgram);
     ASSERT_EQ(stopWatch.getElapsedTime(), 2);
 }
