@@ -1,6 +1,5 @@
 #include "runtimer.h"
 #include <gtest/gtest.h>
-#include <chrono>
 
 using namespace ::testing;
 
