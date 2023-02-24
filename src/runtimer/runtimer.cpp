@@ -9,7 +9,7 @@ RunTimer::RunTimer(IProgram& program, IStopWatch& stopWatch)
 
 int RunTimer::timeProgram()
 {
-    return 0;
+    return mProgram.run();
 }
 
 StopWatch::StopWatch(IClock& clock) 

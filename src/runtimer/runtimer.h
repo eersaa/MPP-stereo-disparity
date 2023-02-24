@@ -8,7 +8,7 @@ struct IClock
 
 struct IProgram
 {
-
+    virtual int run() = 0;
 };
 
 struct IStopWatch

@@ -37,6 +37,11 @@ class FakeProgram : public IProgram
         FakeProgram(int retVal) 
             : mRetVal(retVal){}
 
+        int run() override
+        {
+            return mRetVal;
+        }
+
     private:
         int mRetVal;
 
