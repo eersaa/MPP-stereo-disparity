@@ -123,6 +123,13 @@ TEST(StopWatchTest, ShouldReturnStartTimePoint)
     ASSERT_EQ(stopWatch.saveStartPoint(), 1);
 }
 
+TEST(StopWatchTest, ShouldReturnEndTimePoint)
+{
+    FakeClock fakeClock(1, 3);
+    StopWatch stopWatch(fakeClock);
+    ASSERT_EQ(stopWatch.saveEndPoint(), 3);
+}
+
 // TEST(TimerTest, ShouldReturnElapsedTimeOfTwoTimePoints)
 // {
 //     Timer t(fakeClock);
