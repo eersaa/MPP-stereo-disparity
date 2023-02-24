@@ -3,7 +3,9 @@
 
 struct IClock
 {
-    
+    virtual void start() = 0;
+    virtual void stop() = 0;
+    virtual int elapsedMillis() = 0;
 };
 
 struct IProgram

@@ -8,5 +8,7 @@ RunTimer::RunTimer(IProgram& program, IClock& clock)
 
 int RunTimer::timeProgram()
 {
-    return 0;
+    mClock.start();
+    mClock.stop();
+    return mClock.elapsedMillis();
 }

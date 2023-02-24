@@ -21,6 +21,21 @@ class FakeClock : public IClock
 
             }
 
+        void start() override
+        {
+            ;
+        }
+
+        void stop() override
+        {
+            ;
+        }
+
+        int elapsedMillis() override
+        {
+            return mEndTime - mStartTime;
+        }
+
     private:
         int mStartTime;
         int mEndTime;
