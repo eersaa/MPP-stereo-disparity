@@ -107,3 +107,13 @@ TEST(RunTimerTest, ShouldReturnValueOfProgramAfterRun)
     RunTimer runTimer(fakeProgram, stopWatch);
     ASSERT_EQ(runTimer.timeProgram(), 1);
 }
+
+TEST(RunTimerTest, ShouldReturnElapsedTimeAfterRun)
+{
+    FakeProgram fakeProgram(0);
+    FakeClock fakeClock(1, 3);
+    StopWatch stopWatch(fakeClock);
+    RunTimer runTimer(fakeProgram, stopWatch);
+    runTimer.timeProgram();
+    ASSERT_EQ(stopWatch.getElapsedTime(), 2);
+}
