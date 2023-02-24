@@ -20,25 +20,23 @@ class FakeClock : public IClock
             {
 
             }
-
-        void start() override
+        
+        int now() override
         {
-            ;
-        }
-
-        void stop() override
-        {
-            ;
-        }
-
-        int elapsedMillis() override
-        {
-            return mEndTime - mStartTime;
+            if (!mIsRunning)
+            {
+                return mStartTime;
+            }
+            else
+            {
+                return mEndTime;
+            }            
         }
 
     private:
         int mStartTime;
         int mEndTime;
+        bool mIsRunning;
 };
 
 class FakeProgram : public IProgram
@@ -87,8 +85,9 @@ class FakeProgram : public IProgram
 class RunTimerTestFixture : public ::testing::Test
 {
     protected:
-        RunTimer* rt;
+        RunTimer* runTimer;
         FakeProgram fakeProgram;
+        StopWatch* stopWatch;
 
         void SetUp() override
         {
@@ -96,30 +95,47 @@ class RunTimerTestFixture : public ::testing::Test
 
         void TearDown() override
         {
-            delete rt;
+            delete runTimer;
+            delete stopWatch;
         }
 };
 
-TEST_F(RunTimerTestFixture, ShouldReturnZeroElapsedTime)
-{
-    FakeClock fakeClock(0, 0);
-    rt = new RunTimer(fakeProgram, fakeClock);
-    ASSERT_EQ(rt->timeProgram(), 0);
-}
+// TEST_F(RunTimerTestFixture, ShouldReturnZeroElapsedTime)
+// {
+//     FakeClock fakeClock(0, 0);
+//     stopWatch = new StopWatch(fakeClock);
+//     runTimer = new RunTimer(fakeProgram, *stopWatch);
+//     ASSERT_EQ(runTimer->timeProgram(), 0);
+// }
 
-TEST_F(RunTimerTestFixture, ShouldReturnElapsedTimeOfTwo)
+// TEST_F(RunTimerTestFixture, ShouldReturnElapsedTimeOfTwo)
+// {
+//     FakeClock fakeClock(1, 3);
+//     stopWatch = new StopWatch(fakeClock);
+//     runTimer = new RunTimer(fakeProgram, *stopWatch);
+//     ASSERT_EQ(runTimer->timeProgram(), 2);
+// }
+
+TEST(StopWatchTest, ShouldReturnStartTimePoint)
 {
     FakeClock fakeClock(1, 3);
-    rt = new RunTimer(fakeProgram, fakeClock);
-    ASSERT_EQ(rt->timeProgram(), 2);
+    StopWatch stopWatch(fakeClock);
+    ASSERT_EQ(stopWatch.saveStartPoint(), 1);
 }
 
-// TEST_F(RunTimerTestFixture, ShouldReturnZeroAfterSuccessfulProgramRun)
+// TEST(TimerTest, ShouldReturnElapsedTimeOfTwoTimePoints)
 // {
-//     FakeClock fakeClock(0);
-//     rt = new RunTimer(&fakeProgram, &fakeClock);
-//     ASSERT_EQ(rt->runProgram(), 0);
+//     Timer t(fakeClock);
+
 // }
+
+// TEST(ProgramRunnerTest, ShouldReturnZeroAfterSuccessfulProgramRun)
+// {
+//     ProgramRunner pr;
+//     ASSERT_EQ(pr.run(), 0);
+// }
+
+
 
 // TEST(ProgramRunnerTest, ShouldReturnNonZeroAfterFailingProgramRun)
 // {

@@ -1,14 +1,24 @@
 #include "runtimer.h"
 
-RunTimer::RunTimer(IProgram& program, IClock& clock)
-    : mProgram(program), mClock(clock)
+RunTimer::RunTimer(IProgram& program, IStopWatch& stopWatch)
+    : mProgram(program)
+    , mStopWatch(stopWatch)
 {
     ;
 }
 
 int RunTimer::timeProgram()
 {
-    mClock.start();
-    mClock.stop();
-    return mClock.elapsedMillis();
+    return 1;
+}
+
+StopWatch::StopWatch(IClock& clock) 
+    : mClock(clock)
+{
+    ;
+}
+
+int StopWatch::saveStartPoint()
+{
+    return 0;
 }

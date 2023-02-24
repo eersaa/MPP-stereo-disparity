@@ -3,28 +3,41 @@
 
 struct IClock
 {
-    virtual void start() = 0;
-    virtual void stop() = 0;
-    virtual int elapsedMillis() = 0;
+    virtual int now() = 0;
 };
 
 struct IProgram
 {
-    
+
+};
+
+struct IStopWatch
+{
+    virtual int saveStartPoint() = 0;
+};
+
+class StopWatch : public IStopWatch
+{
+    public:
+    StopWatch(IClock& clock);
+
+    int saveStartPoint() override;
+
+    private:
+    IClock& mClock;
 };
 
 class RunTimer
 {
     public:
-    RunTimer(IProgram& program, IClock& clock);
+    RunTimer(IProgram& program, IStopWatch& stopWatch);
 
     int timeProgram();
 
     private:
     IProgram& mProgram;
-    IClock& mClock;
+    IStopWatch& mStopWatch;
 };
-
 
 
 #endif // RUNTIMER_HPP
