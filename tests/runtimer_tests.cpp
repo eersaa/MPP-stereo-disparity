@@ -27,6 +27,42 @@ class FakeProgram : public IProgram
 
 };
 
+// // Stub that always returns 0
+// class FakeProgramStub : public IProgram
+// {
+//     public:
+//         FakeProgramStub() {}
+
+//         int run() override
+//         {
+//             return 0;
+//         }
+// };
+
+// // Stub that always returns 1
+// class FakeProgramStub2 : public IProgram
+// {
+//     public:
+//         FakeProgramStub2() {}
+
+//         int run() override
+//         {
+//             return 1;
+//         }
+// };
+
+// // Stub that always returns negative value
+// class FakeProgramStub3 : public IProgram
+// {
+//     public:
+//         FakeProgramStub3() {}
+
+//         int run() override
+//         {
+//             return -1;
+//         }
+// };
+
 class RunTimerTestFixture : public ::testing::Test
 {
     protected:
@@ -46,16 +82,16 @@ class RunTimerTestFixture : public ::testing::Test
 TEST_F(RunTimerTestFixture, ShouldReturnZeroElapsedTime)
 {
     FakeClock fakeClock(0);
-    rt = new RunTimer(&fakeProgram, &fakeClock);
-    ASSERT_EQ(rt->getElapsedTime(), 0);
+    rt = new RunTimer(fakeProgram, fakeClock);
+    ASSERT_EQ(rt->timeProgram(), 0);
 }
 
-TEST_F(RunTimerTestFixture, ShouldReturnZeroAfterSuccessfulProgramRun)
-{
-    FakeClock fakeClock(0);
-    rt = new RunTimer(&fakeProgram, &fakeClock);
-    ASSERT_EQ(rt->runProgram(), 0);
-}
+// TEST_F(RunTimerTestFixture, ShouldReturnZeroAfterSuccessfulProgramRun)
+// {
+//     FakeClock fakeClock(0);
+//     rt = new RunTimer(&fakeProgram, &fakeClock);
+//     ASSERT_EQ(rt->runProgram(), 0);
+// }
 
 // TEST(ProgramRunnerTest, ShouldReturnNonZeroAfterFailingProgramRun)
 // {

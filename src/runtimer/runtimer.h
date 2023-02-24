@@ -14,14 +14,13 @@ struct IProgram
 class RunTimer
 {
     public:
-    RunTimer(IProgram* program, IClock* clock);
+    RunTimer(IProgram& program, IClock& clock);
 
-    int getElapsedTime();
-    int runProgram();
+    int timeProgram();
 
     private:
-    IProgram* mProgram;
-    IClock* mClock;
+    IProgram& mProgram;
+    IClock& mClock;
 };
 
 

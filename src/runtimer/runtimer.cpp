@@ -1,17 +1,12 @@
 #include "runtimer.h"
 
-RunTimer::RunTimer(IProgram* program, IClock* clock)
+RunTimer::RunTimer(IProgram& program, IClock& clock)
     : mProgram(program), mClock(clock)
 {
     ;
 }
 
-int RunTimer::getElapsedTime()
+int RunTimer::timeProgram()
 {
     return 0;
-}
-
-int RunTimer::runProgram()
-{
-    ;
 }
