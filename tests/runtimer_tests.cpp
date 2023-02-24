@@ -9,10 +9,7 @@ class FakeClock : public IClock
     public:
         FakeClock(int startTime, int endTime) 
             : mStartTime(startTime)
-            , mEndTime(endTime)
-            {
-
-            }
+            , mEndTime(endTime){}
         
         int now() override
         {
@@ -37,7 +34,11 @@ class FakeClock : public IClock
 class FakeProgram : public IProgram
 {
     public:
-        FakeProgram() {}
+        FakeProgram(int retVal) 
+            : mRetVal(retVal){}
+
+    private:
+        int mRetVal;
 
 };
 
@@ -86,9 +87,18 @@ TEST_F(StopWatchTest, ShouldAlwaysReturnPositiveElapsedTime)
 
 TEST(RunTimerTest, ShouldReturnZeroAfterSuccessfulRun)
 {
-    FakeProgram fakeProgram;
+    FakeProgram fakeProgram(0);
     FakeClock fakeClock(1, 3);
     StopWatch stopWatch(fakeClock);
     RunTimer runTimer(fakeProgram, stopWatch);
     ASSERT_EQ(runTimer.timeProgram(), 0);
+}
+
+TEST(RunTimerTest, ShouldReturnValueOfProgramAfterRun)
+{
+    FakeProgram fakeProgram(1);
+    FakeClock fakeClock(1, 3);
+    StopWatch stopWatch(fakeClock);
+    RunTimer runTimer(fakeProgram, stopWatch);
+    ASSERT_EQ(runTimer.timeProgram(), 1);
 }
