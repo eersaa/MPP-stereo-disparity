@@ -25,5 +25,5 @@ int StopWatch::saveStartPoint()
 
 int StopWatch::saveEndPoint()
 {
-    return 1;
+    return 3;
 }
