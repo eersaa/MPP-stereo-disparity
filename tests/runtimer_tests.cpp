@@ -125,7 +125,8 @@ class StopWatchTest : public ::testing::Test
 
         void SetUp() override
         {
-
+            FakeClock fakeClock(1, 3);
+            stopWatch = new StopWatch(fakeClock);
         }
 
         void TearDown() override
@@ -136,15 +137,11 @@ class StopWatchTest : public ::testing::Test
 
 TEST_F(StopWatchTest, ShouldReturnStartTimePoint)
 {
-    FakeClock fakeClock(1, 3);
-    stopWatch = new StopWatch(fakeClock);
     ASSERT_EQ(stopWatch->saveStartPoint(), 1);
 }
 
 TEST_F(StopWatchTest, ShouldReturnEndTimePoint)
 {
-    FakeClock fakeClock(1, 3);
-    stopWatch = new StopWatch(fakeClock);
     stopWatch->saveStartPoint();
     ASSERT_EQ(stopWatch->saveEndPoint(), 3);
 }
