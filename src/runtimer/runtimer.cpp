@@ -27,3 +27,8 @@ int StopWatch::saveEndPoint()
 {
     return mClock.now();
 }
+
+int StopWatch::getElapsedTime()
+{
+    return 1;
+}

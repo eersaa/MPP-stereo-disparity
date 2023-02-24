@@ -146,6 +146,13 @@ TEST_F(StopWatchTest, ShouldReturnEndTimePoint)
     ASSERT_EQ(stopWatch->saveEndPoint(), 3);
 }
 
+TEST_F(StopWatchTest, ShouldReturnElapsedTime)
+{
+    stopWatch->saveStartPoint();
+    stopWatch->saveEndPoint();
+    ASSERT_EQ(stopWatch->getElapsedTime(), 2);
+}
+
 // TEST(TimerTest, ShouldReturnElapsedTimeOfTwoTimePoints)
 // {
 //     Timer t(fakeClock);

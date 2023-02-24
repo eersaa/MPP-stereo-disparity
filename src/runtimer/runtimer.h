@@ -15,6 +15,7 @@ struct IStopWatch
 {
     virtual int saveStartPoint() = 0;
     virtual int saveEndPoint() = 0;
+    virtual int getElapsedTime() = 0;
 };
 
 class StopWatch : public IStopWatch
@@ -24,6 +25,7 @@ class StopWatch : public IStopWatch
 
     int saveStartPoint() override;
     int saveEndPoint() override;
+    int getElapsedTime() override;
 
     private:
     IClock& mClock;
