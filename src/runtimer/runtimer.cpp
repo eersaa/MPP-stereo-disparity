@@ -30,5 +30,12 @@ int StopWatch::saveEndPoint()
 
 int StopWatch::getElapsedTime()
 {
-    return mEndTime - mStartTime;
+    if (mStartTime < mEndTime)
+    {
+        return mEndTime - mStartTime;
+    }
+    else
+    {
+        return 0;
+    }
 }
