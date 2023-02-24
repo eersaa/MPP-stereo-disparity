@@ -82,3 +82,10 @@ TEST_F(StopWatchTest, ShouldReturnElapsedTime)
     stopWatch->saveEndPoint();
     ASSERT_EQ(stopWatch->getElapsedTime(), 2);
 }
+
+TEST_F(StopWatchTest, ShouldAlwaysReturnPositiveElapsedTime)
+{
+    stopWatch->saveEndPoint();
+    stopWatch->saveStartPoint();
+    ASSERT_GE(stopWatch->getElapsedTime(), 0);
+}
