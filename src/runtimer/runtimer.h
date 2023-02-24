@@ -29,6 +29,8 @@ class StopWatch : public IStopWatch
 
     private:
     IClock& mClock;
+    int mStartTime = 0;
+    int mEndTime = 0;
 };
 
 class RunTimer

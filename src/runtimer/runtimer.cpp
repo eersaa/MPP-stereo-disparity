@@ -20,15 +20,15 @@ StopWatch::StopWatch(IClock& clock)
 
 int StopWatch::saveStartPoint()
 {
-    return mClock.now();
+    return mStartTime = mClock.now();
 }
 
 int StopWatch::saveEndPoint()
 {
-    return mClock.now();
+    return mEndTime = mClock.now();
 }
 
 int StopWatch::getElapsedTime()
 {
-    return 1;
+    return mEndTime - mStartTime;
 }
