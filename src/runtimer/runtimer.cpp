@@ -9,7 +9,10 @@ RunTimer::RunTimer(IProgram& program, IStopWatch& stopWatch)
 
 int RunTimer::timeProgram()
 {
-    return mProgram.run();
+    mStopWatch.saveStartPoint();
+    int result = mProgram.run();
+    mStopWatch.saveEndPoint();
+    return result;
 }
 
 StopWatch::StopWatch(IClock& clock) 
