@@ -14,10 +14,16 @@ using namespace ::testing;
 class FakeClock : public IClock
 {
     public:
-        FakeClock(int time) : mTime(time) {}
+        FakeClock(int startTime, int endTime) 
+            : mStartTime(startTime)
+            , mEndTime(endTime)
+            {
+
+            }
 
     private:
-        int mTime;
+        int mStartTime;
+        int mEndTime;
 };
 
 class FakeProgram : public IProgram
@@ -81,9 +87,16 @@ class RunTimerTestFixture : public ::testing::Test
 
 TEST_F(RunTimerTestFixture, ShouldReturnZeroElapsedTime)
 {
-    FakeClock fakeClock(0);
+    FakeClock fakeClock(0, 0);
     rt = new RunTimer(fakeProgram, fakeClock);
     ASSERT_EQ(rt->timeProgram(), 0);
+}
+
+TEST_F(RunTimerTestFixture, ShouldReturnElapsedTimeOfTwo)
+{
+    FakeClock fakeClock(1, 3);
+    rt = new RunTimer(fakeProgram, fakeClock);
+    ASSERT_EQ(rt->timeProgram(), 2);
 }
 
 // TEST_F(RunTimerTestFixture, ShouldReturnZeroAfterSuccessfulProgramRun)
