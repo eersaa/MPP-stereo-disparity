@@ -1,25 +1,15 @@
 #include "runtimer.h"
 #include <chrono>
 
-RunTimer::RunTimer(IStopWatch& stopWatch)
-    : mStopWatch(stopWatch)
+int ChronoClock::now()
 {
-    ;
+    return std::chrono::duration_cast<std::chrono::microseconds>
+            (std::chrono::system_clock::now().time_since_epoch()).count();
 }
-
-int RunTimer::runProgram(IProgram& program)
-{
-    mStopWatch.saveStartPoint();
-    int result = program.run();
-    mStopWatch.saveEndPoint();
-    return result;
-}
-
-int RunTimer::getElapsedTime(){return mStopWatch.getElapsedTime();}
 
 
 StopWatch::StopWatch(IClock& clock) 
-    : mClock(clock)
+    : mClock{clock}
 {
     ;
 }
@@ -46,8 +36,18 @@ int StopWatch::getElapsedTime()
     }
 }
 
-int ChronoClock::now()
+
+ProgramStopWatch::ProgramStopWatch(IClock& clock) 
+    : StopWatch{clock}
+    , mClock{clock}
 {
-    return std::chrono::duration_cast<std::chrono::microseconds>
-            (std::chrono::system_clock::now().time_since_epoch()).count();
+    ;
+}
+
+int ProgramStopWatch::runProgram(IProgram& program)
+{
+    saveStartPoint();
+    int result = program.run();
+    saveEndPoint();
+    return result;
 }

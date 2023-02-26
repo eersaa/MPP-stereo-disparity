@@ -92,45 +92,40 @@ TEST_F(StopWatchTest, ShouldAlwaysReturnPositiveElapsedTime)
 }
 
 
-class RunTimerTest : public ::testing::Test
+class ProgramStopWatchTest : public ::testing::Test
 {
     protected:
-        RunTimer* runTimer;
+        ProgramStopWatch* programStopWatch;
         FakeClock* fakeClock;
-        StopWatch* stopWatch;
 
         void SetUp() override
         {
-            // FakeClock fakeClock(1, 3);
-            // StopWatch stopWatch(fakeClock);
             fakeClock = new FakeClock(1, 3);
-            stopWatch = new StopWatch(*fakeClock);
-            runTimer = new RunTimer(*stopWatch);
+            programStopWatch = new ProgramStopWatch(*fakeClock);
         }
 
         void TearDown() override
         {
-            delete runTimer;
-            delete stopWatch;
+            delete programStopWatch;
             delete fakeClock;
         }
 };
 
-TEST_F(RunTimerTest, ShouldReturnZeroAfterSuccessfulRun)
+TEST_F(ProgramStopWatchTest, ShouldReturnZeroAfterSuccessfulRun)
 {
     FakeProgram fakeProgram(0);
-    ASSERT_EQ(runTimer->runProgram(fakeProgram), 0);
+    ASSERT_EQ(programStopWatch->runProgram(fakeProgram), 0);
 }
 
-TEST_F(RunTimerTest, ShouldReturnValueOfProgramAfterRun)
+TEST_F(ProgramStopWatchTest, ShouldReturnValueOfProgramAfterRun)
 {
     FakeProgram fakeProgram(1);
-    ASSERT_EQ(runTimer->runProgram(fakeProgram), 1);
+    ASSERT_EQ(programStopWatch->runProgram(fakeProgram), 1);
 }
 
-TEST_F(RunTimerTest, ShouldReturnElapsedTimeAfterRun)
+TEST_F(ProgramStopWatchTest, ShouldReturnElapsedTimeAfterRun)
 {
     FakeProgram fakeProgram(0);
-    runTimer->runProgram(fakeProgram);
-    ASSERT_EQ(runTimer->getElapsedTime(), 2);
+    programStopWatch->runProgram(fakeProgram);
+    ASSERT_EQ(programStopWatch->getElapsedTime(), 2);
 }

@@ -42,16 +42,15 @@ class StopWatch : public IStopWatch
     int mEndTime = 0;
 };
 
-class RunTimer
+class ProgramStopWatch : public StopWatch
 {
     public:
-    RunTimer(IStopWatch& stopWatch);
+    ProgramStopWatch(IClock& clock);
 
     int runProgram(IProgram& program);
-    int getElapsedTime();
 
     private:
-    IStopWatch& mStopWatch;
+    IClock& mClock;
 };
 
 
