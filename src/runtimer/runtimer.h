@@ -1,5 +1,5 @@
-#ifndef RUNTIMER_HPP
-#define RUNTIMER_HPP
+#ifndef STOPWATCHES_HPP
+#define STOPWATCHES_HPP
 
 struct IClock
 {
@@ -54,4 +54,4 @@ class ProgramStopwatch : public Stopwatch
 };
 
 
-#endif // RUNTIMER_HPP
+#endif // STOPWATCHES_HPP
