@@ -1,4 +1,5 @@
 #include "runtimer.h"
+#include <chrono>
 
 RunTimer::RunTimer(IStopWatch& stopWatch)
     : mStopWatch(stopWatch)
@@ -43,4 +44,10 @@ int StopWatch::getElapsedTime()
     {
         return 0;
     }
+}
+
+int ChronoClock::now()
+{
+    return std::chrono::duration_cast<std::chrono::microseconds>
+            (std::chrono::system_clock::now().time_since_epoch()).count();
 }

@@ -21,6 +21,12 @@ struct IStopWatch
     virtual int getElapsedTime() = 0;
 };
 
+class ChronoClock : public IClock
+{
+    public:
+    int now() override;
+};
+
 class StopWatch : public IStopWatch
 {
     public:
