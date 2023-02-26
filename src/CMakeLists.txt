@@ -1,1 +1,1 @@
-add_subdirectory(runtimer)
+add_subdirectory(Stopwatches)
