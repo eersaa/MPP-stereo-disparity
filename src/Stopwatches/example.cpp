@@ -1,5 +1,5 @@
 // Example code of measuring the time of execution of a program:
-#include "runtimer.h"
+#include "Stopwatches.h"
 #include <iostream>
 
 class Program : public IProgram
