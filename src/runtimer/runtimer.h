@@ -27,10 +27,10 @@ class ChronoClock : public IClock
     int now() override;
 };
 
-class StopWatch : public IStopWatch
+class Stopwatch : public IStopWatch
 {
     public:
-    StopWatch(IClock& clock);
+    Stopwatch(IClock& clock);
 
     int saveStartPoint() override;
     int saveEndPoint() override;
@@ -42,10 +42,10 @@ class StopWatch : public IStopWatch
     int mEndTime = 0;
 };
 
-class ProgramStopWatch : public StopWatch
+class ProgramStopwatch : public Stopwatch
 {
     public:
-    ProgramStopWatch(IClock& clock);
+    ProgramStopwatch(IClock& clock);
 
     int runProgram(IProgram& program);
 

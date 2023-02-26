@@ -8,23 +8,23 @@ int ChronoClock::now()
 }
 
 
-StopWatch::StopWatch(IClock& clock) 
+Stopwatch::Stopwatch(IClock& clock) 
     : mClock{clock}
 {
     ;
 }
 
-int StopWatch::saveStartPoint()
+int Stopwatch::saveStartPoint()
 {
     return mStartTime = mClock.now();
 }
 
-int StopWatch::saveEndPoint()
+int Stopwatch::saveEndPoint()
 {
     return mEndTime = mClock.now();
 }
 
-int StopWatch::getElapsedTime()
+int Stopwatch::getElapsedTime()
 {
     if (mStartTime < mEndTime)
     {
@@ -37,14 +37,14 @@ int StopWatch::getElapsedTime()
 }
 
 
-ProgramStopWatch::ProgramStopWatch(IClock& clock) 
-    : StopWatch{clock}
+ProgramStopwatch::ProgramStopwatch(IClock& clock) 
+    : Stopwatch{clock}
     , mClock{clock}
 {
     ;
 }
 
-int ProgramStopWatch::runProgram(IProgram& program)
+int ProgramStopwatch::runProgram(IProgram& program)
 {
     saveStartPoint();
     int result = program.run();

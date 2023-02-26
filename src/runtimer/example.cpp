@@ -20,11 +20,11 @@ int main()
 {
 
     ChronoClock clock;
-    ProgramStopWatch programStopWatch(clock);
+    ProgramStopwatch programStopwatch(clock);
     Program program;
 
-    int result = programStopWatch.runProgram(program);
+    int result = programStopwatch.runProgram(program);
 
     std::cout << "Result: " << result << std::endl;
-    std::cout << "Elapsed time: " << programStopWatch.getElapsedTime() << " us" << std::endl;
+    std::cout << "Elapsed time: " << programStopwatch.getElapsedTime() << " us" << std::endl;
 }

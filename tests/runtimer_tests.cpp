@@ -47,85 +47,85 @@ class FakeProgram : public IProgram
 };
 
 
-class StopWatchTest : public ::testing::Test
+class StopwatchTest : public ::testing::Test
 {
     protected:
-        StopWatch* stopWatch;
+        Stopwatch* stopwatch;
         FakeClock* fakeClock;
 
         void SetUp() override
         {
             fakeClock = new FakeClock(1, 3);
-            stopWatch = new StopWatch(*fakeClock);
+            stopwatch = new Stopwatch(*fakeClock);
         }
 
         void TearDown() override
         {
-            delete stopWatch;
+            delete stopwatch;
             delete fakeClock;
         }
 };
 
-TEST_F(StopWatchTest, ShouldReturnStartTimePoint)
+TEST_F(StopwatchTest, ShouldReturnStartTimePoint)
 {
-    ASSERT_EQ(stopWatch->saveStartPoint(), 1);
+    ASSERT_EQ(stopwatch->saveStartPoint(), 1);
 }
 
-TEST_F(StopWatchTest, ShouldReturnEndTimePoint)
+TEST_F(StopwatchTest, ShouldReturnEndTimePoint)
 {
-    stopWatch->saveStartPoint();
-    ASSERT_EQ(stopWatch->saveEndPoint(), 3);
+    stopwatch->saveStartPoint();
+    ASSERT_EQ(stopwatch->saveEndPoint(), 3);
 }
 
-TEST_F(StopWatchTest, ShouldReturnElapsedTime)
+TEST_F(StopwatchTest, ShouldReturnElapsedTime)
 {
-    stopWatch->saveStartPoint();
-    stopWatch->saveEndPoint();
-    ASSERT_EQ(stopWatch->getElapsedTime(), 2);
+    stopwatch->saveStartPoint();
+    stopwatch->saveEndPoint();
+    ASSERT_EQ(stopwatch->getElapsedTime(), 2);
 }
 
-TEST_F(StopWatchTest, ShouldAlwaysReturnPositiveElapsedTime)
+TEST_F(StopwatchTest, ShouldAlwaysReturnPositiveElapsedTime)
 {
-    stopWatch->saveEndPoint();
-    stopWatch->saveStartPoint();
-    ASSERT_GE(stopWatch->getElapsedTime(), 0);
+    stopwatch->saveEndPoint();
+    stopwatch->saveStartPoint();
+    ASSERT_GE(stopwatch->getElapsedTime(), 0);
 }
 
 
-class ProgramStopWatchTest : public ::testing::Test
+class ProgramStopwatchTest : public ::testing::Test
 {
     protected:
-        ProgramStopWatch* programStopWatch;
+        ProgramStopwatch* programStopwatch;
         FakeClock* fakeClock;
 
         void SetUp() override
         {
             fakeClock = new FakeClock(1, 3);
-            programStopWatch = new ProgramStopWatch(*fakeClock);
+            programStopwatch = new ProgramStopwatch(*fakeClock);
         }
 
         void TearDown() override
         {
-            delete programStopWatch;
+            delete programStopwatch;
             delete fakeClock;
         }
 };
 
-TEST_F(ProgramStopWatchTest, ShouldReturnZeroAfterSuccessfulRun)
+TEST_F(ProgramStopwatchTest, ShouldReturnZeroAfterSuccessfulRun)
 {
     FakeProgram fakeProgram(0);
-    ASSERT_EQ(programStopWatch->runProgram(fakeProgram), 0);
+    ASSERT_EQ(programStopwatch->runProgram(fakeProgram), 0);
 }
 
-TEST_F(ProgramStopWatchTest, ShouldReturnValueOfProgramAfterRun)
+TEST_F(ProgramStopwatchTest, ShouldReturnValueOfProgramAfterRun)
 {
     FakeProgram fakeProgram(1);
-    ASSERT_EQ(programStopWatch->runProgram(fakeProgram), 1);
+    ASSERT_EQ(programStopwatch->runProgram(fakeProgram), 1);
 }
 
-TEST_F(ProgramStopWatchTest, ShouldReturnElapsedTimeAfterRun)
+TEST_F(ProgramStopwatchTest, ShouldReturnElapsedTimeAfterRun)
 {
     FakeProgram fakeProgram(0);
-    programStopWatch->runProgram(fakeProgram);
-    ASSERT_EQ(programStopWatch->getElapsedTime(), 2);
+    programStopwatch->runProgram(fakeProgram);
+    ASSERT_EQ(programStopwatch->getElapsedTime(), 2);
 }
