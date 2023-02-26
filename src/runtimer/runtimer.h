@@ -3,16 +3,19 @@
 
 struct IClock
 {
+    virtual ~IClock() = default;
     virtual int now() = 0;
 };
 
 struct IProgram
 {
+    virtual ~IProgram() = default;
     virtual int run() = 0;
 };
 
 struct IStopWatch
 {
+    virtual ~IStopWatch() = default;
     virtual int saveStartPoint() = 0;
     virtual int saveEndPoint() = 0;
     virtual int getElapsedTime() = 0;
