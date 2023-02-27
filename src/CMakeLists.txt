@@ -6,6 +6,7 @@ add_library(lodepng STATIC
   )
 
 target_include_directories(lodepng 
-        INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/lodepng
-        )
+  INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/lodepng
+  )
 
+add_subdirectory(lodepng_wrapper)
