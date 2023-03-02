@@ -2,5 +2,7 @@
 
 int main()
 {
-    return 0;
+    lodepng_wrapper::LodepngWrapper img0;
+    unsigned error = img0.load_image("../../../source-img/im0.png");
+    return (int) error;
 }
