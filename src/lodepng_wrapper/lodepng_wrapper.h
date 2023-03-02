@@ -16,6 +16,7 @@ class LodepngWrapper
 
     unsigned load_image(const char* filename);
     unsigned save_image(const char* filename);
+    unsigned transform_to_grayscale();
 
     private:
     unsigned char* image = 0;
