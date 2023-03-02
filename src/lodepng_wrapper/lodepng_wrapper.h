@@ -3,6 +3,7 @@
 #define LODEPNG_WRAPPER_HPP
 
 #include "lodepng.h"
+#include <iostream>
 
 namespace lodepng_wrapper
 {
@@ -11,12 +12,12 @@ class LodepngWrapper
 {
     public:
     LodepngWrapper();
-    unsigned load_image(const std::string& filename);
+    ~LodepngWrapper();
+    unsigned load_image(const char* filename);
 
     private:
-    std::vector<unsigned char> image;
-    unsigned width;
-    unsigned height;
+    unsigned char* image = 0;
+    unsigned width, height;
 };
 
 } // namespace lodepng_wrapper

@@ -8,7 +8,14 @@ LodepngWrapper::LodepngWrapper()
     ;
 }
 
-unsigned LodepngWrapper::load_image(const std::string& filename)
+LodepngWrapper::~LodepngWrapper()
 {
-    return lodepng::decode(image, width, height, filename);
+    free(image));
+}
+
+unsigned LodepngWrapper::load_image(const char* filename)
+{
+    unsigned error = lodepng_decode32_file(&image, &width, &height, filename);
+    if (error) std::cout << "decoder error " << error << ": " << lodepng_error_text(error) << std::endl;
+    return error;
 }
