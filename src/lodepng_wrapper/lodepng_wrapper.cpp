@@ -10,7 +10,7 @@ LodepngWrapper::LodepngWrapper()
 
 LodepngWrapper::~LodepngWrapper()
 {
-    free(image));
+    free(image);
 }
 
 unsigned LodepngWrapper::load_image(const char* filename)
