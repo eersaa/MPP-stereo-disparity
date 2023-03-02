@@ -15,7 +15,8 @@ class LodepngWrapper
     ~LodepngWrapper();
 
     unsigned load_image(const char* filename);
-    unsigned save_image(const char* filename);
+    unsigned save_RGBAimage(const char* filename);
+    unsigned save_greyimage(const char* filename);
     unsigned transform_to_grayscale();
 
     private:

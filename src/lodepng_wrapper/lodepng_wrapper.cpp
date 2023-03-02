@@ -20,9 +20,16 @@ unsigned LodepngWrapper::load_image(const char* filename)
     return error;
 }
 
-unsigned LodepngWrapper::save_image(const char* filename)
+unsigned LodepngWrapper::save_RGBAimage(const char* filename)
 {
     unsigned error = lodepng_encode_file(filename, image, width, height, LCT_RGBA, 8);
+    if (error) std::cout << "encoder error " << error << ": " << lodepng_error_text(error) << std::endl;
+    return error;
+}
+
+unsigned LodepngWrapper::save_greyimage(const char* filename)
+{
+    unsigned error = lodepng_encode_file(filename, grey_image, width, height, LCT_GREY, 8);
     if (error) std::cout << "encoder error " << error << ": " << lodepng_error_text(error) << std::endl;
     return error;
 }
