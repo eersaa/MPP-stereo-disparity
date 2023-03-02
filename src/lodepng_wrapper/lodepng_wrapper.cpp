@@ -19,3 +19,10 @@ unsigned LodepngWrapper::load_image(const char* filename)
     if (error) std::cout << "decoder error " << error << ": " << lodepng_error_text(error) << std::endl;
     return error;
 }
+
+unsigned LodepngWrapper::save_image(const char* filename)
+{
+    unsigned error = lodepng_encode_file(filename, image, width, height, LCT_GREY, 8);
+    if (error) std::cout << "encoder error " << error << ": " << lodepng_error_text(error) << std::endl;
+    return error;
+}

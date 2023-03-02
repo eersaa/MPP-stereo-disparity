@@ -13,7 +13,9 @@ class LodepngWrapper
     public:
     LodepngWrapper();
     ~LodepngWrapper();
+
     unsigned load_image(const char* filename);
+    unsigned save_image(const char* filename);
 
     private:
     unsigned char* image = 0;
