@@ -40,5 +40,13 @@ unsigned LodepngWrapper::transform_to_grayscale()
         image[i + 1] = y;
         image[i + 2] = y;
     }
+
+    // shrink the buffer to only contain the Y channel
+    grey_image = (unsigned char*)malloc(width * height);
+    for (unsigned i = 0; i < width * height * 4; i += 4)
+    {
+        grey_image[i / 4] = image[i];
+    }
+
     return 0;
 }

@@ -20,6 +20,7 @@ class LodepngWrapper
 
     private:
     unsigned char* image = 0;
+    unsigned char* grey_image = 0;
     unsigned width, height;
 };
 
