@@ -10,3 +10,4 @@ target_include_directories(lodepng
   )
 
 add_subdirectory(lodepng_wrapper)
+add_subdirectory(utilities)
