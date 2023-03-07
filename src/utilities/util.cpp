@@ -59,6 +59,8 @@ int printPlatformProfile()
             char opencl_c_version[100];
             cl_uint device_max_compute_units;
             cl_uint device_max_work_item_dimensions;
+            cl_device_local_mem_type local_mem_type;
+            cl_ulong local_mem_size;
             size_t device_max_work_group_size;
             cl_uint device_max_clock_frequency;
             clGetDeviceInfo(devices[j], CL_DEVICE_NAME, sizeof(device_name), device_name, NULL);
@@ -67,14 +69,26 @@ int printPlatformProfile()
             clGetDeviceInfo(devices[j], CL_DEVICE_OPENCL_C_VERSION, sizeof(opencl_c_version), opencl_c_version, NULL);
             clGetDeviceInfo(devices[j], CL_DEVICE_MAX_COMPUTE_UNITS, sizeof(device_max_compute_units), &device_max_compute_units, NULL);
             clGetDeviceInfo(devices[j], CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS, sizeof(device_max_work_item_dimensions), &device_max_work_item_dimensions, NULL);
+            clGetDeviceInfo(devices[j], CL_DEVICE_LOCAL_MEM_TYPE, sizeof(local_mem_type), &local_mem_type, NULL);
+            clGetDeviceInfo(devices[j], CL_DEVICE_LOCAL_MEM_SIZE, sizeof(local_mem_size), &local_mem_size, NULL);
             clGetDeviceInfo(devices[j], CL_DEVICE_MAX_WORK_GROUP_SIZE, sizeof(device_max_work_group_size), &device_max_work_group_size, NULL);
             clGetDeviceInfo(devices[j], CL_DEVICE_MAX_CLOCK_FREQUENCY, sizeof(device_max_clock_frequency), &device_max_clock_frequency, NULL);
             printf("Device name: %s\n", device_name);
             printf("Hardware version: %s\n", device_version);
             printf("Driver version: %s\n", driver_version);
             printf("OpenCL C version: %s\n", opencl_c_version);
-            printf("Device max compute units: %u\n", device_max_compute_units);
+            printf("Parallel compute units: %u\n", device_max_compute_units);
             printf("Device max work item dimensions: %u\n", device_max_work_item_dimensions);
+            if (local_mem_type == CL_LOCAL) {
+                printf("Device local mem type: CL_LOCAL\n");
+            }
+            else if (local_mem_type == CL_GLOBAL) {
+                printf("Device local mem type: CL_GLOBAL\n");
+            }
+            else {
+                printf("Device local mem type: UNKNOWN\n");
+            }
+            printf("Device local mem size: %zu\n", local_mem_size);
             printf("Device max work group size: %zu\n", device_max_work_group_size);
             printf("Device max clock frequency: %u\n", device_max_clock_frequency);
         }
