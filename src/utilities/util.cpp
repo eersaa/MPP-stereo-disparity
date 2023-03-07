@@ -38,7 +38,11 @@ int printPlatformProfile()
 
         // Get the number of devices for this platform
         cl_uint num_devices;
-        clGetDeviceIDs(platforms[i], CL_DEVICE_TYPE_ALL, 0, NULL, &num_devices);
+        err = clGetDeviceIDs(platforms[i], CL_DEVICE_TYPE_ALL, 0, NULL, &num_devices);
+        if (err != CL_SUCCESS || num_devices <= 0) {
+            printf("Failed to find any OpenCL devices.\n");
+            return -1;
+        }
 
         std::cout << "Device count on platform " << i << ": " << num_devices << std::endl;
 
