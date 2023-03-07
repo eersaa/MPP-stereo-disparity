@@ -12,8 +12,8 @@ target_include_directories(lodepng
 add_subdirectory(lodepng_wrapper)
 add_subdirectory(utilities)
 
-add_executable(application main.cpp)
-target_link_libraries(application
+add_executable(phase1 phase1.cpp)
+target_link_libraries(phase1
   PRIVATE
   lodepng_wrapper
   utilities

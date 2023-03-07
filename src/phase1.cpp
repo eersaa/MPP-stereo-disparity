@@ -1,4 +1,4 @@
-#include "main.h"
+#include "phase1.h"
 
     lodepng_wrapper::LodepngWrapper img0;
 
