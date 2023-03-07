@@ -49,6 +49,8 @@ int printPlatformProfile()
         cl_uint num_devices;
         clGetDeviceIDs(platforms[i], CL_DEVICE_TYPE_ALL, 0, NULL, &num_devices);
 
+        std::cout << "Device count on platform " << i << ": " << num_devices << std::endl;
+
         // Get the device IDs
         cl_device_id devices[num_devices];
         clGetDeviceIDs(platforms[i], CL_DEVICE_TYPE_ALL, num_devices, devices, NULL);
