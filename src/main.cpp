@@ -1,7 +1,25 @@
 #include "main.h"
 
-int main(int argc, char const *argv[])
+    lodepng_wrapper::LodepngWrapper img0;
+
+    struct LoadImage : public IProgram
+    {
+        int run() override
+        {
+            unsigned error = img0.load_image("../../source-img/im0.png");
+            return (int) error;
+        }
+    };
+
+int main()
 {
-    /* code */
+    // Step 3
+    ChronoClock clock;
+    ProgramStopwatch LoadImage_sw(clock);
+    LoadImage loadImage;
+
+    int result = LoadImage_sw.runProgram(loadImage);
+    std::cout << "Result: " << result << std::endl;
+    std::cout << "Elapsed time: " << LoadImage_sw.getElapsedTime() << " us" << std::endl;
     return 0;
 }
