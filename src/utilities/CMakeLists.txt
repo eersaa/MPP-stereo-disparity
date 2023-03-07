@@ -4,6 +4,8 @@ if (NOT BUILD_UTILITIES)
     return()
 endif()
 
+find_package(OpenCL REQUIRED)
+
 add_library(utilities util.cpp)
 
 target_include_directories(utilities
@@ -11,7 +13,7 @@ target_include_directories(utilities
     )
 
 # link our compiler flags interface library
-target_link_libraries(utilities compiler_flags)
+target_link_libraries(utilities OpenCL::OpenCL compiler_flags)
 
 add_executable(utilities_example example.cpp)
 target_link_libraries(utilities_example utilities compiler_flags)
