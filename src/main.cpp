@@ -31,8 +31,13 @@
 
 int main()
 {
-    // Step 3
+    // Measure total time
     ChronoClock clock;
+    Stopwatch sw(clock);
+
+    sw.saveStartPoint();
+    
+    // Step 3
     ProgramStopwatch Program_sw(clock);
     LoadImage loadImage;
     TransformToGreyscale transformToGreyscale;
@@ -49,5 +54,8 @@ int main()
     result = Program_sw.runProgram(saveGreyscaleImage);
     std::cout << "Save greyscale image return result: " << result << std::endl;
     std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
+
+    sw.saveEndPoint();
+    std::cout << "Total elapsed time: " << sw.getElapsedTime() << " us" << std::endl;
     return 0;
 }
