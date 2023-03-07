@@ -3,18 +3,6 @@
 
 int printPlatformProfile()
 {
-    // Get the OpenCL platforms and devices
-    // Include following information:
-    // Platform count
-    // Device count on platform
-    // Device
-    // Hardware version
-    // Driver version
-    // OpenCL C version
-    // Parallel compute units
-    // Max work item dimensions
-
-
     // Get the number of platforms
     cl_uint num_platforms;
     cl_int err = clGetPlatformIDs(0, NULL, &num_platforms);
