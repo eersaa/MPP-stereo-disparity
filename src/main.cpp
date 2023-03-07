@@ -36,7 +36,7 @@ int main()
     Stopwatch sw(clock);
 
     sw.saveStartPoint();
-    
+
     // Step 3
     ProgramStopwatch Program_sw(clock);
     LoadImage loadImage;
@@ -56,6 +56,8 @@ int main()
     std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
     sw.saveEndPoint();
-    std::cout << "Total elapsed time: " << sw.getElapsedTime() << " us" << std::endl;
+    std::cout << "Total elapsed time: " << sw.getElapsedTime() << " us\n" << std::endl;
+
+    printPlatformProfile(false);
     return 0;
 }
