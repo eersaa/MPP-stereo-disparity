@@ -1,5 +1,5 @@
-#ifndef STOPWATCHES_HPP
-#define STOPWATCHES_HPP
+#ifndef STOPWATCHES_H
+#define STOPWATCHES_H
 
 struct IClock
 {
