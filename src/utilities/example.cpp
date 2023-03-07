@@ -2,6 +2,6 @@
 
 int main()
 {
-    printPlatformProfile();
+    printPlatformProfile(true);
     return 0;
 }

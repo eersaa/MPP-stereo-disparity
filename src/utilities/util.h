@@ -10,6 +10,6 @@
 #include <CL/opencl.h>
 
 
-int printPlatformProfile();
+int printPlatformProfile(bool print_extras);
 
 #endif  // UTIL_H
