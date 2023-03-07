@@ -14,25 +14,16 @@ int printPlatformProfile()
     // Parallel compute units
     // Max work item dimensions
 
-    // // Get number of platforms
-    // cl_uint numPlatforms = 0;
-    // cl_int err = clGetPlatformIDs(0, NULL, &numPlatforms);
-    // if (err != CL_SUCCESS || numPlatforms <= 0) {
-    //     std::cout << "Failed to find any OpenCL platforms." << std::endl;
-    //     return -1;
-    // }
-
-    // // Get all platforms    
-    // cl_platform_id* platforms = (cl_platform_id*)malloc(numPlatforms * sizeof(cl_platform_id)));
-    // err = clGetPlatformIDs(numPlatforms, platforms, NULL);
-
-    //     // Iterate through each platform
-    // for (int i = 0; i < numPlatforms; i++) {
-
 
     // Get the number of platforms
     cl_uint num_platforms;
-    clGetPlatformIDs(0, NULL, &num_platforms);
+    cl_int err = clGetPlatformIDs(0, NULL, &num_platforms);
+    if (err != CL_SUCCESS || num_platforms <= 0) {
+        printf("Failed to find any OpenCL platforms.\n");
+        return -1;
+    }
+
+    std::cout << "Platform count: " << num_platforms << std::endl;
 
     // Get the platform IDs
     cl_platform_id platforms[num_platforms];
