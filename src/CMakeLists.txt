@@ -11,3 +11,10 @@ target_include_directories(lodepng
 
 add_subdirectory(lodepng_wrapper)
 add_subdirectory(utilities)
+
+add_executable(application main.cpp)
+target_link_libraries(application
+  PRIVATE
+  lodepng_wrapper
+  utilities
+  )
