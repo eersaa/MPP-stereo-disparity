@@ -65,37 +65,36 @@ int printPlatformProfile(bool print_extras)
             clGetDeviceInfo(devices[j], CL_DEVICE_LOCAL_MEM_TYPE, sizeof(local_mem_type), &local_mem_type, NULL);
             size_t device_max_work_item_sizes[device_max_work_item_dimensions];
             clGetDeviceInfo(devices[j], CL_DEVICE_MAX_WORK_ITEM_SIZES, sizeof(device_max_work_item_sizes), &device_max_work_item_sizes, NULL);
-            printf("Device name: %s\n", device_name);
-            printf("Hardware version: %s\n", device_version);
-            printf("Driver version: %s\n", driver_version);
-            printf("OpenCL C version: %s\n", opencl_c_version);
-            printf("Parallel compute units: %u\n", device_max_compute_units);
-            printf("Device max work item dimensions: %u\n", device_max_work_item_dimensions);
+            std::cout << "Device name: " << device_name << std::endl;
+            std::cout << "Hardware version: " << device_version << std::endl;
+            std::cout << "Driver version: " << driver_version << std::endl;
+            std::cout << "OpenCL C version: " << opencl_c_version << std::endl;
+            std::cout << "Parallel compute units: " << device_max_compute_units << std::endl;
+            std::cout << "Device max work item dimensions: " << device_max_work_item_dimensions << std::endl;
+
             if (print_extras) {
                 if (local_mem_type == CL_LOCAL) {
-                    printf("Device local mem type: CL_LOCAL\n");
+                    std::cout << "Device local mem type: CL_LOCAL" << std::endl;
                 }
                 else if (local_mem_type == CL_GLOBAL) {
-                    printf("Device local mem type: CL_GLOBAL\n");
+                    std::cout << "Device local mem type: CL_GLOBAL" << std::endl;
                 }
                 else {
-                    printf("Device local mem type: UNKNOWN\n");
+                    std::cout << "Device local mem type: UNKNOWN" << std::endl;
                 }
-                printf("Device local mem size: %zu\n", local_mem_size);
-                printf("Device max clock frequency: %u\n", device_max_clock_frequency);
-                printf("Device max constant buffer size: %zu\n", device_max_constant_buffer_size);
-                printf("Device max work group size: %zu\n", device_max_work_group_size);
-                printf("Device max work item sizes: ");
+                std::cout << "Device local mem size: " << local_mem_size << std::endl;
+                std::cout << "Device max clock frequency: " << device_max_clock_frequency << std::endl;
+                std::cout << "Device max constant buffer size: " << device_max_constant_buffer_size << std::endl;
+                std::cout << "Device max work group size: " << device_max_work_group_size << std::endl;
+                std::cout << "Device max work item sizes: ";
                 for (cl_uint k = 0; k < device_max_work_item_dimensions; k++) {
-                    if (k != device_max_work_item_dimensions - 1) {
-                        printf("%zu, ", device_max_work_item_sizes[k]);
-                    }
-                    else {
-                        printf("%zu", device_max_work_item_sizes[k]);
+                    std::cout << device_max_work_item_sizes[k];
+                    if (k < device_max_work_item_dimensions - 1) {
+                        std::cout << ", ";
                     }
                 }
+                std::cout << std::endl;
             }
-
         }
     }
     return 0;
