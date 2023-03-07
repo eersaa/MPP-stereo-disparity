@@ -6,7 +6,7 @@ endif()
 
 find_package(OpenCL REQUIRED)
 
-add_library(utilities util.cpp)
+add_library(utilities utils.cpp)
 
 target_include_directories(utilities
     INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}
