@@ -54,21 +54,21 @@ int printPlatformProfile()
         for (cl_uint j = 0; j < num_devices; j++) {
         // Print device info
         char device_name[100];
-        char hw_version[100];
+        char device_version[100];
         char driver_version[100];
         char opencl_c_version[100];
         cl_uint device_max_compute_units;
         size_t device_max_work_group_size;
         cl_uint device_max_clock_frequency;
         clGetDeviceInfo(devices[j], CL_DEVICE_NAME, sizeof(device_name), device_name, NULL);
-        clGetDeviceInfo(devices[j], CL_DEVICE_VERSION, sizeof(hw_version), hw_version, NULL);
+        clGetDeviceInfo(devices[j], CL_DEVICE_VERSION, sizeof(device_version), device_version, NULL);
         clGetDeviceInfo(devices[j], CL_DRIVER_VERSION, sizeof(driver_version), driver_version, NULL);
         clGetDeviceInfo(devices[j], CL_DEVICE_OPENCL_C_VERSION, sizeof(opencl_c_version), opencl_c_version, NULL);
         clGetDeviceInfo(devices[j], CL_DEVICE_MAX_COMPUTE_UNITS, sizeof(device_max_compute_units), &device_max_compute_units, NULL);
         clGetDeviceInfo(devices[j], CL_DEVICE_MAX_WORK_GROUP_SIZE, sizeof(device_max_work_group_size), &device_max_work_group_size, NULL);
         clGetDeviceInfo(devices[j], CL_DEVICE_MAX_CLOCK_FREQUENCY, sizeof(device_max_clock_frequency), &device_max_clock_frequency, NULL);
         printf("Device name: %s\n", device_name);
-        printf("Hardware version: %s\n", hw_version);
+        printf("Hardware version: %s\n", device_version);
         printf("Driver version: %s\n", driver_version);
         printf("OpenCL C version: %s\n", opencl_c_version);
         printf("Device max compute units: %u\n", device_max_compute_units);
