@@ -54,17 +54,17 @@ int printPlatformProfile()
         for (cl_uint j = 0; j < num_devices; j++) {
         // Print device info
         char device_name[100];
-        cl_device_type device_type;
+        char driver_version[100];
         cl_uint device_max_compute_units;
         size_t device_max_work_group_size;
         cl_uint device_max_clock_frequency;
         clGetDeviceInfo(devices[j], CL_DEVICE_NAME, sizeof(device_name), device_name, NULL);
-        clGetDeviceInfo(devices[j], CL_DEVICE_TYPE, sizeof(device_type), &device_type, NULL);
+        clGetDeviceInfo(devices[j], CL_DRIVER_VERSION, sizeof(driver_version), driver_version, NULL);
         clGetDeviceInfo(devices[j], CL_DEVICE_MAX_COMPUTE_UNITS, sizeof(device_max_compute_units), &device_max_compute_units, NULL);
         clGetDeviceInfo(devices[j], CL_DEVICE_MAX_WORK_GROUP_SIZE, sizeof(device_max_work_group_size), &device_max_work_group_size, NULL);
         clGetDeviceInfo(devices[j], CL_DEVICE_MAX_CLOCK_FREQUENCY, sizeof(device_max_clock_frequency), &device_max_clock_frequency, NULL);
         printf("Device name: %s\n", device_name);
-        printf("Device type: %u\n", (unsigned)device_type);
+        printf("Driver version: %s\n", driver_version);
         printf("Device max compute units: %u\n", device_max_compute_units);
         printf("Device max work group size: %zu\n", device_max_work_group_size);
         printf("Device max clock frequency: %u\n", device_max_clock_frequency);
