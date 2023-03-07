@@ -17,4 +17,5 @@ target_link_libraries(application
   PRIVATE
   lodepng_wrapper
   utilities
+  stopwatches
   )
