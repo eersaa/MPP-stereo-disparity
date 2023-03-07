@@ -19,7 +19,7 @@ int printPlatformProfile()
     cl_uint num_platforms;
     cl_int err = clGetPlatformIDs(0, NULL, &num_platforms);
     if (err != CL_SUCCESS || num_platforms <= 0) {
-        printf("Failed to find any OpenCL platforms.\n");
+        std::cout << "Failed to find any OpenCL platforms." << std::endl;
         return -1;
     }
 
@@ -34,13 +34,13 @@ int printPlatformProfile()
         // Print platform info
         char platform_version[100];
         clGetPlatformInfo(platforms[i], CL_PLATFORM_VERSION, sizeof(platform_version), platform_version, NULL);
-        printf("Platform version: %s\n", platform_version);
+        std::cout << "Platform version: " << platform_version << std::endl;
 
         // Get the number of devices for this platform
         cl_uint num_devices;
         err = clGetDeviceIDs(platforms[i], CL_DEVICE_TYPE_ALL, 0, NULL, &num_devices);
         if (err != CL_SUCCESS || num_devices <= 0) {
-            printf("Failed to find any OpenCL devices.\n");
+            std::cout << "Failed to find any OpenCL devices." << std::endl;
             return -1;
         }
 
@@ -57,11 +57,12 @@ int printPlatformProfile()
             char device_version[100];
             char driver_version[100];
             char opencl_c_version[100];
-            cl_uint device_max_compute_units;
-            cl_uint device_max_work_item_dimensions;
-            cl_device_local_mem_type local_mem_type;
+            cl_uint device_max_compute_units; // number of parallel compute units
+            cl_uint device_max_work_item_dimensions; // number of dimensions
+            cl_device_local_mem_type local_mem_type; // CL_LOCAL or CL_GLOBAL
             cl_ulong local_mem_size; // in bytes
             cl_uint device_max_clock_frequency; // in MHz
+            cl_ulong device_max_constant_buffer_size; // in bytes
             size_t device_max_work_group_size; // number of work-items
             clGetDeviceInfo(devices[j], CL_DEVICE_NAME, sizeof(device_name), device_name, NULL);
             clGetDeviceInfo(devices[j], CL_DEVICE_VERSION, sizeof(device_version), device_version, NULL);
@@ -71,6 +72,7 @@ int printPlatformProfile()
             clGetDeviceInfo(devices[j], CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS, sizeof(device_max_work_item_dimensions), &device_max_work_item_dimensions, NULL);
             clGetDeviceInfo(devices[j], CL_DEVICE_LOCAL_MEM_SIZE, sizeof(local_mem_size), &local_mem_size, NULL);
             clGetDeviceInfo(devices[j], CL_DEVICE_MAX_CLOCK_FREQUENCY, sizeof(device_max_clock_frequency), &device_max_clock_frequency, NULL);
+            clGetDeviceInfo(devices[j], CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE, sizeof(device_max_constant_buffer_size), &device_max_constant_buffer_size, NULL);
             clGetDeviceInfo(devices[j], CL_DEVICE_MAX_WORK_GROUP_SIZE, sizeof(device_max_work_group_size), &device_max_work_group_size, NULL);
             clGetDeviceInfo(devices[j], CL_DEVICE_LOCAL_MEM_TYPE, sizeof(local_mem_type), &local_mem_type, NULL);
             size_t device_max_work_item_sizes[device_max_work_item_dimensions];
@@ -92,6 +94,7 @@ int printPlatformProfile()
             }
             printf("Device local mem size: %zu\n", local_mem_size);
             printf("Device max clock frequency: %u\n", device_max_clock_frequency);
+            printf("Device max constant buffer size: %zu\n", device_max_constant_buffer_size);
             printf("Device max work group size: %zu\n", device_max_work_group_size);
             printf("Device max work item sizes: ");
             for (cl_uint k = 0; k < device_max_work_item_dimensions; k++) {
