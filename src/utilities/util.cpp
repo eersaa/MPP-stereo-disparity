@@ -32,18 +32,9 @@ int printPlatformProfile()
     // Loop through the platforms
     for (cl_uint i = 0; i < num_platforms; i++) {
         // Print platform info
-        char platform_name[100];
-        char platform_vendor[100];
         char platform_version[100];
-        char platform_extensions[1000];
-        clGetPlatformInfo(platforms[i], CL_PLATFORM_NAME, sizeof(platform_name), platform_name, NULL);
-        clGetPlatformInfo(platforms[i], CL_PLATFORM_VENDOR, sizeof(platform_vendor), platform_vendor, NULL);
         clGetPlatformInfo(platforms[i], CL_PLATFORM_VERSION, sizeof(platform_version), platform_version, NULL);
-        clGetPlatformInfo(platforms[i], CL_PLATFORM_EXTENSIONS, sizeof(platform_extensions), platform_extensions, NULL);
-        printf("Platform name: %s\n", platform_name);
-        printf("Platform vendor: %s\n", platform_vendor);
         printf("Platform version: %s\n", platform_version);
-        printf("Platform extensions: %s\n", platform_extensions);
 
         // Get the number of devices for this platform
         cl_uint num_devices;
