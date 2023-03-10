@@ -59,10 +59,8 @@ unsigned LodepngWrapper::transform_to_grayscale()
     return 0;
 }
 
-void LodepngWrapper::clone_greyimage(unsigned char* dest, unsigned *width, unsigned *height)
+void LodepngWrapper::clone_greyimage(unsigned char* dest)
 {
-    *width = this->width;
-    *height = this->height;
     memcpy(dest, grey_image, this->width * this->height);
 }
 
@@ -77,4 +75,14 @@ void LodepngWrapper::set_greyimage(unsigned char* src, unsigned width, unsigned 
 void LodepngWrapper::apply_filter(void (*filter)(unsigned char* image, unsigned width, unsigned height, unsigned windowSize), unsigned windowSize)
 {
     filter(grey_image, width, height, windowSize);
+}
+
+unsigned LodepngWrapper::get_width()
+{
+    return width;
+}
+
+unsigned LodepngWrapper::get_height()
+{
+    return height;
 }
