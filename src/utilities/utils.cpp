@@ -99,3 +99,45 @@ int printPlatformProfile(bool print_extras)
     }
     return 0;
   }
+
+// Function that applies moving filter to an one dimensional array which represents image pixels.
+// Image is greyscale image containing pixel values in between 0-255. 
+// I know the width and height of the image.
+// Function has adjustable window size
+// Function written using C syntax
+void movingFilter(int* image, int width, int height, int windowSize) {
+  int* imageCopy = (int*)malloc(sizeof(int) * width * height);
+  int windowSizeHalf = windowSize / 2;
+
+  // Loop through the image
+  for (int y = 0; y < height; y++) {
+    for (int x = 0; x < width; x++) {
+      int sum = 0;
+      int count = 0;
+
+      // Loop through the window
+      for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
+        for (int j = -windowSizeHalf; j <= windowSizeHalf; j++) {
+          int x2 = x + j;
+          int y2 = y + i;
+
+          // Check that the pixel is inside the image
+          if (x2 >= 0 && x2 < width && y2 >= 0 && y2 < height) {
+            sum += image[y2 * width + x2];
+            count++;
+          }
+        }
+      }
+
+      // Set the pixel value
+      imageCopy[y * width + x] = sum / count;
+    }
+  }
+
+  // Copy the image back
+  memcpy(image, imageCopy, sizeof(int) * width * height);
+
+  // Free the memory
+  free(imageCopy);
+}
+
