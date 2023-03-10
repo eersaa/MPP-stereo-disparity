@@ -19,7 +19,7 @@ class LodepngWrapper
     unsigned save_greyimage(const char* filename);
     unsigned transform_to_grayscale();
     void clone_greyimage(unsigned char* dest, unsigned *width, unsigned *height);
-    // void set_greyimage(unsigned char* src, unsigned width, unsigned height);
+    void set_greyimage(unsigned char* src, unsigned width, unsigned height);
     void apply_filter(void (*filter)(unsigned char* image, unsigned width, unsigned height, unsigned windowSize), unsigned windowSize);
 
     private:
