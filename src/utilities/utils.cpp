@@ -100,12 +100,8 @@ int printPlatformProfile(bool print_extras)
     return 0;
   }
 
-// Function that applies moving filter to an one dimensional array which represents image pixels.
-// Image is greyscale image containing pixel values in between 0-255. 
-// I know the width and height of the image.
-// Function has adjustable window size
-// Function written using C syntax
-void movingFilter(int* image, int width, int height, int windowSize) {
+
+void movingAvgFilter(int* image, int width, int height, int windowSize) {
   int* imageCopy = (int*)malloc(sizeof(int) * width * height);
   int windowSizeHalf = windowSize / 2;
 
