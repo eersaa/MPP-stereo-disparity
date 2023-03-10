@@ -3,7 +3,7 @@
 int main()
 {
     // Create one dimensional image of 3x3 pixels
-    int image[9] = { 1, 1, 1, 1, 10, 1, 1, 1, 1 };
+    unsigned char image[9] = { 1, 1, 1, 1, 10, 1, 1, 1, 1 };
 
     // take moving average of image
     movingAvgFilter(image, 3, 3, 3);
