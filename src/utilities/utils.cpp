@@ -131,7 +131,7 @@ void movingAvgFilter(unsigned char* image, unsigned width, unsigned height, unsi
   }
 
   // Copy the image back
-  memcpy(image, imageCopy, sizeof(int) * width * height);
+  memcpy(image, imageCopy, sizeof(unsigned char) * width * height);
 
   // Free the memory
   free(imageCopy);
