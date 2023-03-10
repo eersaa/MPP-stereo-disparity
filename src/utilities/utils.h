@@ -12,6 +12,6 @@
 
 int printPlatformProfile(bool print_extras);
 
-void movingAvgFilter(unsigned char* image, int width, int height, int windowSize);
+void movingAvgFilter(unsigned char* image, unsigned width, unsigned height, unsigned windowSize);
 
 #endif  // UTIL_H
