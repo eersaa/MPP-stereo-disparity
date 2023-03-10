@@ -88,9 +88,9 @@ int main()
     std::cout << "Save greyscale image return result: " << result << std::endl;
     std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
-    result = Program_sw.runProgram(cloneAndSaveImage);
-    std::cout << "Clone and save image return result: " << result << std::endl;
-    std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
+    // result = Program_sw.runProgram(cloneAndSaveImage);
+    // std::cout << "Clone and save image return result: " << result << std::endl;
+    // std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
     sw.saveEndPoint();
     std::cout << "Total elapsed time: " << sw.getElapsedTime() << " us\n" << std::endl;
