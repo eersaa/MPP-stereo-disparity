@@ -20,6 +20,15 @@
         }
     };
 
+    struct ApplyFilter : public IProgram
+    {
+        int run() override
+        {
+            img0.apply_filter(movingAvgFilter, 20);
+            return 0;
+        }
+    };
+
     struct SaveGreyscaleImage : public IProgram
     {
         int run() override
@@ -41,6 +50,7 @@ int main()
     ProgramStopwatch Program_sw(clock);
     LoadImage loadImage;
     TransformToGreyscale transformToGreyscale;
+    ApplyFilter applyFilter;
     SaveGreyscaleImage saveGreyscaleImage;
 
     int result = Program_sw.runProgram(loadImage);
@@ -49,6 +59,10 @@ int main()
 
     result = Program_sw.runProgram(transformToGreyscale);
     std::cout << "Transform to greyscale return result: " << result << std::endl;
+    std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
+
+    result = Program_sw.runProgram(applyFilter);
+    std::cout << "Apply filter return result: " << result << std::endl;
     std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
     result = Program_sw.runProgram(saveGreyscaleImage);
