@@ -14,6 +14,8 @@ public:
     OCL_Base();
     ~OCL_Base();
 
+    virtual void run(char* filename) = 0;
+
 private:
     void init();
 
