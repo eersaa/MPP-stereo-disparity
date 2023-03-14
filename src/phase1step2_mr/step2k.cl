@@ -1,5 +1,6 @@
-__kernel void step2k (__global int** mat1, __global int** mat2, __global int** matR)
+__kernel void step2k (__global double* mat1, __global int* mat2, __global int** matR)
 {
+    int id = get_global_id(0);
     int matSize = 100;
     //calc result
     for (int i=0; i<matSize; i++) {

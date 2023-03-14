@@ -138,34 +138,34 @@ int main(int argc, char* argv[])
     //Step 7: Initializing matrices
     int matSize = 100;
     int ** matrixA;
-    matrixA = calloc(matSize, sizeof(int*));
+    matrixA = (int**)calloc(matSize*matSize, sizeof(int*));
 
     int ** matrixB;
-    matrixB = calloc(matSize, sizeof(int*));
+    matrixB = (int**)calloc(matSize*matSize, sizeof(int*));
 
     int ** matrixR;
-    matrixR = calloc(matSize, sizeof(int*));
+    matrixR = (int**)calloc(matSize*matSize, sizeof(int*));
 
     //fill matrices
-    for (i=0, i<matSize, i++) {
-        for (j=0, j<matSize, j++) {
+    for (int i=0; i<matSize; i++) {
+        for (int j=0; j<matSize; j++) {
             matrixA[i][j] = 1;
             matrixB[i][j] = 2;
         }
     }
     
-    size_t strlength = strlen(matrixA);
+    size_t strlength = matSize * matSize;
     cout << "input matrix A:" << endl;
 	cout << matrixA << endl;
 	cout << "input matrix B:" << endl;
 	cout << matrixB << endl;
 	
     cl_mem matrixABuffer = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, 
-                             (strlength + 1) * sizeof(char), (void *)matrixA, NULL);
+                             (strlength) * sizeof(int*), (void *)matrixA, NULL);
     cl_mem matrixBBuffer = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, 
-                             (strlength + 1) * sizeof(char), (void *)matrixB, NULL);
+                             (strlength) * sizeof(int*), (void *)matrixB, NULL);
 	cl_mem outputBuffer = clCreateBuffer(context, CL_MEM_WRITE_ONLY, 
-                              (strlength + 1) * sizeof(char), NULL, NULL);
+                              (strlength) * sizeof(int*), NULL, NULL);
 
 	/*Step 8: Create kernel object */
 	cl_kernel kernel = clCreateKernel(program, "step2", NULL);
@@ -182,24 +182,25 @@ int main(int argc, char* argv[])
 
 	/*Step 11: Read the cout put back to host memory.*/
 	status = clEnqueueReadBuffer(commandQueue, outputBuffer, CL_TRUE, 0, 
-                 strlength * sizeof(char), output, 0, NULL, NULL);
+                 strlength * sizeof(char), matrixR, 0, NULL, NULL);
 
-	output[strlength] = '\0'; //Add the terminal character to the end of output.
+	//matrixR[strlength] = '\0'; //Add the terminal character to the end of output.
 	cout << "\noutput matrix:" << endl;
-	cout << output << endl;
+	cout << matrixR << endl;
 
 	/*Step 12: Clean the resources.*/
 	status = clReleaseKernel(kernel); //Release kernel.
 	status = clReleaseProgram(program); //Release the program object.
-	status = clReleaseMemObject(inputBuffer); //Release mem object.
+	status = clReleaseMemObject(matrixABuffer); //Release mem object.
+	status = clReleaseMemObject(matrixBBuffer); //Release mem object.
 	status = clReleaseMemObject(outputBuffer);
 	status = clReleaseCommandQueue(commandQueue); //Release  Command queue.
 	status = clReleaseContext(context); //Release context.
 
-	if (output != NULL)
+	if (matrixR != NULL)
 	{
-		free(output);
-		output = NULL;
+		free(matrixR);
+		matrixR = NULL;
 	}
 
 	if (devices != NULL)

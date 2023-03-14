@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
 	cl_command_queue commandQueue = clCreateCommandQueue(context, devices[0], 0, NULL);
 
 	/*Step 5: Create program object */
-	const char *filename = "hello-world.cl";
+	const char *filename = "hello-1234.cl";
 	string sourceStr;
 	status = convertToString(filename, sourceStr);
 	const char *source = sourceStr.c_str();
@@ -124,19 +124,28 @@ int main(int argc, char* argv[])
 	status = clBuildProgram(program, 1, devices, NULL, NULL, NULL);
 
 	/*Step 7: Initial input,output for the host and create memory objects for the kernel*/
-	const char* input = "GdkknVnqkc";
-	size_t strlength = strlen(input);
+	//int* input = new int[5];
+	const int strlength = 5;
+
+	int *input = (int*)calloc(sizeof(int)*strlength);
+	for (int i = 0; i<strlength; i++) {
+		input[i] = i;
+	}
+
+	//size_t strlength = 5;
 	cout << "input string:" << endl;
 	cout << input << endl;
-	char *output = (char*)malloc(strlength + 1);
+
+
+	int *output = (int*)malloc(sizeof(int)*strlength);
 
 	cl_mem inputBuffer = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, 
-                             (strlength + 1) * sizeof(char), (void *)input, NULL);
+                             (sizeof(int)*strlength), (void *)input, NULL);
 	cl_mem outputBuffer = clCreateBuffer(context, CL_MEM_WRITE_ONLY, 
-                              (strlength + 1) * sizeof(char), NULL, NULL);
+                              (sizeof(int)*strlength), NULL, NULL);
 
 	/*Step 8: Create kernel object */
-	cl_kernel kernel = clCreateKernel(program, "helloworld", NULL);
+	cl_kernel kernel = clCreateKernel(program, "hello1234", NULL);
 
 	/*Step 9: Sets Kernel arguments.*/
 	status = clSetKernelArg(kernel, 0, sizeof(cl_mem), (void *)&inputBuffer);
@@ -149,7 +158,7 @@ int main(int argc, char* argv[])
 
 	/*Step 11: Read the cout put back to host memory.*/
 	status = clEnqueueReadBuffer(commandQueue, outputBuffer, CL_TRUE, 0, 
-                 strlength * sizeof(char), output, 0, NULL, NULL);
+                 strlength * sizeof(int), output, 0, NULL, NULL);
 
 	output[strlength] = '\0'; //Add the terminal character to the end of output.
 	cout << "\noutput string:" << endl;

@@ -17,7 +17,7 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ********************************************************************/
-__kernel void helloworld(__global char* in, __global char* out)
+__kernel void helloworld(__global const int *in, __global int *out)
 {
 	int num = get_global_id(0);
 	out[num] = in[num] + 1;
