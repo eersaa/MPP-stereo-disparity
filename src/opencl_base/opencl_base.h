@@ -17,12 +17,12 @@ public:
 private:
     void init();
 
-    cl_uint numPlatforms; //the NO. of platforms
-	cl_platform_id platform = NULL; //the chosen platform
-	cl_int status = 0;
+    cl_uint numPlatforms;
+	cl_platform_id platform;
+	cl_int status;
     cl_platform_id* platforms;
 
-    cl_uint numDevices = 0;
+    cl_uint numDevices;
 	cl_device_id *devices;
 
     cl_context context;

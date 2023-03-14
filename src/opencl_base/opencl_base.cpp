@@ -2,6 +2,11 @@
 
 OCL_Base::OCL_Base()
 {
+    platform = NULL;
+    status = 0;
+
+    numDevices = 0;
+
     init();
 }
 
