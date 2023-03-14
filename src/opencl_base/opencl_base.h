@@ -21,21 +21,23 @@ public:
 protected:
     virtual void Run() = 0;
 
+    cl_int status;
+
+    cl_context context;
+    cl_program program;
+    cl_command_queue commandQueue;
+
 private:
     void Init();
 
     cl_uint numPlatforms;
-	cl_platform_id platform;
-	cl_int status;
+    cl_platform_id platform;
     cl_platform_id* platforms;
 
     cl_uint numDevices;
-	cl_device_id *devices;
+    cl_device_id *devices;
 
-    cl_context context;
-    cl_command_queue commandQueue;
 
-    cl_program program;
 };
 
 int convertToString(const char *filename, std::string& s);
