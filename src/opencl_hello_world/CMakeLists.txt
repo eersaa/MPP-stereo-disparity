@@ -2,7 +2,7 @@ find_package(OpenCL REQUIRED)
 
 add_executable(hello-world hello-world.cpp)
 
-target_link_libraries(hello-world OpenCL::OpenCL compiler_flags)
+target_link_libraries(hello-world opencl_base OpenCL::OpenCL compiler_flags)
 
 # Add OpenCL kernel file to the target
 set_source_files_properties(hello-world.cl PROPERTIES HEADER_ONLY TRUE)
