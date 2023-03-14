@@ -6,12 +6,8 @@
 #endif
 #include <CL/opencl.h>
 
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <iostream>
 #include <string>
-#include <fstream>
 
 #include "opencl_base.h"
 
