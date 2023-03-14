@@ -11,6 +11,8 @@ target_include_directories(lodepng
 
 add_subdirectory(lodepng_wrapper)
 add_subdirectory(utilities)
+add_subdirectory(opencl_base)
+add_subdirectory(opencl_hello_world)
 
 add_executable(phase1 phase1.cpp)
 target_link_libraries(phase1
