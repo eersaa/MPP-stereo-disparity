@@ -1,6 +1,10 @@
 find_package(OpenCL REQUIRED)
 
-add_executable(hello-world hello-world.cpp)
+add_library(hello-world hello-world.cpp)
+
+target_include_directories(hello-world
+    INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}
+    )
 
 target_link_libraries(hello-world opencl_base OpenCL::OpenCL compiler_flags)
 
@@ -16,3 +20,6 @@ add_custom_command(
     ${CMAKE_CURRENT_SOURCE_DIR}/hello-world.cl
     ${CMAKE_CURRENT_BINARY_DIR}/hello-world.cl
     )
+
+add_executable(hello-world-example example.cpp)
+target_link_libraries(hello-world-example hello-world)
