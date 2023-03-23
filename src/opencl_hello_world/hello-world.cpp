@@ -33,10 +33,10 @@ OCL_HelloWorld::~OCL_HelloWorld()
     status = clReleaseMemObject(outputBuffer);
 
     if (output != NULL)
-	{
-		free(output);
-		output = NULL;
-	}
+    {
+        free(output);
+        output = NULL;
+    }
 }
 
 void OCL_HelloWorld::Run()
