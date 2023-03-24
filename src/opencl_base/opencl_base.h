@@ -35,8 +35,10 @@ private:
     cl_platform_id* platforms;
 
     cl_uint numDevices;
-    cl_device_id *devices;
+    cl_device_id* devices;
 
+    cl_program* Programs;
+    int ProgCount;
 
 };
 

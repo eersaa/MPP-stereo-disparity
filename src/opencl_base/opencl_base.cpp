@@ -7,6 +7,9 @@ OCL_Base::OCL_Base()
 
     numDevices = 0;
 
+    Programs = NULL;
+    ProgCount = 0;
+
     Init();
 }
 
@@ -20,10 +23,26 @@ OCL_Base::~OCL_Base()
         free(devices);
         devices = NULL;
     }
+
+    if (Programs != NULL)
+    {
+        free(Programs);
+        Programs = NULL;
+    }
 }
 
 void OCL_Base::CreateProgramFromFile(const char* filename)
 {
+    // Save programs to list and keep count how many programs are created
+    if (Programs == NULL)
+    {
+        Programs = (cl_program*)malloc(sizeof(cl_program));
+    }
+    else
+    {
+        Programs = (cl_program*)realloc(Programs, sizeof(cl_program) * (ProgCount + 1));
+    }
+
     /*Step 5: Create program object */
     std::string sourceStr;
     status = convertToString(filename, sourceStr);
@@ -33,6 +52,11 @@ void OCL_Base::CreateProgramFromFile(const char* filename)
 
     /*Step 6: Build program. */
     status = clBuildProgram(program, 1, devices, NULL, NULL, NULL);
+
+    // Save program to list
+    Programs[ProgCount] = program;
+    ProgCount++;
+
 }
 
 void OCL_Base::Init()
