@@ -28,7 +28,6 @@ OCL_HelloWorld::~OCL_HelloWorld()
 {
     /*Step 12: Clean the resources.*/
     status = clReleaseKernel(kernel); //Release kernel.
-    status = clReleaseProgram(program); //Release the program object.
     status = clReleaseMemObject(inputBuffer); //Release mem object.
     status = clReleaseMemObject(outputBuffer);
 
@@ -53,10 +52,10 @@ void OCL_HelloWorld::Run()
     outputBuffer = clCreateBuffer(context, CL_MEM_WRITE_ONLY, 
                               (strlength + 1) * sizeof(char), NULL, NULL);
 
-    OCL_HelloWorld::CreateProgramFromFile("hello-world.cl");
+    cl_program prog = CreateProgramFromFile("hello-world.cl");
 
     /*Step 8: Create kernel object */
-    kernel = clCreateKernel(program, "helloworld", NULL);
+    kernel = clCreateKernel(prog, "helloworld", NULL);
 
     /*Step 9: Sets Kernel arguments.*/
     status = clSetKernelArg(kernel, 0, sizeof(cl_mem), (void *)&inputBuffer);
