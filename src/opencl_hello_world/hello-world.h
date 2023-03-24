@@ -20,7 +20,6 @@ public:
     void Run() override;
 private:
 
-    cl_kernel kernel;
     cl_mem inputBuffer;
     cl_mem outputBuffer;
 

@@ -27,7 +27,6 @@ OCL_HelloWorld::OCL_HelloWorld()
 OCL_HelloWorld::~OCL_HelloWorld()
 {
     /*Step 12: Clean the resources.*/
-    status = clReleaseKernel(kernel); //Release kernel.
     status = clReleaseMemObject(inputBuffer); //Release mem object.
     status = clReleaseMemObject(outputBuffer);
 
@@ -53,17 +52,15 @@ void OCL_HelloWorld::Run()
                               (strlength + 1) * sizeof(char), NULL, NULL);
 
     cl_program prog = CreateProgramFromFile("hello-world.cl");
-
-    /*Step 8: Create kernel object */
-    kernel = clCreateKernel(prog, "helloworld", NULL);
+    CreateKernelFromProgram(prog, "helloworld");
 
     /*Step 9: Sets Kernel arguments.*/
-    status = clSetKernelArg(kernel, 0, sizeof(cl_mem), (void *)&inputBuffer);
-    status = clSetKernelArg(kernel, 1, sizeof(cl_mem), (void *)&outputBuffer);
+    status = clSetKernelArg(GetKernel(0), 0, sizeof(cl_mem), (void *)&inputBuffer);
+    status = clSetKernelArg(GetKernel(0), 1, sizeof(cl_mem), (void *)&outputBuffer);
 
     /*Step 10: Running the kernel.*/
     size_t global_work_size[1] = { strlength };
-    status = clEnqueueNDRangeKernel(commandQueue, kernel, 1, NULL, 
+    status = clEnqueueNDRangeKernel(commandQueue, GetKernel(0), 1, NULL, 
                                         global_work_size, NULL, 0, NULL, NULL);
 
     /*Step 11: Read the std::cout put back to host memory.*/
