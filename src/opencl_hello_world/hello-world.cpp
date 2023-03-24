@@ -53,6 +53,8 @@ void OCL_HelloWorld::Run()
     outputBuffer = clCreateBuffer(context, CL_MEM_WRITE_ONLY, 
                               (strlength + 1) * sizeof(char), NULL, NULL);
 
+    OCL_HelloWorld::CreateProgramFromFile("hello-world.cl");
+
     /*Step 8: Create kernel object */
     kernel = clCreateKernel(program, "helloworld", NULL);
 
