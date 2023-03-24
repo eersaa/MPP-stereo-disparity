@@ -10,6 +10,9 @@ OCL_Base::OCL_Base()
     Programs = NULL;
     ProgCount = 0;
 
+    Kernels = NULL;
+    KernCount = 0;
+
     Init();
 }
 
@@ -29,10 +32,18 @@ OCL_Base::~OCL_Base()
         free(Programs);
         Programs = NULL;
     }
+
+    if (Kernels != NULL)
+    {
+        free(Kernels);
+        Kernels = NULL;
+    }
 }
 
-void OCL_Base::CreateProgramFromFile(const char* filename)
+cl_program OCL_Base::CreateProgramFromFile(const char* filename)
 {
+    cl_program program;
+
     // Save programs to list and keep count how many programs are created
     if (Programs == NULL)
     {
@@ -53,10 +64,32 @@ void OCL_Base::CreateProgramFromFile(const char* filename)
     /*Step 6: Build program. */
     status = clBuildProgram(program, 1, devices, NULL, NULL, NULL);
 
-    // Save program to list
     Programs[ProgCount] = program;
     ProgCount++;
 
+    return program;
+}
+
+cl_kernel OCL_Base::CreateKernelFromProgram(cl_program program, const char* kernelName)
+{
+    cl_kernel kernel;
+
+    // Save kernels to list and keep count how many kernels are created
+    if (Kernels == NULL)
+    {
+        Kernels = (cl_kernel*)malloc(sizeof(cl_kernel));
+    }
+    else
+    {
+        Kernels = (cl_kernel*)realloc(Kernels, sizeof(cl_kernel) * (KernCount + 1));
+    }
+
+    kernel = clCreateKernel(program, kernelName, NULL);
+
+    Kernels[KernCount] = kernel;
+    KernCount++;
+
+    return kernel;
 }
 
 void OCL_Base::Init()

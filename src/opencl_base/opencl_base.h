@@ -16,7 +16,13 @@ public:
     OCL_Base();
     ~OCL_Base();
 
-    void CreateProgramFromFile(const char* filename);
+    cl_program CreateProgramFromFile(const char* filename);
+    cl_kernel CreateKernelFromProgram(cl_program program, const char* kernelName);
+
+    cl_kernel GetKernel(int index)
+    {
+        return Kernels[index];
+    }
 
 protected:
     virtual void Run() = 0;
@@ -24,7 +30,6 @@ protected:
     cl_int status;
 
     cl_context context;
-    cl_program program;
     cl_command_queue commandQueue;
 
 private:
@@ -39,6 +44,9 @@ private:
 
     cl_program* Programs;
     int ProgCount;
+
+    cl_kernel* Kernels;
+    int KernCount;
 
 };
 
