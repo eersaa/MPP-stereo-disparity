@@ -14,16 +14,11 @@ list(APPEND TESTS ocl_grayscale_tests)
 
 # Add OpenCL kernel file to the target
 set_source_files_properties(grayscale.cl PROPERTIES HEADER_ONLY TRUE)
-add_custom_target(grayscale_kernel_header DEPENDS grayscale.cl)
-add_dependencies(ocl_grayscale_tests grayscale_kernel_header)
-
-# Copy OpenCL kernel file to the binary directory
-add_custom_command(
-    TARGET ocl_grayscale_tests POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
+add_custom_target(grayscale_kernel_header DEPENDS grayscale.cl 
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
     ${CMAKE_CURRENT_SOURCE_DIR}/grayscale.cl
-    ${CMAKE_CURRENT_BINARY_DIR}/grayscale.cl
-    )
+    ${CMAKE_CURRENT_BINARY_DIR}/grayscale.cl)
+add_dependencies(ocl_grayscale_tests grayscale_kernel_header)
 
 include(GoogleTest)
 
