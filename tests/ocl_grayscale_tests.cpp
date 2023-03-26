@@ -19,11 +19,11 @@ public:
     {
     }
 
-    unsigned char Convert(unsigned char image)
+    unsigned char Convert(unsigned char* image)
     {
 
         cl_mem inputBuffer = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, 
-                                sizeof(unsigned char), &image, NULL);
+                                sizeof(unsigned char), image, NULL);
         cl_mem outputBuffer = clCreateBuffer(context, CL_MEM_WRITE_ONLY, 
                                 sizeof(unsigned char), NULL, NULL);
 
@@ -49,15 +49,15 @@ public:
 TEST(OCL_GrayscaleTest, ShouldReturnOnePixelImageWhenGivenOnePixelImage)
 {
     OCL_Grayscale ocl_grayscale;
-    unsigned char image = 1;
+    unsigned char image[1] = {1};
     unsigned char greyscale_image = ocl_grayscale.Convert(image);
     ASSERT_THAT(greyscale_image, testing::Eq(1));
 }
 
-// TEST(OCL_GrayscaleTest, ShouldReturnEmptyImageWhenGivenEmptyImage)
-// {
-//     OCL_Grayscale ocl_grayscale;
-//     unsigned char image = 0;
-//     unsigned char greyscale_image = ocl_grayscale.Convert(image);
-//     ASSERT_THAT(greyscale_image, testing::Eq(0));
-// }
+TEST(OCL_GrayscaleTest, ShouldReturnOnePixelImageGivenFourPixelImage)
+{
+    OCL_Grayscale ocl_grayscale;
+    unsigned char image[4] = {1, 1, 1, 1};
+    unsigned char greyscale_image = ocl_grayscale.Convert(image);
+    ASSERT_THAT(greyscale_image, testing::Eq(1));
+}
