@@ -74,6 +74,7 @@ private:
     size_t global_work_size[1];
 };
 
+
 using namespace testing;
 
 class OCL_GrayscaleTest : public ::testing::Test
@@ -83,12 +84,23 @@ public:
     unsigned char* image;
     unsigned char* grayscale_image;
 
+    // One byte per pixel
     void createImage(int pixels)
     {
         image = (unsigned char*)malloc(pixels * sizeof(unsigned char));
         for (int i = 0; i < pixels; i++)
         {
             image[i] = 1;
+        }
+    }
+
+    // Four bytes per pixel
+    void createRGBAImage(int pixels)
+    {
+        image = (unsigned char*)malloc(pixels * 4 * sizeof(unsigned char));
+        for (int i = 0; i < pixels; i++)
+        {
+            image[i] = 10;
         }
     }
 
@@ -125,4 +137,12 @@ TEST_F(OCL_GrayscaleTest, ShouldReturnTwoPixelImageGivenEightPixelImage)
     ocl_grayscale.Convert(image, grayscale_image, 8);
     ASSERT_THAT(*grayscale_image, Eq(1));
     ASSERT_THAT(*(grayscale_image + 1), Eq(1));
+}
+
+TEST_F(OCL_GrayscaleTest, ShouldReturnGrayscalePixelOfRedPixelFromRGBAImage)
+{
+    createRGBAImage(1);
+    grayscale_image = (unsigned char*)malloc(1 * sizeof(unsigned char));
+    ocl_grayscale.Convert(image, grayscale_image, 4);
+    ASSERT_THAT(*grayscale_image, Eq((unsigned char)(image[0] * 0.2126)));
 }
