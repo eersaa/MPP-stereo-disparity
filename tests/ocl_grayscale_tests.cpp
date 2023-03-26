@@ -21,7 +21,7 @@ public:
 
     unsigned char Convert(unsigned char image)
     {
-        return 0;
+        return 1;
     }
 
 };
