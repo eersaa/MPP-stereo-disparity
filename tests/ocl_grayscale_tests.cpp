@@ -46,6 +46,8 @@ public:
 
 };
 
+using namespace testing;
+
 class OCL_GrayscaleTest : public ::testing::Test
 {
 public:
@@ -74,13 +76,19 @@ TEST_F(OCL_GrayscaleTest, ShouldReturnOnePixelImageWhenGivenOnePixelImage)
 {
     createImage(1);
     unsigned char greyscale_image = ocl_grayscale.Convert(image);
-    ASSERT_THAT(greyscale_image, testing::Eq(1));
+    ASSERT_THAT(greyscale_image, Eq(1));
 }
 
 TEST_F(OCL_GrayscaleTest, ShouldReturnOnePixelImageGivenFourPixelImage)
 {
     createImage(4);
     unsigned char greyscale_image = ocl_grayscale.Convert(image);
-    ASSERT_THAT(greyscale_image, testing::Eq(1));
+    ASSERT_THAT(greyscale_image, Eq(1));
 }
 
+// TEST_F(OCL_GrayscaleTest, ShouldReturnTwoPixelImageGivenEightPixelImage)
+// {
+//     createImage(8);
+//     unsigned char greyscale_image = ocl_grayscale.Convert(image);
+//     ASSERT_THAT(greyscale_image, testing::Eq((unsigned char){1, 1}));
+// }
