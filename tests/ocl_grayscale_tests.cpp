@@ -46,18 +46,41 @@ public:
 
 };
 
-TEST(OCL_GrayscaleTest, ShouldReturnOnePixelImageWhenGivenOnePixelImage)
+class OCL_GrayscaleTest : public ::testing::Test
 {
+public:
     OCL_Grayscale ocl_grayscale;
-    unsigned char image[1] = {1};
+    unsigned char* image;
+
+    void createImage(int size)
+    {
+        image = (unsigned char*)malloc(size * sizeof(unsigned char));
+        for (int i = 0; i < size; i++)
+        {
+            image[i] = 1;
+        }
+    }
+
+protected:
+    void TearDown() override
+    {
+        free(image);
+    }
+
+};
+
+
+TEST_F(OCL_GrayscaleTest, ShouldReturnOnePixelImageWhenGivenOnePixelImage)
+{
+    createImage(1);
     unsigned char greyscale_image = ocl_grayscale.Convert(image);
     ASSERT_THAT(greyscale_image, testing::Eq(1));
 }
 
-TEST(OCL_GrayscaleTest, ShouldReturnOnePixelImageGivenFourPixelImage)
+TEST_F(OCL_GrayscaleTest, ShouldReturnOnePixelImageGivenFourPixelImage)
 {
-    OCL_Grayscale ocl_grayscale;
-    unsigned char image[4] = {1, 1, 1, 1};
+    createImage(4);
     unsigned char greyscale_image = ocl_grayscale.Convert(image);
     ASSERT_THAT(greyscale_image, testing::Eq(1));
 }
+
