@@ -53,6 +53,7 @@ class OCL_GrayscaleTest : public ::testing::Test
 public:
     OCL_Grayscale ocl_grayscale;
     unsigned char* image;
+    unsigned char* grayscale_image;
 
     void createImage(int size)
     {
@@ -67,6 +68,7 @@ protected:
     void TearDown() override
     {
         free(image);
+        free(grayscale_image);
     }
 
 };
@@ -75,27 +77,24 @@ protected:
 TEST_F(OCL_GrayscaleTest, ShouldReturnOnePixelImageWhenGivenOnePixelImage)
 {
     createImage(1);
-    unsigned char* grayscale_image = (unsigned char*)malloc(1 * sizeof(unsigned char));
+    grayscale_image = (unsigned char*)malloc(1 * sizeof(unsigned char));
     ocl_grayscale.Convert(image, grayscale_image, 1);
     ASSERT_THAT(*grayscale_image, Eq(1));
-    free(grayscale_image);
 }
 
 TEST_F(OCL_GrayscaleTest, ShouldReturnOnePixelImageGivenFourPixelImage)
 {
     createImage(4);
-    unsigned char* grayscale_image = (unsigned char*)malloc(1 * sizeof(unsigned char));
+    grayscale_image = (unsigned char*)malloc(1 * sizeof(unsigned char));
     ocl_grayscale.Convert(image, grayscale_image, 4);
     ASSERT_THAT(*grayscale_image, Eq(1));
-    free(grayscale_image);
 }
 
 TEST_F(OCL_GrayscaleTest, ShouldReturnTwoPixelImageGivenEightPixelImage)
 {
     createImage(8);
-    unsigned char* grayscale_image = (unsigned char*)malloc(2 * sizeof(unsigned char));
+    grayscale_image = (unsigned char*)malloc(2 * sizeof(unsigned char));
     ocl_grayscale.Convert(image, grayscale_image, 8);
     ASSERT_THAT(*grayscale_image, Eq(1));
     ASSERT_THAT(*(grayscale_image + 1), Eq(1));
-    free(grayscale_image);
 }
