@@ -75,20 +75,22 @@ protected:
 TEST_F(OCL_GrayscaleTest, ShouldReturnOnePixelImageWhenGivenOnePixelImage)
 {
     createImage(1);
-    unsigned char greyscale_image = ocl_grayscale.Convert(image);
-    ASSERT_THAT(greyscale_image, Eq(1));
+    unsigned char grayscale_image = ocl_grayscale.Convert(image);
+    ASSERT_THAT(grayscale_image, Eq(1));
 }
 
 TEST_F(OCL_GrayscaleTest, ShouldReturnOnePixelImageGivenFourPixelImage)
 {
     createImage(4);
-    unsigned char greyscale_image = ocl_grayscale.Convert(image);
-    ASSERT_THAT(greyscale_image, Eq(1));
+    unsigned char grayscale_image = ocl_grayscale.Convert(image);
+    ASSERT_THAT(grayscale_image, Eq(1));
 }
 
-// TEST_F(OCL_GrayscaleTest, ShouldReturnTwoPixelImageGivenEightPixelImage)
-// {
-//     createImage(8);
-//     unsigned char greyscale_image = ocl_grayscale.Convert(image);
-//     ASSERT_THAT(greyscale_image, testing::Eq((unsigned char){1, 1}));
-// }
+TEST_F(OCL_GrayscaleTest, ShouldReturnTwoPixelImageGivenEightPixelImage)
+{
+    createImage(8);
+    unsigned char* grayscale_image = (unsigned char*)malloc(2 * sizeof(unsigned char));
+    ocl_grayscale.Convert(image, grayscale_image);
+    ASSERT_THAT(*grayscale_image, Eq(1));
+    ASSERT_THAT(*(grayscale_image + 1), Eq(1));
+}
