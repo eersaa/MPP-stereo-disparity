@@ -39,6 +39,26 @@ public:
 
     }
 
+    void Convert_R(unsigned char* image, unsigned char* grayscale_image, int width)
+    {
+
+        CreateInputBuffer(image, width);
+        CreateOutputBuffer(width);
+        
+        cl_program prog = CreateProgramFromFile("grayscale.cl");
+        CreateKernelFromProgram(prog, "grayscale_r");
+
+        status = clSetKernelArg(GetKernel(0), 0, sizeof(cl_mem), (void *)&inputBuffer);
+        status = clSetKernelArg(GetKernel(0), 1, sizeof(cl_mem), (void *)&outputBuffer);
+
+        status = clEnqueueNDRangeKernel(commandQueue, GetKernel(0), 1, NULL, 
+                                            GetGlobalWorkSize(width), NULL, 0, NULL, NULL);
+
+        status = clEnqueueReadBuffer(commandQueue, outputBuffer, CL_TRUE, 0, 
+                            GetOutputBufferSize(width), grayscale_image, 0, NULL, NULL);
+
+    }
+
 private:
 
     cl_mem CreateOutputBuffer(int width)
@@ -119,7 +139,7 @@ TEST_F(OCL_GrayscaleTest, ShouldReturnOnePixelImageWhenGivenOnePixelImage)
     createImage(1);
     grayscale_image = (unsigned char*)malloc(1 * sizeof(unsigned char));
     ocl_grayscale.Convert(image, grayscale_image, 1);
-    ASSERT_THAT(*grayscale_image, Eq(1));
+    ASSERT_THAT(grayscale_image[0], Eq(1));
 }
 
 TEST_F(OCL_GrayscaleTest, ShouldReturnOnePixelImageGivenFourPixelImage)
@@ -127,7 +147,7 @@ TEST_F(OCL_GrayscaleTest, ShouldReturnOnePixelImageGivenFourPixelImage)
     createImage(4);
     grayscale_image = (unsigned char*)malloc(1 * sizeof(unsigned char));
     ocl_grayscale.Convert(image, grayscale_image, 4);
-    ASSERT_THAT(*grayscale_image, Eq(1));
+    ASSERT_THAT(grayscale_image[0], Eq(1));
 }
 
 TEST_F(OCL_GrayscaleTest, ShouldReturnTwoPixelImageGivenEightPixelImage)
@@ -135,14 +155,14 @@ TEST_F(OCL_GrayscaleTest, ShouldReturnTwoPixelImageGivenEightPixelImage)
     createImage(8);
     grayscale_image = (unsigned char*)malloc(2 * sizeof(unsigned char));
     ocl_grayscale.Convert(image, grayscale_image, 8);
-    ASSERT_THAT(*grayscale_image, Eq(1));
-    ASSERT_THAT(*(grayscale_image + 1), Eq(1));
+    ASSERT_THAT(grayscale_image[0], Eq(1));
+    ASSERT_THAT(grayscale_image[1], Eq(1));
 }
 
 TEST_F(OCL_GrayscaleTest, ShouldReturnGrayscalePixelOfRedPixelFromRGBAImage)
 {
     createRGBAImage(1);
     grayscale_image = (unsigned char*)malloc(1 * sizeof(unsigned char));
-    ocl_grayscale.Convert(image, grayscale_image, 4);
+    ocl_grayscale.Convert_R(image, grayscale_image, 4);
     ASSERT_THAT(*grayscale_image, Eq((unsigned char)(image[0] * 0.2126)));
 }
