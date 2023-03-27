@@ -19,7 +19,7 @@ public:
     {
     }
 
-    void Convert(unsigned char* image, unsigned char* grayscale_image, int width)
+    void Shrink(unsigned char* image, unsigned char* shrinked_image, int width)
     {
 
         CreateInputBuffer(image, width);
@@ -35,7 +35,7 @@ public:
                                             GetGlobalWorkSize(width), NULL, 0, NULL, NULL);
 
         status = clEnqueueReadBuffer(commandQueue, outputBuffer, CL_TRUE, 0, 
-                            GetOutputBufferSize(width), grayscale_image, 0, NULL, NULL);
+                            GetOutputBufferSize(width), shrinked_image, 0, NULL, NULL);
 
     }
 
@@ -138,7 +138,7 @@ TEST_F(OCL_GrayscaleTest, ShouldReturnOnePixelImageWhenGivenOnePixelImage)
 {
     createImage(1);
     grayscale_image = (unsigned char*)malloc(1 * sizeof(unsigned char));
-    ocl_grayscale.Convert(image, grayscale_image, 1);
+    ocl_grayscale.Shrink(image, grayscale_image, 1);
     ASSERT_THAT(grayscale_image[0], Eq(1));
 }
 
@@ -146,7 +146,7 @@ TEST_F(OCL_GrayscaleTest, ShouldReturnOnePixelImageGivenFourPixelImage)
 {
     createImage(4);
     grayscale_image = (unsigned char*)malloc(1 * sizeof(unsigned char));
-    ocl_grayscale.Convert(image, grayscale_image, 4);
+    ocl_grayscale.Shrink(image, grayscale_image, 4);
     ASSERT_THAT(grayscale_image[0], Eq(1));
 }
 
@@ -154,7 +154,7 @@ TEST_F(OCL_GrayscaleTest, ShouldReturnTwoPixelImageGivenEightPixelImage)
 {
     createImage(8);
     grayscale_image = (unsigned char*)malloc(2 * sizeof(unsigned char));
-    ocl_grayscale.Convert(image, grayscale_image, 8);
+    ocl_grayscale.Shrink(image, grayscale_image, 8);
     ASSERT_THAT(grayscale_image[0], Eq(1));
     ASSERT_THAT(grayscale_image[1], Eq(1));
 }
