@@ -8,5 +8,6 @@ __kernel void grayscale_rgba(__global unsigned char* input, __global unsigned ch
     output[0] = grayscale;
     output[1] = grayscale;
     output[2] = grayscale;
+    output[3] = input[3];
 
 }
