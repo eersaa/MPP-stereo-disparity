@@ -18,7 +18,9 @@ class LodepngWrapper
     unsigned save_RGBAimage(const char* filename);
     unsigned save_greyimage(const char* filename);
     unsigned transform_to_grayscale();
+    void clone_image(unsigned char* dest);
     void clone_greyimage(unsigned char* dest);
+    void set_image(unsigned char* src, unsigned width, unsigned height);
     void set_greyimage(unsigned char* src, unsigned width, unsigned height);
     void apply_filter(void (*filter)(unsigned char* image, unsigned width, unsigned height, unsigned windowSize), unsigned windowSize);
     unsigned get_width();
