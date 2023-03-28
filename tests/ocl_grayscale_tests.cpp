@@ -19,53 +19,50 @@ public:
     {
     }
 
-    void Shrink(unsigned char* image, unsigned char* shrunk_image, int width)
+    void Shrink(unsigned char *image, unsigned char *shrunk_image, int width)
     {
 
         CreateInputBuffer(image, width);
         CreateOutputBuffer(width);
-        
+
         cl_program prog = CreateProgramFromFile("grayscale.cl");
         CreateKernelFromProgram(prog, "shrink");
 
         status = clSetKernelArg(GetKernel(0), 0, sizeof(cl_mem), (void *)&inputBuffer);
         status = clSetKernelArg(GetKernel(0), 1, sizeof(cl_mem), (void *)&outputBuffer);
 
-        status = clEnqueueNDRangeKernel(commandQueue, GetKernel(0), 1, NULL, 
-                                            GetGlobalWorkSize(width), NULL, 0, NULL, NULL);
+        status = clEnqueueNDRangeKernel(commandQueue, GetKernel(0), 1, NULL,
+                                        GetGlobalWorkSize(width), NULL, 0, NULL, NULL);
 
-        status = clEnqueueReadBuffer(commandQueue, outputBuffer, CL_TRUE, 0, 
-                            GetOutputBufferSize(width), shrunk_image, 0, NULL, NULL);
-
+        status = clEnqueueReadBuffer(commandQueue, outputBuffer, CL_TRUE, 0,
+                                     GetOutputBufferSize(width), shrunk_image, 0, NULL, NULL);
     }
 
-    
 private:
-
     cl_mem CreateOutputBuffer(int width)
     {
-        outputBuffer = clCreateBuffer(context, CL_MEM_WRITE_ONLY, 
-                                GetOutputBufferSize(width), NULL, NULL);
+        outputBuffer = clCreateBuffer(context, CL_MEM_WRITE_ONLY,
+                                      GetOutputBufferSize(width), NULL, NULL);
         return outputBuffer;
     }
 
-    cl_mem CreateInputBuffer(unsigned char* image, int width)
+    cl_mem CreateInputBuffer(unsigned char *image, int width)
     {
-        inputBuffer = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, 
-                                width * sizeof(unsigned char), image, NULL);
+        inputBuffer = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+                                     width * sizeof(unsigned char), image, NULL);
         return inputBuffer;
     }
 
     size_t GetOutputBufferSize(int width)
     {
-        size_t bufferSize = width/4 * sizeof(unsigned char);
+        size_t bufferSize = width / 4 * sizeof(unsigned char);
         if (bufferSize < sizeof(unsigned char)) {bufferSize = sizeof(unsigned char);}
         return bufferSize;
     }
 
-    size_t* GetGlobalWorkSize(int width)
+    size_t *GetGlobalWorkSize(int width)
     {
-        global_work_size[0] = { width * sizeof(unsigned char) };
+        global_work_size[0] = {width * sizeof(unsigned char)};
         return global_work_size;
     }
 
@@ -74,8 +71,6 @@ private:
 
     size_t global_work_size[1];
 };
-
-
 
 using namespace testing;
 
@@ -115,7 +110,6 @@ using namespace testing;
 
 // };
 
-
 // TEST_F(OCL_ShrinkTest, ShouldReturnOnePixelImageWhenGivenOnePixelImage)
 // {
 //     createImage(1);
@@ -148,27 +142,26 @@ public:
     {
     }
 
-    void Convert_RGBA(unsigned char* image, unsigned char* result_image, int pixels)
+    void Convert_RGBA(unsigned char *image, unsigned char *result_image, int pixels)
     {
 
-        cl_mem inputBuffer = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, 
-                                pixels * 4 * sizeof(unsigned char), image, NULL);
-        cl_mem outputBuffer = clCreateBuffer(context, CL_MEM_WRITE_ONLY, 
-                                 pixels * 4 * sizeof(unsigned char), NULL, NULL);
-        
+        cl_mem inputBuffer = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+                                            pixels * 4 * sizeof(unsigned char), image, NULL);
+        cl_mem outputBuffer = clCreateBuffer(context, CL_MEM_WRITE_ONLY,
+                                             pixels * 4 * sizeof(unsigned char), NULL, NULL);
+
         cl_program prog = CreateProgramFromFile("grayscale.cl");
         CreateKernelFromProgram(prog, "grayscale_rgba");
 
         clSetKernelArg(GetKernel(0), 0, sizeof(cl_mem), (void *)&inputBuffer);
         clSetKernelArg(GetKernel(0), 1, sizeof(cl_mem), (void *)&outputBuffer);
 
-        size_t global_work_size[1] = { pixels * 4 * sizeof(unsigned char) };
-        clEnqueueNDRangeKernel(commandQueue, GetKernel(0), 1, NULL, 
-                                            global_work_size, NULL, 0, NULL, NULL);
+        size_t global_work_size[1] = {pixels * 4 * sizeof(unsigned char)};
+        clEnqueueNDRangeKernel(commandQueue, GetKernel(0), 1, NULL,
+                               global_work_size, NULL, 0, NULL, NULL);
 
-        clEnqueueReadBuffer(commandQueue, outputBuffer, CL_TRUE, 0, 
+        clEnqueueReadBuffer(commandQueue, outputBuffer, CL_TRUE, 0,
                             pixels * 4 * sizeof(unsigned char), result_image, 0, NULL, NULL);
-
     }
 };
 
@@ -177,14 +170,14 @@ class OCL_GrayscaleOnePixelTests : public ::testing::Test
 public:
     OCL_Grayscale ocl_grayscale;
     unsigned char image[4] = {0x72, 0x67, 0x62, 0xff}; // r = red, g = green, b = blue, a = alpha
-    unsigned char* result_image;
+    unsigned char *result_image;
     unsigned char grayscale;
     const int pixels = 1;
 
 protected:
     void SetUp() override
     {
-        result_image = (unsigned char*)malloc(4 * sizeof(unsigned char));
+        result_image = (unsigned char *)malloc(4 * sizeof(unsigned char));
         grayscale = (unsigned char)(image[0] * 0.2126 + image[1] * 0.7152 + image[2] * 0.0722);
     }
     void TearDown() override
@@ -222,14 +215,14 @@ class OCL_GrayscaleTwoPixelTests : public ::testing::Test
 public:
     OCL_Grayscale ocl_grayscale;
     unsigned char image[8] = {10, 20, 30, 40, 50, 60, 70, 80}; // r = red, g = green, b = blue, a = alpha * 2
-    unsigned char* result_image;
+    unsigned char *result_image;
     unsigned char grayscale;
     int pixels = 2;
 
 protected:
     void SetUp() override
     {
-        result_image = (unsigned char*)malloc(8 * sizeof(unsigned char));
+        result_image = (unsigned char *)malloc(8 * sizeof(unsigned char));
         grayscale = (unsigned char)(image[4] * 0.2126 + image[5] * 0.7152 + image[6] * 0.0722);
     }
     void TearDown() override
@@ -251,39 +244,3 @@ TEST_F(OCL_GrayscaleTwoPixelTests, ShouldKeepAlphaChannelTheSame)
     ocl_grayscale.Convert_RGBA(image, result_image, pixels);
     EXPECT_THAT(result_image[7], Eq(image[7]));
 }
-
-// class OCL_GrayscaleFourPixelTests : public ::testing::Test
-// {
-// public:
-//     OCL_Grayscale ocl_grayscale;
-//     unsigned char image[16];
-//     unsigned char* result_image;
-//     unsigned char grayscale;
-//     int pixels = 4;
-
-// protected:
-//     void SetUp() override
-//     {
-//         InitImage();
-//         result_image = (unsigned char*)malloc(16 * sizeof(unsigned char));
-//         grayscale = (unsigned char)(image[0] * 0.2126 + image[1] * 0.7152 + image[2] * 0.0722);
-//     }
-//     void TearDown() override
-//     {
-//         free(result_image);
-//         free(image);
-//     }
-
-//     void InitImage()
-//     {
-//         for (int i = 0; i < 16; i++)
-//         {
-//             image[i/4] = 0x72;
-//             image[i/4 + 1] = 0x67;
-//             image[i/4 + 2] = 0x62;
-//             image[i/4 + 3] = 0xff;
-//         }
-//     }
-// };
-
-
