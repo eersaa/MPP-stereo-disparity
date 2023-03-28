@@ -212,8 +212,8 @@ TEST_F(OCL_GrayscaleTest, ShouldReplaceBluePixelWithGrayscaledBluePixel)
     ASSERT_THAT(result_image[2], Eq(grayscale));
 }
 
-// TEST_F(OCL_GrayscaleTest, ShouldKeepAlphaPixelTheSame)
-// {
-//     ocl_grayscale.Convert_RGBA(image, result_image, 4);
-//     ASSERT_THAT(result_image[3], Eq(image[3]));
-// }
+TEST_F(OCL_GrayscaleTest, ShouldKeepAlphaPixelTheSame)
+{
+    ocl_grayscale.Convert_RGBA(image, result_image, 4);
+    ASSERT_THAT(result_image[3], Eq(image[3]));
+}
