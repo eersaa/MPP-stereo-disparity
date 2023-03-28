@@ -221,7 +221,7 @@ class OCL_GrayscaleTwoPixelTests : public ::testing::Test
 {
 public:
     OCL_Grayscale ocl_grayscale;
-    unsigned char image[8] = {0x72, 0x67, 0x62, 0xff, 0x72, 0x67, 0x62, 0xff}; // r = red, g = green, b = blue, a = alpha * 2
+    unsigned char image[8] = {10, 20, 30, 40, 50, 60, 70, 80}; // r = red, g = green, b = blue, a = alpha * 2
     unsigned char* result_image;
     unsigned char grayscale;
     int pixels = 2;
@@ -230,7 +230,7 @@ protected:
     void SetUp() override
     {
         result_image = (unsigned char*)malloc(8 * sizeof(unsigned char));
-        grayscale = (unsigned char)(image[0] * 0.2126 + image[1] * 0.7152 + image[2] * 0.0722);
+        grayscale = (unsigned char)(image[4] * 0.2126 + image[5] * 0.7152 + image[6] * 0.0722);
     }
     void TearDown() override
     {
@@ -251,3 +251,39 @@ TEST_F(OCL_GrayscaleTwoPixelTests, ShouldKeepAlphaChannelTheSame)
     ocl_grayscale.Convert_RGBA(image, result_image, pixels);
     EXPECT_THAT(result_image[7], Eq(image[7]));
 }
+
+// class OCL_GrayscaleFourPixelTests : public ::testing::Test
+// {
+// public:
+//     OCL_Grayscale ocl_grayscale;
+//     unsigned char image[16];
+//     unsigned char* result_image;
+//     unsigned char grayscale;
+//     int pixels = 4;
+
+// protected:
+//     void SetUp() override
+//     {
+//         InitImage();
+//         result_image = (unsigned char*)malloc(16 * sizeof(unsigned char));
+//         grayscale = (unsigned char)(image[0] * 0.2126 + image[1] * 0.7152 + image[2] * 0.0722);
+//     }
+//     void TearDown() override
+//     {
+//         free(result_image);
+//         free(image);
+//     }
+
+//     void InitImage()
+//     {
+//         for (int i = 0; i < 16; i++)
+//         {
+//             image[i/4] = 0x72;
+//             image[i/4 + 1] = 0x67;
+//             image[i/4 + 2] = 0x62;
+//             image[i/4 + 3] = 0xff;
+//         }
+//     }
+// };
+
+
