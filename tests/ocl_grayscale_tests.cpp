@@ -178,12 +178,14 @@ public:
     OCL_Grayscale ocl_grayscale;
     unsigned char image[4] = {0x72, 0x67, 0x62, 0xff}; // r = red, g = green, b = blue, a = alpha
     unsigned char* result_image;
+    unsigned char grayscale;
 
 
 protected:
     void SetUp() override
     {
         result_image = (unsigned char*)malloc(4 * sizeof(unsigned char));
+        grayscale = (unsigned char)(image[0] * 0.2126 + image[1] * 0.7152 + image[2] * 0.0722);
     }
     void TearDown() override
     {
@@ -195,17 +197,23 @@ protected:
 TEST_F(OCL_GrayscaleTest, ShouldReplaceRedPixelWithGrayscaledRedPixel)
 {
     ocl_grayscale.Convert_RGBA(image, result_image, 4);
-    ASSERT_THAT(result_image[0], Eq((unsigned char)(image[0] * 0.2126 + image[1] * 0.7152 + image[2] * 0.0722)));
+    ASSERT_THAT(result_image[0], Eq(grayscale));
 }
 
 TEST_F(OCL_GrayscaleTest, ShouldReplaceGreenPixelWithGrayscaledGreenPixel)
 {
     ocl_grayscale.Convert_RGBA(image, result_image, 4);
-    ASSERT_THAT(result_image[1], Eq((unsigned char)(image[0] * 0.2126 + image[1] * 0.7152 + image[2] * 0.0722)));
+    ASSERT_THAT(result_image[1], Eq(grayscale));
 }
 
 TEST_F(OCL_GrayscaleTest, ShouldReplaceBluePixelWithGrayscaledBluePixel)
 {
     ocl_grayscale.Convert_RGBA(image, result_image, 4);
-    ASSERT_THAT(result_image[2], Eq((unsigned char)(image[0] * 0.2126 + image[1] * 0.7152 + image[2] * 0.0722)));
+    ASSERT_THAT(result_image[2], Eq(grayscale));
 }
+
+// TEST_F(OCL_GrayscaleTest, ShouldKeepAlphaPixelTheSame)
+// {
+//     ocl_grayscale.Convert_RGBA(image, result_image, 4);
+//     ASSERT_THAT(result_image[3], Eq(image[3]));
+// }
