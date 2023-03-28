@@ -194,25 +194,25 @@ protected:
 
 };
 
-TEST_F(OCL_GrayscaleTest, ShouldReplaceRedPixelWithGrayscaledRedPixel)
+TEST_F(OCL_GrayscaleTest, ShouldReplaceRedChannelWithGrayscaledRedChannel)
 {
     ocl_grayscale.Convert_RGBA(image, result_image, 4);
     ASSERT_THAT(result_image[0], Eq(grayscale));
 }
 
-TEST_F(OCL_GrayscaleTest, ShouldReplaceGreenPixelWithGrayscaledGreenPixel)
+TEST_F(OCL_GrayscaleTest, ShouldReplaceGreenChannelWithGrayscaledGreenChannel)
 {
     ocl_grayscale.Convert_RGBA(image, result_image, 4);
     ASSERT_THAT(result_image[1], Eq(grayscale));
 }
 
-TEST_F(OCL_GrayscaleTest, ShouldReplaceBluePixelWithGrayscaledBluePixel)
+TEST_F(OCL_GrayscaleTest, ShouldReplaceBlueChannelWithGrayscaledBlueChannel)
 {
     ocl_grayscale.Convert_RGBA(image, result_image, 4);
     ASSERT_THAT(result_image[2], Eq(grayscale));
 }
 
-TEST_F(OCL_GrayscaleTest, ShouldKeepAlphaPixelTheSame)
+TEST_F(OCL_GrayscaleTest, ShouldKeepAlphaChannelTheSame)
 {
     ocl_grayscale.Convert_RGBA(image, result_image, 4);
     ASSERT_THAT(result_image[3], Eq(image[3]));
