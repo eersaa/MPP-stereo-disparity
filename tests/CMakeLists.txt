@@ -9,7 +9,7 @@ target_link_libraries(stopwatches_tests PRIVATE GTest::gtest_main stopwatches co
 list(APPEND TESTS stopwatches_tests)
 
 add_executable(ocl_grayscale_tests ocl_grayscale_tests.cpp)
-target_link_libraries(ocl_grayscale_tests PRIVATE GTest::gtest_main opencl_base compiler_flags)
+target_link_libraries(ocl_grayscale_tests PRIVATE GTest::gtest_main opencl_base lodepng_wrapper compiler_flags)
 list(APPEND TESTS ocl_grayscale_tests)
 
 # Add OpenCL kernel file to the target
