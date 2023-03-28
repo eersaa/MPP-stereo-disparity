@@ -177,32 +177,35 @@ class OCL_GrayscaleTest : public ::testing::Test
 public:
     OCL_Grayscale ocl_grayscale;
     unsigned char image[4] = {0x72, 0x67, 0x62, 0xff}; // r = red, g = green, b = blue, a = alpha
+    unsigned char* result_image;
+
 
 protected:
+    void SetUp() override
+    {
+        result_image = (unsigned char*)malloc(4 * sizeof(unsigned char));
+    }
     void TearDown() override
     {
-
+        free(result_image);
     }
 
 };
 
 TEST_F(OCL_GrayscaleTest, ShouldReplaceRedPixelWithGrayscaledRedPixel)
 {
-    unsigned char* result_image = (unsigned char*)malloc(4 * sizeof(unsigned char));
     ocl_grayscale.Convert_RGBA(image, result_image, 4);
     ASSERT_THAT(result_image[0], Eq((unsigned char)(image[0] * 0.2126 + image[1] * 0.7152 + image[2] * 0.0722)));
 }
 
 TEST_F(OCL_GrayscaleTest, ShouldReplaceGreenPixelWithGrayscaledGreenPixel)
 {
-    unsigned char* result_image = (unsigned char*)malloc(4 * sizeof(unsigned char));
     ocl_grayscale.Convert_RGBA(image, result_image, 4);
     ASSERT_THAT(result_image[1], Eq((unsigned char)(image[0] * 0.2126 + image[1] * 0.7152 + image[2] * 0.0722)));
 }
 
 TEST_F(OCL_GrayscaleTest, ShouldReplaceBluePixelWithGrayscaledBluePixel)
 {
-    unsigned char* result_image = (unsigned char*)malloc(4 * sizeof(unsigned char));
     ocl_grayscale.Convert_RGBA(image, result_image, 4);
     ASSERT_THAT(result_image[2], Eq((unsigned char)(image[0] * 0.2126 + image[1] * 0.7152 + image[2] * 0.0722)));
 }
