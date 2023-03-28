@@ -224,6 +224,7 @@ public:
     unsigned char image[8] = {0x72, 0x67, 0x62, 0xff, 0x72, 0x67, 0x62, 0xff}; // r = red, g = green, b = blue, a = alpha * 2
     unsigned char* result_image;
     unsigned char grayscale;
+    int pixels = 2;
 
 protected:
     void SetUp() override
@@ -239,7 +240,6 @@ protected:
 
 TEST_F(OCL_GrayscaleTwoPixelTests, ShouldReplaceRGBChannelsWithGrayscaledChannels)
 {
-    int pixels = 2;
     ocl_grayscale.Convert_RGBA(image, result_image, pixels);
     EXPECT_THAT(result_image[4], Eq(grayscale));
     EXPECT_THAT(result_image[5], Eq(grayscale));
@@ -248,7 +248,6 @@ TEST_F(OCL_GrayscaleTwoPixelTests, ShouldReplaceRGBChannelsWithGrayscaledChannel
 
 TEST_F(OCL_GrayscaleTwoPixelTests, ShouldKeepAlphaChannelTheSame)
 {
-    int pixels = 2;
     ocl_grayscale.Convert_RGBA(image, result_image, pixels);
     EXPECT_THAT(result_image[7], Eq(image[7]));
 }
