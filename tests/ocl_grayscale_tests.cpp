@@ -159,14 +159,14 @@ public:
         cl_program prog = CreateProgramFromFile("grayscale.cl");
         CreateKernelFromProgram(prog, "grayscale_rgba");
 
-        status = clSetKernelArg(GetKernel(0), 0, sizeof(cl_mem), (void *)&inputBuffer);
-        status = clSetKernelArg(GetKernel(0), 1, sizeof(cl_mem), (void *)&outputBuffer);
+        clSetKernelArg(GetKernel(0), 0, sizeof(cl_mem), (void *)&inputBuffer);
+        clSetKernelArg(GetKernel(0), 1, sizeof(cl_mem), (void *)&outputBuffer);
 
         size_t global_work_size[1] = { 4 * sizeof(unsigned char) };
-        status = clEnqueueNDRangeKernel(commandQueue, GetKernel(0), 1, NULL, 
+        clEnqueueNDRangeKernel(commandQueue, GetKernel(0), 1, NULL, 
                                             global_work_size, NULL, 0, NULL, NULL);
 
-        status = clEnqueueReadBuffer(commandQueue, outputBuffer, CL_TRUE, 0, 
+        clEnqueueReadBuffer(commandQueue, outputBuffer, CL_TRUE, 0, 
                             4 * sizeof(unsigned char), result_image, 0, NULL, NULL);
 
     }
