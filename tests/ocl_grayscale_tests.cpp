@@ -148,13 +148,13 @@ public:
     {
     }
 
-    void Convert_RGBA(unsigned char* image, unsigned char* result_image, int width)
+    void Convert_RGBA(unsigned char* image, unsigned char* result_image)
     {
 
         cl_mem inputBuffer = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, 
-                                width * sizeof(unsigned char), image, NULL);
+                                4 * sizeof(unsigned char), image, NULL);
         cl_mem outputBuffer = clCreateBuffer(context, CL_MEM_WRITE_ONLY, 
-                                 width * sizeof(unsigned char), NULL, NULL);
+                                 4 * sizeof(unsigned char), NULL, NULL);
         
         cl_program prog = CreateProgramFromFile("grayscale.cl");
         CreateKernelFromProgram(prog, "grayscale_rgba");
@@ -162,12 +162,12 @@ public:
         status = clSetKernelArg(GetKernel(0), 0, sizeof(cl_mem), (void *)&inputBuffer);
         status = clSetKernelArg(GetKernel(0), 1, sizeof(cl_mem), (void *)&outputBuffer);
 
-        size_t global_work_size[1] = { width * sizeof(unsigned char) };
+        size_t global_work_size[1] = { 4 * sizeof(unsigned char) };
         status = clEnqueueNDRangeKernel(commandQueue, GetKernel(0), 1, NULL, 
                                             global_work_size, NULL, 0, NULL, NULL);
 
         status = clEnqueueReadBuffer(commandQueue, outputBuffer, CL_TRUE, 0, 
-                            width * sizeof(unsigned char), result_image, 0, NULL, NULL);
+                            4 * sizeof(unsigned char), result_image, 0, NULL, NULL);
 
     }
 };
@@ -196,24 +196,24 @@ protected:
 
 TEST_F(OCL_GrayscaleOnePixelTests, ShouldReplaceRedChannelWithGrayscaledRedChannel)
 {
-    ocl_grayscale.Convert_RGBA(image, result_image, 4);
+    ocl_grayscale.Convert_RGBA(image, result_image);
     ASSERT_THAT(result_image[0], Eq(grayscale));
 }
 
 TEST_F(OCL_GrayscaleOnePixelTests, ShouldReplaceGreenChannelWithGrayscaledGreenChannel)
 {
-    ocl_grayscale.Convert_RGBA(image, result_image, 4);
+    ocl_grayscale.Convert_RGBA(image, result_image);
     ASSERT_THAT(result_image[1], Eq(grayscale));
 }
 
 TEST_F(OCL_GrayscaleOnePixelTests, ShouldReplaceBlueChannelWithGrayscaledBlueChannel)
 {
-    ocl_grayscale.Convert_RGBA(image, result_image, 4);
+    ocl_grayscale.Convert_RGBA(image, result_image);
     ASSERT_THAT(result_image[2], Eq(grayscale));
 }
 
 TEST_F(OCL_GrayscaleOnePixelTests, ShouldKeepAlphaChannelTheSame)
 {
-    ocl_grayscale.Convert_RGBA(image, result_image, 4);
+    ocl_grayscale.Convert_RGBA(image, result_image);
     ASSERT_THAT(result_image[3], Eq(image[3]));
 }
