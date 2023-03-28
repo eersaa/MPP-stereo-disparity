@@ -172,7 +172,7 @@ public:
     }
 };
 
-class OCL_GrayscaleTest : public ::testing::Test
+class OCL_GrayscaleOnePixelTests : public ::testing::Test
 {
 public:
     OCL_Grayscale ocl_grayscale;
@@ -194,25 +194,25 @@ protected:
 
 };
 
-TEST_F(OCL_GrayscaleTest, ShouldReplaceRedChannelWithGrayscaledRedChannel)
+TEST_F(OCL_GrayscaleOnePixelTests, ShouldReplaceRedChannelWithGrayscaledRedChannel)
 {
     ocl_grayscale.Convert_RGBA(image, result_image, 4);
     ASSERT_THAT(result_image[0], Eq(grayscale));
 }
 
-TEST_F(OCL_GrayscaleTest, ShouldReplaceGreenChannelWithGrayscaledGreenChannel)
+TEST_F(OCL_GrayscaleOnePixelTests, ShouldReplaceGreenChannelWithGrayscaledGreenChannel)
 {
     ocl_grayscale.Convert_RGBA(image, result_image, 4);
     ASSERT_THAT(result_image[1], Eq(grayscale));
 }
 
-TEST_F(OCL_GrayscaleTest, ShouldReplaceBlueChannelWithGrayscaledBlueChannel)
+TEST_F(OCL_GrayscaleOnePixelTests, ShouldReplaceBlueChannelWithGrayscaledBlueChannel)
 {
     ocl_grayscale.Convert_RGBA(image, result_image, 4);
     ASSERT_THAT(result_image[2], Eq(grayscale));
 }
 
-TEST_F(OCL_GrayscaleTest, ShouldKeepAlphaChannelTheSame)
+TEST_F(OCL_GrayscaleOnePixelTests, ShouldKeepAlphaChannelTheSame)
 {
     ocl_grayscale.Convert_RGBA(image, result_image, 4);
     ASSERT_THAT(result_image[3], Eq(image[3]));
