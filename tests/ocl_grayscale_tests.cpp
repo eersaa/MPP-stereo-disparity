@@ -162,7 +162,7 @@ public:
         clSetKernelArg(GetKernel(0), 0, sizeof(cl_mem), (void *)&inputBuffer);
         clSetKernelArg(GetKernel(0), 1, sizeof(cl_mem), (void *)&outputBuffer);
 
-        size_t global_work_size[1] = { 4 * sizeof(unsigned char) };
+        size_t global_work_size[1] = { pixels * 4 * sizeof(unsigned char) };
         clEnqueueNDRangeKernel(commandQueue, GetKernel(0), 1, NULL, 
                                             global_work_size, NULL, 0, NULL, NULL);
 
@@ -244,4 +244,11 @@ TEST_F(OCL_GrayscaleTwoPixelTests, ShouldReplaceRGBChannelsWithGrayscaledChannel
     EXPECT_THAT(result_image[4], Eq(grayscale));
     EXPECT_THAT(result_image[5], Eq(grayscale));
     EXPECT_THAT(result_image[6], Eq(grayscale));
+}
+
+TEST_F(OCL_GrayscaleTwoPixelTests, ShouldKeepAlphaChannelTheSame)
+{
+    int pixels = 2;
+    ocl_grayscale.Convert_RGBA(image, result_image, pixels);
+    EXPECT_THAT(result_image[7], Eq(image[7]));
 }
