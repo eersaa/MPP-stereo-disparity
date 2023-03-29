@@ -21,3 +21,11 @@ target_link_libraries(phase1
   utilities
   stopwatches
   )
+
+add_executable(phase2 phase2.cpp)
+target_link_libraries(phase2
+  PRIVATE
+  lodepng_wrapper
+  utilities
+  stopwatches
+  )
