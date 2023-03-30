@@ -27,7 +27,6 @@ Correlation (ZNCC) algorithm for calculating depth map for stereo images taking 
 - Profiling info
 - Stopwatch
 
-
 ## Done - OpenCL
 
 - Grayscale conversion
