@@ -16,17 +16,20 @@ Correlation (ZNCC) algorithm for calculating depth map for stereo images taking 
   - Cross-check
   - Occlusion filling
 
-## Todo - OpenCL
-
-- 
-
 ## Done - C/C++
 
 - Grayscale conversion
 - Applying a filter to image
 - Profiling info
 - Stopwatch
+- Read image
+- Write image
+
+## Todo - OpenCL
+
+- ?
 
 ## Done - OpenCL
 
+- Some basic framework setup
 - Grayscale conversion
