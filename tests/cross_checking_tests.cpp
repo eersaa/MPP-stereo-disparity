@@ -1,22 +1,6 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-
-bool differenceIsOverThreshold(int pixel1, int pixel2, int threshold)
-{
-    return abs(pixel1 - pixel2) > threshold;
-}
-
-int crossCheck(int pixel1, int pixel2, int threshold)
-{
-    int returnValue = 0;
-    if (!differenceIsOverThreshold(pixel1, pixel2, threshold))
-    {
-        returnValue = pixel1;
-    }
-
-    return returnValue;
-}
-
+#include "utils.h"
 
 using namespace testing;
 

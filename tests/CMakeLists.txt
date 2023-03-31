@@ -21,7 +21,7 @@ add_custom_target(grayscale_kernel_header DEPENDS grayscale.cl
 add_dependencies(ocl_grayscale_tests grayscale_kernel_header)
 
 add_executable(cross_checking_tests cross_checking_tests.cpp)
-target_link_libraries(cross_checking_tests PRIVATE GTest::gtest_main compiler_flags)
+target_link_libraries(cross_checking_tests PRIVATE GTest::gtest_main utilities compiler_flags)
 list(APPEND TESTS cross_checking_tests)
 
 include(GoogleTest)
