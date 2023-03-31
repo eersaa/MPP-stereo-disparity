@@ -3,6 +3,10 @@
 
 int occlusionFill(int pixel)
 {
+    if (pixel == 0)
+    {
+        return 1;
+    }
     return 0;
 }
 
