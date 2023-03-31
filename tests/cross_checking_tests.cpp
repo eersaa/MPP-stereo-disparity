@@ -4,7 +4,7 @@
 
 using namespace testing;
 
-TEST(CrossCheckingTests, ShouldReturnZeroOutputPixelGivenTwoZeroInputPixels)
+TEST(CrossCheckPixelTests, ShouldReturnZeroOutputPixelGivenTwoZeroInputPixels)
 {
     int pixel1 = 0;
     int pixel2 = 0;
@@ -12,7 +12,7 @@ TEST(CrossCheckingTests, ShouldReturnZeroOutputPixelGivenTwoZeroInputPixels)
     ASSERT_THAT(crossCheck(pixel1, pixel2, threshold), Eq(0));
 }
 
-TEST(CrossCheckingTests, ShouldReturnOneGivenTwoPixelsWithValueOfOne)
+TEST(CrossCheckPixelTests, ShouldReturnOneGivenTwoPixelsWithValueOfOne)
 {
     int pixel1 = 1;
     int pixel2 = 1;
@@ -20,7 +20,7 @@ TEST(CrossCheckingTests, ShouldReturnOneGivenTwoPixelsWithValueOfOne)
     ASSERT_THAT(crossCheck(pixel1, pixel2, threshold), Eq(1));
 }
 
-TEST(CrossCheckingTests, ShouldReturnZeroIfPixelDifferenceOverThreshold)
+TEST(CrossCheckPixelTests, ShouldReturnZeroIfPixelDifferenceOverThreshold)
 {
     int pixel1 = 1;
     int pixel2 = 2;
@@ -28,7 +28,7 @@ TEST(CrossCheckingTests, ShouldReturnZeroIfPixelDifferenceOverThreshold)
     ASSERT_THAT(crossCheck(pixel1, pixel2, threshold), Eq(0));
 }
 
-TEST(CrossCheckingTests, ShouldReturnPixel1ValueIfDifferenceBelowThreshold)
+TEST(CrossCheckPixelTests, ShouldReturnPixel1ValueIfDifferenceBelowThreshold)
 {
     int pixel1 = 2;
     int pixel2 = 3;
