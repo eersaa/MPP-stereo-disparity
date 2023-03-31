@@ -3,6 +3,11 @@
 
 int crossCheck(int pixel1, int pixel2, int threshold)
 {
+    if (abs(pixel1 - pixel2) > threshold)
+    {
+        return 0;
+    }
+    
     return pixel1;
 }
 
