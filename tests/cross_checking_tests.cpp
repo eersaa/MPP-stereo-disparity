@@ -21,3 +21,10 @@ TEST(CrossCheckingTests, ShouldReturnOneGivenTwoPixelsWithValueOfOne)
     int pixel2 = 1;
     ASSERT_THAT(crossCheck(pixel1, pixel2), Eq(1));
 }
+
+TEST(CrossCheckingTests, ShouldReturnZeroIfDifferenceOverThreshold)
+{
+    int pixel1 = 1;
+    int pixel2 = 2;
+    ASSERT_THAT(crossCheck(pixel1, pixel2), Eq(0));
+}
