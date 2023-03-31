@@ -234,15 +234,15 @@ protected:
 TEST_F(OCL_GrayscaleTwoPixelTests, ShouldReplaceRGBChannelsWithGrayscaledChannels)
 {
     ocl_grayscale.Convert_RGBA(image, result_image, pixels);
-    EXPECT_THAT(result_image[4], Eq(grayscale));
-    EXPECT_THAT(result_image[5], Eq(grayscale));
-    EXPECT_THAT(result_image[6], Eq(grayscale));
+    ASSERT_THAT(result_image[4], Eq(grayscale));
+    ASSERT_THAT(result_image[5], Eq(grayscale));
+    ASSERT_THAT(result_image[6], Eq(grayscale));
 }
 
 TEST_F(OCL_GrayscaleTwoPixelTests, ShouldKeepAlphaChannelTheSame)
 {
     ocl_grayscale.Convert_RGBA(image, result_image, pixels);
-    EXPECT_THAT(result_image[7], Eq(image[7]));
+    ASSERT_THAT(result_image[7], Eq(image[7]));
 }
 
 #include "lodepng_wrapper.h"
