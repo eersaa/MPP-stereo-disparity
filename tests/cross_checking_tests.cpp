@@ -1,15 +1,14 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-void crossCheck(int iPixel1, int iPixel2, int oPixel)
+int crossCheck()
 {
-
+    return 0;
 }
 
-TEST(CrossCheckingTests, ShouldReturnOutputPixelValueGivenTwoInputPixelValues)
+using namespace testing;
+
+TEST(CrossCheckingTests, ShouldReturnZeroOutputPixelGivenTwoZeroInputPixels)
 {
-    int iPixel1 = 0;
-    int iPixel2 = 0;
-    int oPixel = 0;
-    crossCheck(iPixel1, iPixel2, oPixel);
+    ASSERT_THAT(crossCheck(), Eq(0));
 }
