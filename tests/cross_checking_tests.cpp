@@ -3,7 +3,7 @@
 
 int crossCheck(int pixel1, int pixel2)
 {
-    return 0;
+    return pixel1;
 }
 
 using namespace testing;
