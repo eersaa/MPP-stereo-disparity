@@ -1,4 +1,4 @@
-#include "phase1.h"
+#include "phase2.h"
 
     lodepng_wrapper::LodepngWrapper img0;
     lodepng_wrapper::LodepngWrapper img0_1;
@@ -8,6 +8,15 @@
         int run() override
         {
             unsigned error = img0.load_image("../../source-img/im0.png");
+            return (int) error;
+        }
+    };
+
+    struct ResizeImage : public IProgram
+    {
+        int run() override
+        {
+            unsigned error = img0.resize_image();
             return (int) error;
         }
     };
