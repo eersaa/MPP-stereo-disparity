@@ -14,3 +14,10 @@ TEST(CrossCheckingTests, ShouldReturnZeroOutputPixelGivenTwoZeroInputPixels)
     int pixel2 = 0;
     ASSERT_THAT(crossCheck(pixel1, pixel2), Eq(0));
 }
+
+TEST(CrossCheckingTests, ShouldReturnOneGivenTwoPixelsWithValueOfOne)
+{
+    int pixel1 = 1;
+    int pixel2 = 1;
+    ASSERT_THAT(crossCheck(pixel1, pixel2), Eq(1));
+}
