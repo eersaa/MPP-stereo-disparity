@@ -13,7 +13,7 @@ int occlusionFill(int pixel)
 
 using namespace testing;
 
-TEST(OcclusionFillTests, ShouldReturnPixelWith1GivenPixelWith0Value)
+TEST(OcclusionFillTests, ShouldReturnPixelWith1GivenOnePixelWith0Value)
 {
     int pixel = 0;
     ASSERT_THAT(occlusionFill(pixel), Eq(1));
