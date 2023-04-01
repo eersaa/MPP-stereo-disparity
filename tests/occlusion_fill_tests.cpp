@@ -10,6 +10,11 @@ int occlusionFill(int pixel_index, int *image, int width)
         {
             fillPixelValue = *(image + width - 1);
         }
+        else if (pixel_index == 1
+                 && width == 3)
+        {
+            fillPixelValue = *(image + width - 1);
+        }
         else
         {
             fillPixelValue = *(image);
