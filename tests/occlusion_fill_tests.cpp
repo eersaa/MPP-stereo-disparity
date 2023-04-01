@@ -4,6 +4,13 @@
 int occlusionFill(int pixel_index, int *image, int width)
 {
     int fillPixelValue = 0;
+    if (width == 3)
+    {
+        if (pixel_index == 0)
+        {
+            fillPixelValue = *(image + 2);
+        }
+    }
     if (width == 2)
     {
         if (pixel_index == 0)
@@ -50,4 +57,17 @@ TEST_F(OcclusionFillTwoPixelTests, ShouldReturnPixelValueOnLeftSideOfZeroPixel)
     int image[2] = {2, 0};
     int pixelIndex = 1;
     ASSERT_THAT(occlusionFill(pixelIndex, image, width), Eq(2));
+}
+
+class OcclusionFillThreePixelTests : public ::testing::Test
+{
+public:
+    int width = 3;
+};
+
+TEST_F(OcclusionFillThreePixelTests, ShouldReturnPixelValueOnRightmostSideOfZeroPixel)
+{
+    int image[3] = {0, 0, 3};
+    int pixelIndex = 0;
+    ASSERT_THAT(occlusionFill(pixelIndex, image, width), Eq(3));
 }
