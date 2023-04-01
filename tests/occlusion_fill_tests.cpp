@@ -86,3 +86,11 @@ TEST_F(OcclusionFillThreePixelTests, ShouldReturnPixelValueOnLeftWhenMiddleIndex
     int pixelIndex = 1;
     ASSERT_THAT(occlusionFill(pixelIndex, image, width), Eq(3));
 }
+
+TEST(OcclusionFillTwoVerticalPixelsTests, ShouldReturnPixelValueOnBottomSideOfZeroPixel)
+{
+    int image[2] = {0, 2};
+    int width = 1;
+    int pixelIndex = 0;
+    ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(2));
+}
