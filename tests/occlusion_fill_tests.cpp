@@ -71,3 +71,10 @@ TEST_F(OcclusionFillThreePixelTests, ShouldReturnPixelValueOnLeftmostSideOfZeroP
     int pixelIndex = 2;
     ASSERT_THAT(occlusionFill(pixelIndex, image, width), Eq(3));
 }
+
+TEST_F(OcclusionFillThreePixelTests, ShouldReturnPixelValueOnRightWhenMiddleIndexIsZero)
+{
+    int image[3] = {0, 0, 3};
+    int pixelIndex = 1;
+    ASSERT_THAT(occlusionFill(pixelIndex, image, width), Eq(3));
+}
