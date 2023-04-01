@@ -4,18 +4,11 @@
 int occlusionFill(int pixel_index, int *image, int width)
 {
     int fillPixelValue = 0;
-    if (width == 3)
+    if (width > 0)
     {
         if (pixel_index == 0)
         {
-            fillPixelValue = *(image + 2);
-        }
-    }
-    if (width == 2)
-    {
-        if (pixel_index == 0)
-        {
-            fillPixelValue = *(image + 1);
+            fillPixelValue = *(image + width - 1);
         }
         else
         {
@@ -69,5 +62,12 @@ TEST_F(OcclusionFillThreePixelTests, ShouldReturnPixelValueOnRightmostSideOfZero
 {
     int image[3] = {0, 0, 3};
     int pixelIndex = 0;
+    ASSERT_THAT(occlusionFill(pixelIndex, image, width), Eq(3));
+}
+
+TEST_F(OcclusionFillThreePixelTests, ShouldReturnPixelValueOnLeftmostSideOfZeroPixel)
+{
+    int image[3] = {3, 0, 0};
+    int pixelIndex = 2;
     ASSERT_THAT(occlusionFill(pixelIndex, image, width), Eq(3));
 }
