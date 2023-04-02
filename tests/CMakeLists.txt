@@ -24,8 +24,11 @@ add_executable(cross_checking_tests cross_checking_tests.cpp)
 target_link_libraries(cross_checking_tests PRIVATE GTest::gtest_main utilities compiler_flags)
 list(APPEND TESTS cross_checking_tests)
 
+add_library(occlusion_fill occlusion_fill.h)
+set_target_properties(occlusion_fill PROPERTIES LINKER_LANGUAGE CXX)
+
 add_executable(occlusion_fill_tests occlusion_fill_tests.cpp)
-target_link_libraries(occlusion_fill_tests PRIVATE GTest::gtest_main compiler_flags)
+target_link_libraries(occlusion_fill_tests PRIVATE GTest::gtest_main occlusion_fill compiler_flags)
 list(APPEND TESTS occlusion_fill_tests)
 
 include(GoogleTest)
