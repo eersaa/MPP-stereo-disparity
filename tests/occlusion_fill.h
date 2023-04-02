@@ -1,5 +1,5 @@
 
-int occlusionFill(int pixel_index, int *image, int width)
+int occlusionFill(int pixel_index, int *image, int width, int height)
 {
     int fillPixelValue = 0;
     int leftRange = 0 - pixel_index;
@@ -7,10 +7,13 @@ int occlusionFill(int pixel_index, int *image, int width)
 
     for (int i = leftRange; i < rightRange; i++)
     {
-        if (*(image + pixel_index + i) != 0)
+        for (int j = 0; j < height; j++)
         {
-            fillPixelValue = *(image + pixel_index + i);
-            break;
+            if (*(image + pixel_index + i + j * width) != 0)
+            {
+                fillPixelValue = *(image + pixel_index + i + j * width);
+                break;
+            }
         }
     }
 
