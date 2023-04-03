@@ -104,9 +104,27 @@ unsigned LodepngWrapper::resize_image(unsigned scalingFactor)
     return 0;
 }
 
+void LodepngWrapper::clone_resized_image(unsigned char* dest)
+{
+    memcpy(dest, resized_image, this->resized_width * this->resized_height);
+}
+
+void LodepngWrapper::set_resized_image(unsigned char* src, unsigned resized_width, unsigned resized_height)
+{
+    this->resized_width = resized_width;
+    this->resized_height = resized_height;
+    resized_image = (unsigned char*)malloc(resized_width * resized_height);
+    memcpy(resized_image, src, resized_width * resized_height);
+}
+
 void LodepngWrapper::apply_filter(void (*filter)(unsigned char* image, unsigned width, unsigned height, unsigned windowSize), unsigned windowSize)
 {
     filter(grey_image, width, height, windowSize);
+}
+
+void LodepngWrapper::apply_filter_resized(void (*filter)(unsigned char* image, unsigned width, unsigned height, unsigned windowSize), unsigned windowSize)
+{
+    filter(resized_image, resized_width, resized_height, windowSize);
 }
 
 unsigned LodepngWrapper::get_width()

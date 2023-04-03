@@ -137,3 +137,39 @@ void movingAvgFilter(unsigned char* image, unsigned width, unsigned height, unsi
   free(imageCopy);
 }
 
+void ZNCCFilter(unsigned char* image, unsigned width, unsigned height, unsigned windowSize) {
+  unsigned char* imageCopy = (unsigned char*)malloc(sizeof(unsigned char) * width * height);
+  int windowSizeHalf = windowSize / 2;
+
+  // Loop through the image
+  for (unsigned y = 0; y < height; y++) {
+    for (unsigned x = 0; x < width; x++) {
+      int sum = 0;
+      int count = 0;
+
+      // Loop through the window
+      for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
+        for (int j = -windowSizeHalf; j <= windowSizeHalf; j++) {
+          int x2 = x + j;
+          int y2 = y + i;
+
+          // Check that the pixel is inside the image
+          if (x2 >= 0 && x2 < (int)width && y2 >= 0 && y2 < (int)height) {
+            sum += image[y2 * width + x2];
+            count++;
+          }
+        }
+      }
+
+      // Set the pixel value
+      imageCopy[y * width + x] = sum / count;
+    }
+  }
+
+  // Copy the image back
+  memcpy(image, imageCopy, sizeof(unsigned char) * width * height);
+
+  // Free the memory
+  free(imageCopy);
+}
+
