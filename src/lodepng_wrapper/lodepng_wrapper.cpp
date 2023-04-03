@@ -12,6 +12,7 @@ LodepngWrapper::~LodepngWrapper()
 {
     free(image);
     free(grey_image);
+    free(resized_image);
 }
 
 unsigned LodepngWrapper::load_image(const char* filename)
@@ -24,6 +25,13 @@ unsigned LodepngWrapper::load_image(const char* filename)
 unsigned LodepngWrapper::save_RGBAimage(const char* filename)
 {
     unsigned error = lodepng_encode_file(filename, image, width, height, LCT_RGBA, 8);
+    if (error) std::cout << "encoder error " << error << ": " << lodepng_error_text(error) << std::endl;
+    return error;
+}
+
+unsigned LodepngWrapper::save_Resizedimage(const char* filename)
+{
+    unsigned error = lodepng_encode_file(filename, resized_image, resized_width, resized_height, LCT_GREY, 8);
     if (error) std::cout << "encoder error " << error << ": " << lodepng_error_text(error) << std::endl;
     return error;
 }
@@ -72,34 +80,26 @@ void LodepngWrapper::set_greyimage(unsigned char* src, unsigned width, unsigned 
     memcpy(grey_image, src, width * height);
 }
 
-unsigned LodepngWrapper::resize_image(unsigned width, unsigned height, unsigned scalingFactor)
+unsigned LodepngWrapper::resize_image(unsigned scalingFactor)
 {
-    // resize the image by the given scaling factor
-    // the image is assumed to be a greyscale image
-    // the image is assumed to be a 1D array
-    unsigned char* resized_image = (unsigned char*)malloc(width * height);
+    //int scalingFactor = 4;
+    resized_width = width / scalingFactor;
+    resized_height = height / scalingFactor;
+    
+    // shrink the image
+    resized_image = (unsigned char*)malloc(resized_width * resized_height);
 
-    for (unsigned i = 0; i < height; i++)
-    {
-        for (unsigned j = 0; j < width; j++)
-        {
-            unsigned char value = 0;
-            for (unsigned k = 0; k < scalingFactor; k++)
-            {
-                for (unsigned l = 0; l < scalingFactor; l++)
-                {
-                    value += grey_image[(i * scalingFactor + k) * this->width + (j * scalingFactor + l)];
-                }
-            }
-            value /= scalingFactor * scalingFactor;
-            resized_image[i * width + j] = value;
+    unsigned int ind = 0;
+    unsigned int currow = 0;
+    for (unsigned i = 0; i < (resized_width * resized_height); i++)
+    {   
+        resized_image[i] = grey_image[ind];
+        ind = ind + scalingFactor;
+        if (ind >= (width + (currow * width))) {
+            currow = currow + scalingFactor;
+            ind = (currow * width);
         }
     }
-
-    free(grey_image);
-    grey_image = resized_image;
-    this->width = width;
-    this->height = height;
 
     return 0;
 }
