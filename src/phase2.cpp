@@ -16,7 +16,10 @@
     {
         int run() override
         {
-            unsigned error = img0.resize_image();
+            unsigned width = img0.get_width();
+            unsigned height = img0.get_height();
+            unsigned error = img0.resize_image(width, height, 4);
+            //unsigned error = img0.resize_image();
             return (int) error;
         }
     };

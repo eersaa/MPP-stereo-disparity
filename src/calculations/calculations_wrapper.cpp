@@ -1,32 +1,9 @@
-/*
+// Wrapper created based on the example from the lodepng library
+#include "calculations_wrapper.h"
 
-*/
+using namespace calculations_wrapper;
 
-#include <stdio.h>
-#include <math.h>
-
-int imWidth = 0;
-int imHeight = 0;
-int winSize = 9;
-int maxDisp = 0;
-int znccVal = 0;
-int currentMaxSum = 0;
-int bestDispVal = 0;
-
-int windowSum = 0;
-int windowMean = 0;
-float windowstd = 0;
-
-int windowSum2 = 0;
-int windowMean2 = 0;
-float windowstd2 = 0;
-
-float znccVal = 0;
-
-int image[1000][1000];
-int image2[1000][1000];
-
-int main(int argc, char const *argv[])
+unsigned calculationsWrapper::calc_zncc()
 {
     //zncc algorithm
     for (int j = 0; j < imHeight; j++) {
@@ -66,9 +43,6 @@ int main(int argc, char const *argv[])
                 }
             }
             int disparity_image_pixel = bestDispVal;
-        }
-    }
-
-
-
+    
+    return 0;
 }

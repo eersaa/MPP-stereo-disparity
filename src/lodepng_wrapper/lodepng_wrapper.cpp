@@ -72,47 +72,34 @@ void LodepngWrapper::set_greyimage(unsigned char* src, unsigned width, unsigned 
     memcpy(grey_image, src, width * height);
 }
 
-unsigned LodepngWrapper::resize_image()
+unsigned LodepngWrapper::resize_image(unsigned width, unsigned height, unsigned scalingFactor)
 {
-    //zncc algorithm
-    for (int j = 0; j < imHeight; j++) {
-        for (int i = 0; i < imWidth; i++) {
-            for (int d = 0; d < maxDisp; d++) {
-                for (int y = 0; y < winSize; y++) {
-                    for (int x = 0; x < winSize; x++) {
-                        //Calculate the mean value for each window
-                        windowSum = windowSum + image[j+4-y][i+4-x];
-                        windowSum2 = windowSum2 + image2[j+4-y][i+4-x];
-                    }   
-                }
-                windowMean = windowSum / (imWidth * imHeight);
-                windowMean2 = windowSum2 / (imWidth * imHeight);
+    // resize the image by the given scaling factor
+    // the image is assumed to be a greyscale image
+    // the image is assumed to be a 1D array
+    unsigned char* resized_image = (unsigned char*)malloc(width * height);
 
-                //Calculate stdev for each window
-                for (int y = 0; y < winSize; y++) {
-                    for (int x = 0; x < winSize; x++) {
-                        windowstd = windowstd + image[j+4-y][i+4-x];
-                        windowstd2 = windowstd2 + image2[j+4-y][i+4-x];
-                    }   
-                }
-                windowstd = (pow(windowstd, 0.5)) / (2 * winSize + 1);
-                windowstd2 = (pow(windowstd2, 0.5)) / (2 * winSize + 1);
-
-                for (int y = 0; y < winSize; j++) {
-                    for (int x = 0; x < imWidth; j++) {
-                        //calculate the zncc value for each window
-                    znccVal = znccVal + (image[j+4-y][i+4-x] - windowMean) * (image[j+4-y][i+4-x] - windowMean2);
-                    }
-                }
-                znccVal = znccVal / (pow((2 * winSize + 1), 2) * windowstd * windowstd2);
-
-                if (znccVal > currentMaxSum) {
-                    currentMaxSum = znccVal;
-                    bestDispVal = znccVal;
+    for (unsigned i = 0; i < height; i++)
+    {
+        for (unsigned j = 0; j < width; j++)
+        {
+            unsigned char value = 0;
+            for (unsigned k = 0; k < scalingFactor; k++)
+            {
+                for (unsigned l = 0; l < scalingFactor; l++)
+                {
+                    value += grey_image[(i * scalingFactor + k) * this->width + (j * scalingFactor + l)];
                 }
             }
-            int disparity_image_pixel = bestDispVal;
+            value /= scalingFactor * scalingFactor;
+            resized_image[i * width + j] = value;
         }
+    }
+
+    free(grey_image);
+    grey_image = resized_image;
+    this->width = width;
+    this->height = height;
 
     return 0;
 }
