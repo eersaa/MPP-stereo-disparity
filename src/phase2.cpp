@@ -72,7 +72,7 @@
             dest_r = (unsigned char*) malloc(resized_width * resized_height * sizeof(unsigned char));
             img0.clone_resized_image(dest_r);
             img0_r.set_resized_image(dest_r, resized_width, resized_height);
-            img0_r.apply_filter_resized(ZNCCFilter, 30);
+            img0_r.apply_filter_resized(ZNCCFilter, 9);
             unsigned error = img0_r.save_Resizedimage("../../output-img/im0_grf.png");
             return (int) error;
         }

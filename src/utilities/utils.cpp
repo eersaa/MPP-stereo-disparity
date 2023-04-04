@@ -1,4 +1,5 @@
 #include "utils.h"
+#include <math.h>
 
 
 int printPlatformProfile(bool print_extras)
@@ -147,7 +148,7 @@ void ZNCCFilter(unsigned char* image, unsigned width, unsigned height, unsigned 
       int sum = 0;
       int count = 0;
 
-      // Loop through the window
+      // Loop through the window to get the average value
       for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
         for (int j = -windowSizeHalf; j <= windowSizeHalf; j++) {
           int x2 = x + j;
@@ -156,13 +157,58 @@ void ZNCCFilter(unsigned char* image, unsigned width, unsigned height, unsigned 
           // Check that the pixel is inside the image
           if (x2 >= 0 && x2 < (int)width && y2 >= 0 && y2 < (int)height) {
             sum += image[y2 * width + x2];
+
+
             count++;
           }
         }
       }
+      int avg = sum / count;
+
+      count = 0;
+      sum = 0;
+      // Loop through the window to get the standard deviation
+      for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
+        for (int j = -windowSizeHalf; j <= windowSizeHalf; j++) {
+          int x2 = x + j;
+          int y2 = y + i;
+
+          // Check that the pixel is inside the image
+          if (x2 >= 0 && x2 < (int)width && y2 >= 0 && y2 < (int)height) {
+            sum += pow((image[y2 * width + x2] - avg), 2);
+            
+
+
+            count++;
+          }
+        }
+      }
+      float std = pow(sum, 0.5) / count;
+
+      count = 0;
+      sum = 0;
+      // Loop through the window to get the ZNCC value
+      for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
+        for (int j = -windowSizeHalf; j <= windowSizeHalf; j++) {
+          int x2 = x + j;
+          int y2 = y + i;
+
+          // Check that the pixel is inside the image
+          if (x2 >= 0 && x2 < (int)width && y2 >= 0 && y2 < (int)height) {
+            sum += (image[y2 * width + x2] - avg);
+            
+
+
+            count++;
+          }
+        }
+      }
+      int znccVal = sum / (std);
+
+
 
       // Set the pixel value
-      imageCopy[y * width + x] = sum / count;
+      imageCopy[y * width + x] = znccVal;
     }
   }
 
