@@ -138,7 +138,7 @@ void movingAvgFilter(unsigned char* image, unsigned width, unsigned height, unsi
   free(imageCopy);
 }
 
-void ZNCCFilter(unsigned char* image, unsigned width, unsigned height, unsigned windowSize) {
+void ZNCCFilter(unsigned char* image, unsigned char* image2, unsigned width, unsigned height, unsigned windowSize) {
   unsigned char* imageCopy = (unsigned char*)malloc(sizeof(unsigned char) * width * height);
   int windowSizeHalf = windowSize / 2;
 
@@ -146,7 +146,9 @@ void ZNCCFilter(unsigned char* image, unsigned width, unsigned height, unsigned 
   for (unsigned y = 0; y < height; y++) {
     for (unsigned x = 0; x < width; x++) {
       int sum = 0;
+      int sum2 = 0;
       int count = 0;
+
 
       // Loop through the window to get the average value
       for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
@@ -157,16 +159,19 @@ void ZNCCFilter(unsigned char* image, unsigned width, unsigned height, unsigned 
           // Check that the pixel is inside the image
           if (x2 >= 0 && x2 < (int)width && y2 >= 0 && y2 < (int)height) {
             sum += image[y2 * width + x2];
-
+            sum2 += image2[y2 * width + x2];
 
             count++;
           }
         }
       }
       int avg = sum / count;
+      int avg2 = sum2 / count;
 
       count = 0;
       sum = 0;
+      sum2 = 0;
+      
       // Loop through the window to get the standard deviation
       for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
         for (int j = -windowSizeHalf; j <= windowSizeHalf; j++) {
@@ -176,7 +181,7 @@ void ZNCCFilter(unsigned char* image, unsigned width, unsigned height, unsigned 
           // Check that the pixel is inside the image
           if (x2 >= 0 && x2 < (int)width && y2 >= 0 && y2 < (int)height) {
             sum += pow((image[y2 * width + x2] - avg), 2);
-            
+            sum2 += pow((image2[y2 * width + x2] - avg2), 2);
 
 
             count++;
@@ -184,6 +189,7 @@ void ZNCCFilter(unsigned char* image, unsigned width, unsigned height, unsigned 
         }
       }
       float std = pow(sum, 0.5) / count;
+      float std2 = pow(sum2, 0.5) / count;
 
       count = 0;
       sum = 0;
@@ -195,16 +201,14 @@ void ZNCCFilter(unsigned char* image, unsigned width, unsigned height, unsigned 
 
           // Check that the pixel is inside the image
           if (x2 >= 0 && x2 < (int)width && y2 >= 0 && y2 < (int)height) {
-            sum += (image[y2 * width + x2] - avg);
-            
+            sum += (image[y2 * width + x2] - avg) * (image2[y2 * width + x2] - avg2);
 
 
             count++;
           }
         }
       }
-      int znccVal = sum / (std);
-
+      int znccVal = sum / (std * std2);
 
 
       // Set the pixel value

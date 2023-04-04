@@ -13,11 +13,21 @@ LodepngWrapper::~LodepngWrapper()
     free(image);
     free(grey_image);
     free(resized_image);
+    free(image2);
+    free(grey_image2);
+    free(resized_image2);
 }
 
 unsigned LodepngWrapper::load_image(const char* filename)
 {
     unsigned error = lodepng_decode32_file(&image, &width, &height, filename);
+    if (error) std::cout << "decoder error " << error << ": " << lodepng_error_text(error) << std::endl;
+    return error;
+}
+
+unsigned LodepngWrapper::load_image2(const char* filename2)
+{
+    unsigned error = lodepng_decode32_file(&image2, &width2, &height2, filename2);
     if (error) std::cout << "decoder error " << error << ": " << lodepng_error_text(error) << std::endl;
     return error;
 }
@@ -36,9 +46,23 @@ unsigned LodepngWrapper::save_Resizedimage(const char* filename)
     return error;
 }
 
+unsigned LodepngWrapper::save_Resizedimage2(const char* filename2)
+{
+    unsigned error = lodepng_encode_file(filename2, resized_image2, resized_width2, resized_height2, LCT_GREY, 8);
+    if (error) std::cout << "encoder error " << error << ": " << lodepng_error_text(error) << std::endl;
+    return error;
+}
+
 unsigned LodepngWrapper::save_greyimage(const char* filename)
 {
     unsigned error = lodepng_encode_file(filename, grey_image, width, height, LCT_GREY, 8);
+    if (error) std::cout << "encoder error " << error << ": " << lodepng_error_text(error) << std::endl;
+    return error;
+}
+
+unsigned LodepngWrapper::save_greyimage2(const char* filename2)
+{
+    unsigned error = lodepng_encode_file(filename2, grey_image2, width2, height2, LCT_GREY, 8);
     if (error) std::cout << "encoder error " << error << ": " << lodepng_error_text(error) << std::endl;
     return error;
 }
@@ -62,6 +86,30 @@ unsigned LodepngWrapper::transform_to_grayscale()
     for (unsigned i = 0; i < width * height * 4; i += 4)
     {
         grey_image[i / 4] = image[i];
+    }
+
+    return 0;
+}
+
+unsigned LodepngWrapper::transform_to_grayscale2()
+{
+    // transform image buffer to greyscale with following formula: Y=0.2126R+0.7152G+0.0722B
+    for (unsigned i = 0; i < width2 * height2 * 4; i += 4)
+    {
+        unsigned char r = image2[i];
+        unsigned char g = image2[i + 1];
+        unsigned char b = image2[i + 2];
+        unsigned char y = (unsigned char)(0.2126 * r + 0.7152 * g + 0.0722 * b);
+        image2[i] = y;
+        image2[i + 1] = y;
+        image2[i + 2] = y;
+    }
+
+    // shrink the buffer to only contain the Y channel
+    grey_image2 = (unsigned char*)malloc(width2 * height2);
+    for (unsigned i = 0; i < width2 * height2 * 4; i += 4)
+    {
+        grey_image2[i / 4] = image2[i];
     }
 
     return 0;
@@ -104,6 +152,30 @@ unsigned LodepngWrapper::resize_image(unsigned scalingFactor)
     return 0;
 }
 
+unsigned LodepngWrapper::resize_image2(unsigned scalingFactor2)
+{
+    //int scalingFactor = 4;
+    resized_width2 = width2 / scalingFactor2;
+    resized_height2 = height2 / scalingFactor2;
+    
+    // shrink the image
+    resized_image2 = (unsigned char*)malloc(resized_width2 * resized_height2);
+
+    unsigned int ind = 0;
+    unsigned int currow = 0;
+    for (unsigned i = 0; i < (resized_width2 * resized_height2); i++)
+    {   
+        resized_image2[i] = grey_image2[ind];
+        ind = ind + scalingFactor2;
+        if (ind >= (width2 + (currow * width2))) {
+            currow = currow + scalingFactor2;
+            ind = (currow * width2);
+        }
+    }
+
+    return 0;
+}
+
 void LodepngWrapper::clone_resized_image(unsigned char* dest)
 {
     memcpy(dest, resized_image, this->resized_width * this->resized_height);
@@ -122,9 +194,9 @@ void LodepngWrapper::apply_filter(void (*filter)(unsigned char* image, unsigned 
     filter(grey_image, width, height, windowSize);
 }
 
-void LodepngWrapper::apply_filter_resized(void (*filter)(unsigned char* image, unsigned width, unsigned height, unsigned windowSize), unsigned windowSize)
+void LodepngWrapper::apply_filter_resized(void (*filter)(unsigned char* image, unsigned char* image2, unsigned width, unsigned height, unsigned windowSize), unsigned windowSize)
 {
-    filter(resized_image, resized_width, resized_height, windowSize);
+    filter(resized_image, resized_image2, resized_width, resized_height, windowSize);
 }
 
 unsigned LodepngWrapper::get_width()
