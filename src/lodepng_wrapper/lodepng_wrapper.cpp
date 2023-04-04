@@ -189,6 +189,19 @@ void LodepngWrapper::set_resized_image(unsigned char* src, unsigned resized_widt
     memcpy(resized_image, src, resized_width * resized_height);
 }
 
+void LodepngWrapper::clone_resized_image2(unsigned char* dest2)
+{
+    memcpy(dest2, resized_image2, this->resized_width2 * this->resized_height2);
+}
+
+void LodepngWrapper::set_resized_image2(unsigned char* src2, unsigned resized_width2, unsigned resized_height2)
+{
+    this->resized_width2 = resized_width2;
+    this->resized_height2 = resized_height2;
+    resized_image2 = (unsigned char*)malloc(resized_width2 * resized_height2);
+    memcpy(resized_image2, src2, resized_width2 * resized_height2);
+}
+
 void LodepngWrapper::apply_filter(void (*filter)(unsigned char* image, unsigned width, unsigned height, unsigned windowSize), unsigned windowSize)
 {
     filter(grey_image, width, height, windowSize);

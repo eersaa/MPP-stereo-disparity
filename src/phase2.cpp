@@ -13,7 +13,7 @@
         int run() override
         {
             unsigned error = img0.load_image("../../source-img/im0.png");
-            error = img1.load_image2("../../source-img/im1.png");
+            error = img0.load_image2("../../source-img/im1.png");
             return (int) error;
         }
     };
@@ -23,7 +23,7 @@
         int run() override
         {
             unsigned error = img0.resize_image(4);
-            error = img1.resize_image2(4);
+            error = img0.resize_image2(4);
             return (int) error;
         }
     };
@@ -33,7 +33,7 @@
         int run() override
         {
             unsigned error = img0.transform_to_grayscale();
-            error = img1.transform_to_grayscale2();
+            error = img0.transform_to_grayscale2();
             return (int) error;
         }
     };
@@ -43,7 +43,7 @@
         int run() override
         {
             unsigned error = img0.save_greyimage("../../output-img/im0_grey.png");
-            error = img1.save_greyimage2("../../output-img/im1_grey.png");
+            error = img0.save_greyimage2("../../output-img/im1_grey.png");
             return (int) error;
         }
     };
@@ -53,7 +53,7 @@
         int run() override
         {
             unsigned error = img0.save_Resizedimage("../../output-img/im0_grey_resized.png");
-            error = img1.save_Resizedimage2("../../output-img/im1_grey_resized.png");
+            error = img0.save_Resizedimage2("../../output-img/im1_grey_resized.png");
             return (int) error;
         }
     };
@@ -63,6 +63,7 @@
         int run() override
         {
             unsigned char* dest_r = 0;
+            unsigned char* dest_r2 = 0;
             unsigned width = img0.get_width();
             unsigned height = img0.get_height();
 
@@ -72,8 +73,15 @@
             dest_r = (unsigned char*) malloc(resized_width * resized_height * sizeof(unsigned char));
             img0.clone_resized_image(dest_r);
             img0_r.set_resized_image(dest_r, resized_width, resized_height);
-            img0_r.apply_filter_resized(ZNCCFilter, 9);
-            unsigned error = img0_r.save_Resizedimage("../../output-img/im0_grf.png");
+            
+            //dest_r2 = (unsigned char*) malloc(resized_width * resized_height * sizeof(unsigned char));
+            //img1.clone_resized_image2(dest_r2);
+            //img1_r.set_resized_image2(dest_r2, resized_width, resized_height);
+
+
+
+            img0.apply_filter_resized(ZNCCFilter, 9);
+            unsigned error = img0.save_Resizedimage("../../output-img/im0_grf.png");
             return (int) error;
         }
     };
