@@ -74,3 +74,17 @@ TEST_F(OcclusionFillTwoVerticalPixelTests, ShouldReturnPixelValueOnBottomOfZeroP
     int pixelIndex = 0;
     ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(2));
 }
+
+class OcclusionFillThreePixelTests : public ::testing::Test
+{
+public:
+    int width = 3;
+    int height = 1;
+};
+
+TEST_F(OcclusionFillThreePixelTests, ShouldReturnPixelValueOnRightSideOfZeroPixel)
+{
+    int image[3] = {0, 0, 3};
+    int pixelIndex = 0;
+    ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(2));
+}
