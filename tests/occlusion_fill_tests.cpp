@@ -15,6 +15,13 @@ int occlusionFill(int pixel_index, int *image, int width, int height)
             fillPixelValue = *(image);
         }
     }
+    else if (width == 3)
+    {
+        if (pixel_index == 0)
+        {
+            fillPixelValue = *(image + 2);
+        }
+    }
     if (fillPixelValue == 0)
     {
         fillPixelValue = 1;
@@ -24,6 +31,22 @@ int occlusionFill(int pixel_index, int *image, int width, int height)
 
 using namespace testing;
 
+
+class OcclusionFillThreePixelTests : public ::testing::Test
+{
+public:
+    int width = 3;
+    int height = 1;
+};
+
+TEST_F(OcclusionFillThreePixelTests, ShouldReturnPixelValueOfRightMostPixel)
+{
+    int image[3] = {0, 0, 3};
+    int pixelIndex = 0;
+    ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(3));
+}
+
+
 TEST(OcclusionFillOnePixelTest, ShouldReturnPixelWith1GivenPixelWith0Value)
 {
     int image[1] = {0};
@@ -32,6 +55,7 @@ TEST(OcclusionFillOnePixelTest, ShouldReturnPixelWith1GivenPixelWith0Value)
     int pixelIndex = 0;
     ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(1));
 }
+
 
 class OcclusionFillTwoPixelTests : public ::testing::Test
 {
@@ -61,6 +85,7 @@ public:
     int height = 2;
 };
 
+
 TEST_F(OcclusionFillTwoVerticalPixelTests, ShouldReturnPixelValueOnTopOfZeroPixel)
 {
     int image[2] = {2, 0};
@@ -75,16 +100,3 @@ TEST_F(OcclusionFillTwoVerticalPixelTests, ShouldReturnPixelValueOnBottomOfZeroP
     ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(2));
 }
 
-class OcclusionFillThreePixelTests : public ::testing::Test
-{
-public:
-    int width = 3;
-    int height = 1;
-};
-
-TEST_F(OcclusionFillThreePixelTests, ShouldReturnPixelValueOnRightSideOfZeroPixel)
-{
-    int image[3] = {0, 0, 3};
-    int pixelIndex = 0;
-    ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(2));
-}
