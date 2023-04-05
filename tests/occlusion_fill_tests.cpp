@@ -54,11 +54,23 @@ TEST_F(OcclusionFillTwoPixelTests, ShouldReturnPixelValueOnLeftSideOfZeroPixel)
     ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(2));
 }
 
-TEST(OcclusionFillTwoVerticalPixelTests, ShouldReturnPixelValueOnTopOfZeroPixel)
+class OcclusionFillTwoVerticalPixelTests : public ::testing::Test
 {
-    int image[2] = {2, 0};
+public:
     int width = 1;
     int height = 2;
+};
+
+TEST_F(OcclusionFillTwoVerticalPixelTests, ShouldReturnPixelValueOnTopOfZeroPixel)
+{
+    int image[2] = {2, 0};
     int pixelIndex = 1;
+    ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(2));
+}
+
+TEST_F(OcclusionFillTwoVerticalPixelTests, ShouldReturnPixelValueOnBottomOfZeroPixel)
+{
+    int image[2] = {0, 2};
+    int pixelIndex = 0;
     ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(2));
 }
