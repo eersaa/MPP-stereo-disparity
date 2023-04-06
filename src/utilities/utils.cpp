@@ -142,8 +142,6 @@ void ZNCCFilter(unsigned char* imageOut, unsigned char* image, unsigned char* im
   unsigned char* imageCopy = (unsigned char*)malloc(sizeof(unsigned char) * width * height);
   int windowSizeHalf = windowSize / 2;
 
-  //int leftToRight = 1;
-
   float zncc = 0;
   int minDisp = 0;
   int maxDisp = 8;
@@ -161,12 +159,8 @@ void ZNCCFilter(unsigned char* imageOut, unsigned char* image, unsigned char* im
       zncc = 0;
 
       for (d = minDisp; d < maxDisp; d++) {
-
-        
-
         sum = 0;
         sum2 = 0;
-
         count = 0;
 
         // Loop through the window to get the average value
@@ -199,9 +193,6 @@ void ZNCCFilter(unsigned char* imageOut, unsigned char* image, unsigned char* im
         float avg = sum / count;
         float avg2 = sum2 / count;
 
-        //float mean_l = avg;
-        //float mean_r = avg2;
-
         count = 0;
         sum = 0;
         sum2 = 0;
@@ -224,29 +215,16 @@ void ZNCCFilter(unsigned char* imageOut, unsigned char* image, unsigned char* im
               sum += pow((image[y2 * width + x2] - avg), 2);
               sum2 += pow((image2[y2 * width + x2r] - avg2), 2);
 
-
               count++;
             }
           }
         }
         float std = pow(sum, 0.5);
         float std2 = pow(sum2, 0.5);
-        //float std_r = std2;
-
-        //float std = sum / count;
-        //float std2 = sum2 / count;
-
-        
 
         count = 0;
         sum = 0;
 
-
-        //float pixel_left = 0;
-        //float pixel_right = 0;
-        //float N = 0;
-
-      
         // Loop through the window to get the ZNCC value
         for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
           for (int j = -windowSizeHalf; j <= windowSizeHalf; j++) {
@@ -260,30 +238,15 @@ void ZNCCFilter(unsigned char* imageOut, unsigned char* image, unsigned char* im
               x2r = x2 + d;
             }
 
-
             // Check that the pixel is inside the image
             if (x2 >= 0 && x2 < (int)width && x2r >= 0 && x2r < (int)width && y2 >= 0 && y2 < (int)height) {
               sum += (image[y2 * width + x2] - avg) * (image2[y2 * width + x2r] - avg2);
-
-              //pixel_left = (image[y2*width + x2] - mean_l);
-						  //pixel_right = (image2[y2*width + (x2-d)] - mean_r);
-						  //N += (pixel_left * pixel_right);
-						  //std_r += (pixel_right * pixel_right);
 
               count++;
             }
           }
         }
 
-        //std_r = sqrt(std_r);
-        //float new_zncc = (N / (std*std_r));
-
-        /* (new_zncc > zncc)
-				{
-					zncc = new_zncc;
-					imageCopy[y*width + x] = (255*abs(float(d))/dispRange);
-				}
-        */
         float znccVal = sum / (std * std2);
         
         
@@ -293,7 +256,6 @@ void ZNCCFilter(unsigned char* imageOut, unsigned char* image, unsigned char* im
         }
       }
       // Set the pixel value
-      //imageCopy[y * width + x] = znccValInt;
     }
   }
 
