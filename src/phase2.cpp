@@ -1,12 +1,6 @@
 #include "phase2.h"
 
     lodepng_wrapper::LodepngWrapper img0;
-    lodepng_wrapper::LodepngWrapper img0_r;
-    lodepng_wrapper::LodepngWrapper img0_1;
-
-    lodepng_wrapper::LodepngWrapper img1;
-    lodepng_wrapper::LodepngWrapper img1_r;
-    lodepng_wrapper::LodepngWrapper img1_1;
 
     int scaling_factor = 4;
 
@@ -64,24 +58,6 @@
     {
         int run() override
         {
-            unsigned char* dest_r = 0;
-            //unsigned char* dest_r2 = 0;
-            unsigned width = img0.get_width();
-            unsigned height = img0.get_height();
-
-            unsigned resized_width = width / scaling_factor;
-            unsigned resized_height = height / scaling_factor;
-
-            dest_r = (unsigned char*) malloc(resized_width * resized_height * sizeof(unsigned char));
-            img0.clone_resized_image(dest_r);
-            img0_r.set_resized_image(dest_r, resized_width, resized_height);
-            
-            //dest_r2 = (unsigned char*) malloc(resized_width * resized_height * sizeof(unsigned char));
-            //img1.clone_resized_image2(dest_r2);
-            //img1_r.set_resized_image2(dest_r2, resized_width, resized_height);
-
-
-
             img0.apply_filter_resized(ZNCCFilter, 9, 1);
             unsigned error = img0.save_depthimage("../../output-img/im0_grf.png");
 

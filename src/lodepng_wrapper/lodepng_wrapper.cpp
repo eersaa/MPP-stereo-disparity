@@ -146,7 +146,6 @@ void LodepngWrapper::set_greyimage(unsigned char* src, unsigned width, unsigned 
 
 unsigned LodepngWrapper::resize_image(unsigned scalingFactor)
 {
-    //int scalingFactor = 4;
     resized_width = width / scalingFactor;
     resized_height = height / scalingFactor;
     
@@ -170,7 +169,6 @@ unsigned LodepngWrapper::resize_image(unsigned scalingFactor)
 
 unsigned LodepngWrapper::resize_image2(unsigned scalingFactor2)
 {
-    //int scalingFactor = 4;
     resized_width2 = width2 / scalingFactor2;
     resized_height2 = height2 / scalingFactor2;
     
@@ -190,32 +188,6 @@ unsigned LodepngWrapper::resize_image2(unsigned scalingFactor2)
     }
 
     return 0;
-}
-
-void LodepngWrapper::clone_resized_image(unsigned char* dest)
-{
-    memcpy(dest, resized_image, this->resized_width * this->resized_height);
-}
-
-void LodepngWrapper::set_resized_image(unsigned char* src, unsigned resized_width, unsigned resized_height)
-{
-    this->resized_width = resized_width;
-    this->resized_height = resized_height;
-    resized_image = (unsigned char*)malloc(resized_width * resized_height);
-    memcpy(resized_image, src, resized_width * resized_height);
-}
-
-void LodepngWrapper::clone_resized_image2(unsigned char* dest2)
-{
-    memcpy(dest2, resized_image2, this->resized_width2 * this->resized_height2);
-}
-
-void LodepngWrapper::set_resized_image2(unsigned char* src2, unsigned resized_width2, unsigned resized_height2)
-{
-    this->resized_width2 = resized_width2;
-    this->resized_height2 = resized_height2;
-    resized_image2 = (unsigned char*)malloc(resized_width2 * resized_height2);
-    memcpy(resized_image2, src2, resized_width2 * resized_height2);
 }
 
 void LodepngWrapper::apply_filter(void (*filter)(unsigned char* image, unsigned width, unsigned height, unsigned windowSize), unsigned windowSize)
