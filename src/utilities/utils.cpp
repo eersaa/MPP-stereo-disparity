@@ -144,7 +144,7 @@ void ZNCCFilter(unsigned char* imageOut, unsigned char* image, unsigned char* im
 
   float zncc = 0;
   int minDisp = 0;
-  int maxDisp = 8;
+  int maxDisp = 65;
   int dispRange = maxDisp - minDisp;
   int d = 0;
   int x2r = 0;
