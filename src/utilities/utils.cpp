@@ -138,21 +138,24 @@ void movingAvgFilter(unsigned char* image, unsigned width, unsigned height, unsi
   free(imageCopy);
 }
 
-void ZNCCFilter(unsigned char* image, unsigned char* image2, unsigned width, unsigned height, unsigned windowSize) {
+void ZNCCFilter(unsigned char* imageOut, unsigned char* image, unsigned char* image2, unsigned width, unsigned height, unsigned windowSize, unsigned leftToRight) {
   unsigned char* imageCopy = (unsigned char*)malloc(sizeof(unsigned char) * width * height);
   int windowSizeHalf = windowSize / 2;
 
+  //int leftToRight = 1;
+
   float zncc = 0;
   int minDisp = 0;
-  int maxDisp = 28;
+  int maxDisp = 8;
   int dispRange = maxDisp - minDisp;
   int d = 0;
+  int x2r = 0;
 
   // Loop through the image
   for (unsigned y = 0; y < height; y++) {
     for (unsigned x = 0; x < width; x++) {
-      int sum = 0;
-      int sum2 = 0;
+      float sum = 0;
+      float sum2 = 0;
       int count = 0;
 
       zncc = 0;
@@ -172,7 +175,12 @@ void ZNCCFilter(unsigned char* image, unsigned char* image2, unsigned width, uns
             int x2 = x + j;
             int y2 = y + i;
 
-            int x2r = x2 - d;
+            if (leftToRight == 1) {
+              x2r = x2 - d;
+            }
+            else {
+              x2r = x2 + d;
+            }
 
             // Check that the pixel is inside the image
             if (x2 >= 0 && x2 < (int)width && x2r >= 0 && x2r < (int)width && y2 >= 0 && y2 < (int)height) {
@@ -188,8 +196,8 @@ void ZNCCFilter(unsigned char* image, unsigned char* image2, unsigned width, uns
           count = 1;
         }
 
-        int avg = sum / count;
-        int avg2 = sum2 / count;
+        float avg = sum / count;
+        float avg2 = sum2 / count;
 
         //float mean_l = avg;
         //float mean_r = avg2;
@@ -204,7 +212,12 @@ void ZNCCFilter(unsigned char* image, unsigned char* image2, unsigned width, uns
             int x2 = x + j;
             int y2 = y + i;
 
-            int x2r = x2 - d;
+            if (leftToRight == 1) {
+              x2r = x2 - d;
+            }
+            else {
+              x2r = x2 + d;
+            }
 
             // Check that the pixel is inside the image
             if (x2 >= 0 && x2 < (int)width && x2r >= 0 && x2r < (int)width && y2 >= 0 && y2 < (int)height) {
@@ -218,7 +231,7 @@ void ZNCCFilter(unsigned char* image, unsigned char* image2, unsigned width, uns
         }
         float std = pow(sum, 0.5);
         float std2 = pow(sum2, 0.5);
-        float std_r = std2;
+        //float std_r = std2;
 
         //float std = sum / count;
         //float std2 = sum2 / count;
@@ -231,7 +244,7 @@ void ZNCCFilter(unsigned char* image, unsigned char* image2, unsigned width, uns
 
         //float pixel_left = 0;
         //float pixel_right = 0;
-        float N = 0;
+        //float N = 0;
 
       
         // Loop through the window to get the ZNCC value
@@ -240,7 +253,12 @@ void ZNCCFilter(unsigned char* image, unsigned char* image2, unsigned width, uns
             int x2 = x + j;
             int y2 = y + i;
 
-            int x2r = x2 - d;
+            if (leftToRight == 1) {
+              x2r = x2 - d;
+            }
+            else {
+              x2r = x2 + d;
+            }
 
 
             // Check that the pixel is inside the image
@@ -271,7 +289,6 @@ void ZNCCFilter(unsigned char* image, unsigned char* image2, unsigned width, uns
         
         if (znccVal > zncc) {
           zncc = znccVal;
-          int znccValInt = (int)(znccVal);
           imageCopy[y * width + x] = (255*abs(d))/dispRange;
         }
       }
@@ -281,7 +298,7 @@ void ZNCCFilter(unsigned char* image, unsigned char* image2, unsigned width, uns
   }
 
   // Copy the image back
-  memcpy(image, imageCopy, sizeof(unsigned char) * width * height);
+  memcpy(imageOut, imageCopy, sizeof(unsigned char) * width * height);
 
   // Free the memory
   free(imageCopy);

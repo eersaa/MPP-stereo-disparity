@@ -13,9 +13,11 @@ LodepngWrapper::~LodepngWrapper()
     free(image);
     free(grey_image);
     free(resized_image);
+    free(depth_image);
     free(image2);
     free(grey_image2);
     free(resized_image2);
+    free(depth_image2);
 }
 
 unsigned LodepngWrapper::load_image(const char* filename)
@@ -63,6 +65,20 @@ unsigned LodepngWrapper::save_greyimage(const char* filename)
 unsigned LodepngWrapper::save_greyimage2(const char* filename2)
 {
     unsigned error = lodepng_encode_file(filename2, grey_image2, width2, height2, LCT_GREY, 8);
+    if (error) std::cout << "encoder error " << error << ": " << lodepng_error_text(error) << std::endl;
+    return error;
+}
+
+unsigned LodepngWrapper::save_depthimage(const char* filename)
+{
+    unsigned error = lodepng_encode_file(filename, depth_image, resized_width, resized_height, LCT_GREY, 8);
+    if (error) std::cout << "encoder error " << error << ": " << lodepng_error_text(error) << std::endl;
+    return error;
+}
+
+unsigned LodepngWrapper::save_depthimage2(const char* filename2)
+{
+    unsigned error = lodepng_encode_file(filename2, depth_image2, resized_width2, resized_height2, LCT_GREY, 8);
     if (error) std::cout << "encoder error " << error << ": " << lodepng_error_text(error) << std::endl;
     return error;
 }
@@ -207,9 +223,16 @@ void LodepngWrapper::apply_filter(void (*filter)(unsigned char* image, unsigned 
     filter(grey_image, width, height, windowSize);
 }
 
-void LodepngWrapper::apply_filter_resized(void (*filter)(unsigned char* image, unsigned char* image2, unsigned width, unsigned height, unsigned windowSize), unsigned windowSize)
+void LodepngWrapper::apply_filter_resized(void (*filter)(unsigned char* imageOut, unsigned char* image, unsigned char* image2, unsigned width, unsigned height, unsigned windowSize, unsigned leftToRight), unsigned windowSize, unsigned leftToRight)
 {
-    filter(resized_image, resized_image2, resized_width, resized_height, windowSize);
+    depth_image = (unsigned char*)malloc(resized_width * resized_height);
+    filter(depth_image, resized_image, resized_image2, resized_width, resized_height, windowSize, leftToRight);
+}
+
+void LodepngWrapper::apply_filter_resized2(void (*filter)(unsigned char* imageOut, unsigned char* image, unsigned char* image2, unsigned width, unsigned height, unsigned windowSize, unsigned leftToRight), unsigned windowSize, unsigned leftToRight)
+{
+    depth_image2 = (unsigned char*)malloc(resized_width * resized_height);
+    filter(depth_image2, resized_image2, resized_image, resized_width, resized_height, windowSize, leftToRight);
 }
 
 unsigned LodepngWrapper::get_width()

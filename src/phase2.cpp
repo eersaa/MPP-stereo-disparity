@@ -8,6 +8,8 @@
     lodepng_wrapper::LodepngWrapper img1_r;
     lodepng_wrapper::LodepngWrapper img1_1;
 
+    int scaling_factor = 4;
+
     struct LoadImage : public IProgram
     {
         int run() override
@@ -22,8 +24,8 @@
     {
         int run() override
         {
-            unsigned error = img0.resize_image(4);
-            error = img0.resize_image2(4);
+            unsigned error = img0.resize_image(scaling_factor);
+            error = img0.resize_image2(scaling_factor);
             return (int) error;
         }
     };
@@ -67,8 +69,8 @@
             unsigned width = img0.get_width();
             unsigned height = img0.get_height();
 
-            unsigned resized_width = width / 4;
-            unsigned resized_height = height / 4;
+            unsigned resized_width = width / scaling_factor;
+            unsigned resized_height = height / scaling_factor;
 
             dest_r = (unsigned char*) malloc(resized_width * resized_height * sizeof(unsigned char));
             img0.clone_resized_image(dest_r);
@@ -80,8 +82,12 @@
 
 
 
-            img0.apply_filter_resized(ZNCCFilter, 9);
-            unsigned error = img0.save_Resizedimage("../../output-img/im0_grf.png");
+            img0.apply_filter_resized(ZNCCFilter, 9, 1);
+            unsigned error = img0.save_depthimage("../../output-img/im0_grf.png");
+
+            img0.apply_filter_resized2(ZNCCFilter, 9, 2);
+            error = img0.save_depthimage2("../../output-img/im1_grf.png");
+
             return (int) error;
         }
     };
