@@ -142,6 +142,12 @@ void ZNCCFilter(unsigned char* image, unsigned char* image2, unsigned width, uns
   unsigned char* imageCopy = (unsigned char*)malloc(sizeof(unsigned char) * width * height);
   int windowSizeHalf = windowSize / 2;
 
+  float zncc = 0;
+  int minDisp = 0;
+  int maxDisp = 28;
+  int dispRange = maxDisp - minDisp;
+  int d = 0;
+
   // Loop through the image
   for (unsigned y = 0; y < height; y++) {
     for (unsigned x = 0; x < width; x++) {
@@ -149,70 +155,128 @@ void ZNCCFilter(unsigned char* image, unsigned char* image2, unsigned width, uns
       int sum2 = 0;
       int count = 0;
 
+      zncc = 0;
 
-      // Loop through the window to get the average value
-      for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
-        for (int j = -windowSizeHalf; j <= windowSizeHalf; j++) {
-          int x2 = x + j;
-          int y2 = y + i;
+      for (d = minDisp; d < maxDisp; d++) {
 
-          // Check that the pixel is inside the image
-          if (x2 >= 0 && x2 < (int)width && y2 >= 0 && y2 < (int)height) {
-            sum += image[y2 * width + x2];
-            sum2 += image2[y2 * width + x2];
+        
 
-            count++;
+        sum = 0;
+        sum2 = 0;
+
+        count = 0;
+
+        // Loop through the window to get the average value
+        for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
+          for (int j = -windowSizeHalf; j <= windowSizeHalf; j++) {
+            int x2 = x + j;
+            int y2 = y + i;
+
+            int x2r = x2 - d;
+
+            // Check that the pixel is inside the image
+            if (x2 >= 0 && x2 < (int)width && x2r >= 0 && x2r < (int)width && y2 >= 0 && y2 < (int)height) {
+              sum += image[y2 * width + x2];
+              sum2 += image2[y2 * width + x2r];
+
+              count++;
+            }
           }
         }
-      }
-      int avg = sum / count;
-      int avg2 = sum2 / count;
 
-      count = 0;
-      sum = 0;
-      sum2 = 0;
+        if (count == 0) {
+          count = 1;
+        }
+
+        int avg = sum / count;
+        int avg2 = sum2 / count;
+
+        //float mean_l = avg;
+        //float mean_r = avg2;
+
+        count = 0;
+        sum = 0;
+        sum2 = 0;
+        
+        // Loop through the window to get the standard deviation
+        for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
+          for (int j = -windowSizeHalf; j <= windowSizeHalf; j++) {
+            int x2 = x + j;
+            int y2 = y + i;
+
+            int x2r = x2 - d;
+
+            // Check that the pixel is inside the image
+            if (x2 >= 0 && x2 < (int)width && x2r >= 0 && x2r < (int)width && y2 >= 0 && y2 < (int)height) {
+              sum += pow((image[y2 * width + x2] - avg), 2);
+              sum2 += pow((image2[y2 * width + x2r] - avg2), 2);
+
+
+              count++;
+            }
+          }
+        }
+        float std = pow(sum, 0.5);
+        float std2 = pow(sum2, 0.5);
+        float std_r = std2;
+
+        //float std = sum / count;
+        //float std2 = sum2 / count;
+
+        
+
+        count = 0;
+        sum = 0;
+
+
+        //float pixel_left = 0;
+        //float pixel_right = 0;
+        float N = 0;
+
       
-      // Loop through the window to get the standard deviation
-      for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
-        for (int j = -windowSizeHalf; j <= windowSizeHalf; j++) {
-          int x2 = x + j;
-          int y2 = y + i;
+        // Loop through the window to get the ZNCC value
+        for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
+          for (int j = -windowSizeHalf; j <= windowSizeHalf; j++) {
+            int x2 = x + j;
+            int y2 = y + i;
 
-          // Check that the pixel is inside the image
-          if (x2 >= 0 && x2 < (int)width && y2 >= 0 && y2 < (int)height) {
-            sum += pow((image[y2 * width + x2] - avg), 2);
-            sum2 += pow((image2[y2 * width + x2] - avg2), 2);
+            int x2r = x2 - d;
 
 
-            count++;
+            // Check that the pixel is inside the image
+            if (x2 >= 0 && x2 < (int)width && x2r >= 0 && x2r < (int)width && y2 >= 0 && y2 < (int)height) {
+              sum += (image[y2 * width + x2] - avg) * (image2[y2 * width + x2r] - avg2);
+
+              //pixel_left = (image[y2*width + x2] - mean_l);
+						  //pixel_right = (image2[y2*width + (x2-d)] - mean_r);
+						  //N += (pixel_left * pixel_right);
+						  //std_r += (pixel_right * pixel_right);
+
+              count++;
+            }
           }
         }
-      }
-      float std = pow(sum, 0.5) / count;
-      float std2 = pow(sum2, 0.5) / count;
 
-      count = 0;
-      sum = 0;
-      // Loop through the window to get the ZNCC value
-      for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
-        for (int j = -windowSizeHalf; j <= windowSizeHalf; j++) {
-          int x2 = x + j;
-          int y2 = y + i;
+        //std_r = sqrt(std_r);
+        //float new_zncc = (N / (std*std_r));
 
-          // Check that the pixel is inside the image
-          if (x2 >= 0 && x2 < (int)width && y2 >= 0 && y2 < (int)height) {
-            sum += (image[y2 * width + x2] - avg) * (image2[y2 * width + x2] - avg2);
-
-
-            count++;
-          }
+        /* (new_zncc > zncc)
+				{
+					zncc = new_zncc;
+					imageCopy[y*width + x] = (255*abs(float(d))/dispRange);
+				}
+        */
+        float znccVal = sum / (std * std2);
+        
+        
+        if (znccVal > zncc) {
+          zncc = znccVal;
+          int znccValInt = (int)(znccVal);
+          imageCopy[y * width + x] = (255*abs(d))/dispRange;
         }
       }
-      int znccVal = sum / (std * std2);
-
-
       // Set the pixel value
-      imageCopy[y * width + x] = znccVal;
+      //imageCopy[y * width + x] = znccValInt;
     }
   }
 

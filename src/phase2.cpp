@@ -63,7 +63,7 @@
         int run() override
         {
             unsigned char* dest_r = 0;
-            unsigned char* dest_r2 = 0;
+            //unsigned char* dest_r2 = 0;
             unsigned width = img0.get_width();
             unsigned height = img0.get_height();
 
