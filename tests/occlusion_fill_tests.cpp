@@ -52,43 +52,28 @@ class VerticalDistanceOneColumnTests : public Test
 {
 public:
     int width = 1;
+    int colIndex = 0;
 };
 
 TEST_F(VerticalDistanceOneColumnTests, ShouldReturnZeroWhenPixelIndexIsSameAsIndex)
 {
     int pixelIndex = 0;
-    int index = 0;
-    ASSERT_THAT(verDistance(pixelIndex, index, width), Eq(0));
-}
-
-TEST_F(VerticalDistanceOneColumnTests, ShouldReturnOneWhenPixelIndexIsOneLessThanIndex)
-{
-    int pixelIndex = 0;
-    int index = 1;
-    ASSERT_THAT(verDistance(pixelIndex, index, width), Eq(1));
-}
-
-TEST_F(VerticalDistanceOneColumnTests, ShouldReturnOneWhenPixelIndexIsOneMoreThanIndex)
-{
-    int pixelIndex = 1;
-    int index = 0;
-    ASSERT_THAT(verDistance(pixelIndex, index, width), Eq(1));
+    ASSERT_THAT(verDistance(pixelIndex, colIndex, width), Eq(0));
 }
 
 TEST_F(VerticalDistanceOneColumnTests, ShouldReturnTwoWhenPixelIndexIsTwoMoreThanIndex)
 {
     int pixelIndex = 2;
-    int index = 0;
-    ASSERT_THAT(verDistance(pixelIndex, index, width), Eq(2));
+    ASSERT_THAT(verDistance(pixelIndex, colIndex, width), Eq(2));
 }
 
 
 TEST(VerticalDistanceOneRowTests, ShouldReturnZeroWhenIndexOnSameRowAsPixelIndex)
 {
     int pixelIndex = 0;
-    int index = 1;
+    int colIndex = 1;
     int width = 2;
-    ASSERT_THAT(verDistance(pixelIndex, index, width), Eq(0));
+    ASSERT_THAT(verDistance(pixelIndex, colIndex, width), Eq(0));
 }
 
 // TEST(OcclusionFillTwoByTwoImageTests, ShouldReturnNearestOnLeft)
