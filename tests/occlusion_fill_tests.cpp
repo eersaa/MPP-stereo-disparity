@@ -1,9 +1,9 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-int verDistance(int pixel_index, int col_index, int width)
+int verDistance(int pixel_index, int row_index, int width)
 {
-    return abs(pixel_index - col_index / width);
+    return abs(pixel_index / width - row_index);
 }
 
 int distance(int pixel_index, int index)
@@ -48,33 +48,46 @@ int occlusionFill(int pixel_index, int *image, int width, int height)
 
 using namespace testing;
 
-class VerticalDistanceOneColumnTests : public Test
-{
-public:
-    int width = 1;
-    int colIndex = 0;
-};
 
-TEST_F(VerticalDistanceOneColumnTests, ShouldReturnZeroWhenPixelIndexIsSameAsIndex)
+TEST(VerticalDistanceTests, ShouldReturnZeroWhenPixelIsOnSameRow)
 {
     int pixelIndex = 0;
-    ASSERT_THAT(verDistance(pixelIndex, colIndex, width), Eq(0));
+    int rowIndex = 0;
+    int width = 1;
+    ASSERT_THAT(verDistance(pixelIndex, rowIndex, width), Eq(0));
 }
 
-TEST_F(VerticalDistanceOneColumnTests, ShouldReturnTwoWhenPixelIndexIsTwoMoreThanIndex)
+TEST(VerticalDistanceTests, ShouldReturnTwoWhenPixelIsTwoRowsBelow)
 {
     int pixelIndex = 2;
-    ASSERT_THAT(verDistance(pixelIndex, colIndex, width), Eq(2));
+    int rowIndex = 0;
+    int width = 1;
+    ASSERT_THAT(verDistance(pixelIndex, rowIndex, width), Eq(2));
 }
 
-
-TEST(VerticalDistanceOneRowTests, ShouldReturnZeroWhenIndexOnSameRowAsPixelIndex)
+TEST(VerticalDistanceTests, ShouldReturnTwoWhenPixelIsTwoRowsAbove)
 {
     int pixelIndex = 0;
-    int colIndex = 1;
-    int width = 2;
-    ASSERT_THAT(verDistance(pixelIndex, colIndex, width), Eq(0));
+    int rowIndex = 2;
+    int width = 1;
+    ASSERT_THAT(verDistance(pixelIndex, rowIndex, width), Eq(2));
 }
+
+TEST(VerticalDistanceTests, ShouldReturnOneWhenPixelIsOnNextRowIn2x2Image)
+{
+    int pixelIndex = 2;
+    int rowIndex = 0;
+    int width = 2;
+    ASSERT_THAT(verDistance(pixelIndex, rowIndex, width), Eq(1));
+}
+
+// TEST(VerticalDistanceTests, ShouldReturnOneWhenPixelIsOnPreviousRowIn2x2Image)
+// {
+//     int pixelIndex = 0;
+//     int rowIndex = 2;
+//     int width = 2;
+//     ASSERT_THAT(verDistance(pixelIndex, rowIndex, width), Eq(1));
+// }
 
 // TEST(OcclusionFillTwoByTwoImageTests, ShouldReturnNearestOnLeft)
 // {
