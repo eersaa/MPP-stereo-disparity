@@ -4,11 +4,13 @@
 int occlusionFill(int pixel_index, int *image, int width, int height)
 {
     int fillPixelValue = 0;
+    int pixelValue = 0;
+    
     if (height > 1)
     {
-        for (int i = 0; i < height; i++)
+        for (int y = 0; y < height; y++)
         {
-            int pixelValue = *(image + i * width);
+            pixelValue = *(image + y * width);
             if (pixelValue != 0)
             {
                 fillPixelValue = pixelValue;
@@ -21,10 +23,10 @@ int occlusionFill(int pixel_index, int *image, int width, int height)
         int distance = 0;
         int minDistance = width;
 
-        for (int i = 0; i < width; i++)
+        for (int x = 0; x < width; x++)
         {
-            distance = abs(pixel_index - i);
-            int pixelValue = *(image + i);
+            distance = abs(pixel_index - x);
+            pixelValue = *(image + x);
 
             if (pixelValue != 0
                 && distance < minDistance)
