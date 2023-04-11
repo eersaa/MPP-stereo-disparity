@@ -79,7 +79,7 @@ TEST_F(OcclusionFillThreeVerticalPixelTests, ShouldReturnPixelValueOfPixelBelow)
     ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(3));
 }
 
-TEST_F(OcclusionFillThreeVerticalPixelTests, ShouldReturnNearestOnTop) // replace with Above
+TEST_F(OcclusionFillThreeVerticalPixelTests, ShouldReturnNearestAbove)
 {
     int image[3] = {2, 3, 0};
     int pixelIndex = 2;
