@@ -1,6 +1,11 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+int verDistance(int pixel_index, int index)
+{
+    return abs(pixel_index - index);
+}
+
 int distance(int pixel_index, int index)
 {
     return abs(pixel_index - index);
@@ -42,6 +47,23 @@ int occlusionFill(int pixel_index, int *image, int width, int height)
 }
 
 using namespace testing;
+
+TEST(VerticalDistanceTests, ShouldReturnZeroWhenPixelIndexIsSameAsIndex)
+{
+    int pixelIndex = 0;
+    int index = 0;
+    ASSERT_THAT(verDistance(pixelIndex, index), Eq(0));
+}
+
+// TEST(OcclusionFillTwoByTwoImageTests, ShouldReturnNearestOnLeft)
+// {
+//     int image[4] = {4, 0, 3, 2};
+//     int pixelIndex = 1;
+//     int width = 2;
+//     int height = 2;
+//     ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(4));
+// }
+
 
 class OcclusionFillTwoByTwoImageFirstRowTests : public Test
 {
