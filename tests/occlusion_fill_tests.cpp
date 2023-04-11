@@ -8,11 +8,17 @@ int occlusionFill(int pixel_index, int *image, int width, int height)
 
     if (height > 1)
     {
+        int vertDistance = 0;
+        int minVertDistance = height;
+
         for (int y = 0; y < height; y++)
         {
+            vertDistance = abs(pixel_index - y * width);
             pixelValue = *(image + y * width);
-            if (pixelValue != 0)
+            if (pixelValue != 0
+                && vertDistance < minVertDistance)
             {
+                minVertDistance = vertDistance;
                 fillPixelValue = pixelValue;
             }
         }
@@ -73,10 +79,17 @@ TEST_F(OcclusionFillThreeVerticalPixelTests, ShouldReturnPixelValueOfPixelBelow)
     ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(3));
 }
 
-TEST_F(OcclusionFillThreeVerticalPixelTests, ShouldReturnNearestOnTop)
+TEST_F(OcclusionFillThreeVerticalPixelTests, ShouldReturnNearestOnTop) // replace with Above
 {
     int image[3] = {2, 3, 0};
     int pixelIndex = 2;
+    ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(3));
+}
+
+TEST_F(OcclusionFillThreeVerticalPixelTests, ShouldReturnNearestBelow)
+{
+    int image[3] = {0, 3, 2};
+    int pixelIndex = 0;
     ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(3));
 }
 
