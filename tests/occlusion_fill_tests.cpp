@@ -48,44 +48,50 @@ int occlusionFill(int pixel_index, int *image, int width, int height)
 
 using namespace testing;
 
+class VerticalDistanceTests : public Test
+{
+public:
+    int width = 1;
+};
 
-TEST(VerticalDistanceTests, ShouldReturnZeroWhenPixelIsOnSameRow)
+TEST_F(VerticalDistanceTests, ShouldReturnZeroWhenPixelIsOnSameRow)
 {
     int pixelIndex = 0;
     int rowIndex = 0;
-    int width = 1;
     ASSERT_THAT(verDistance(pixelIndex, rowIndex, width), Eq(0));
 }
 
-TEST(VerticalDistanceTests, ShouldReturnTwoWhenPixelIsTwoRowsBelow)
+TEST_F(VerticalDistanceTests, ShouldReturnTwoWhenPixelIsTwoRowsBelow)
 {
     int pixelIndex = 2;
     int rowIndex = 0;
-    int width = 1;
     ASSERT_THAT(verDistance(pixelIndex, rowIndex, width), Eq(2));
 }
 
-TEST(VerticalDistanceTests, ShouldReturnTwoWhenPixelIsTwoRowsAbove)
+TEST_F(VerticalDistanceTests, ShouldReturnTwoWhenPixelIsTwoRowsAbove)
 {
     int pixelIndex = 0;
     int rowIndex = 2;
-    int width = 1;
     ASSERT_THAT(verDistance(pixelIndex, rowIndex, width), Eq(2));
 }
 
-TEST(VerticalDistanceTests, ShouldReturnOneWhenPixelIsOnNextRowIn2x2Image)
+class VerticalDistance2x2ImageTests : public Test
+{
+public:
+    int width = 2;
+};
+
+TEST_F(VerticalDistance2x2ImageTests, ShouldReturnOneWhenPixelIsOnNextRow)
 {
     int pixelIndex = 2;
     int rowIndex = 0;
-    int width = 2;
     ASSERT_THAT(verDistance(pixelIndex, rowIndex, width), Eq(1));
 }
 
-TEST(VerticalDistanceTests, ShouldReturnOneWhenPixelIsOnPreviousRowIn2x2Image)
+TEST_F(VerticalDistance2x2ImageTests, ShouldReturnOneWhenPixelIsOnPreviousRow)
 {
     int pixelIndex = 0;
     int rowIndex = 1;
-    int width = 2;
     ASSERT_THAT(verDistance(pixelIndex, rowIndex, width), Eq(1));
 }
 
