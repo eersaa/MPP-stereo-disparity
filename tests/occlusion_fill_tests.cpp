@@ -13,8 +13,8 @@ int occlusionFill(int pixel_index, int *image, int width, int height)
 
         for (int y = 0; y < height; y++)
         {
-            vertDistance = abs(pixel_index - y * width);
-            pixelValue = *(image + y * width);
+            vertDistance = abs(pixel_index - y);
+            pixelValue = *(image + y);
             if (pixelValue != 0
                 && vertDistance < minVertDistance)
             {
