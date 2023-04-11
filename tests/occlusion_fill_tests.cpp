@@ -64,11 +64,25 @@ TEST_F(OcclusionFillTwoByTwoImageFirstRowTests, ShouldReturnPixelValueOnLeft)
     ASSERT_THAT(occlusionFill(pixelIndex, image, 2, 2), Eq(4));
 }
 
-TEST(OcclusionFillTwoByTwoImageSecondRowTests, ShouldReturnPixelValueOnRight)
+class OcclusionFillTwoByTwoImageSecondRowTests : public Test
+{
+public:
+    int width = 2;
+    int height = 2;
+};
+
+TEST_F(OcclusionFillTwoByTwoImageSecondRowTests, ShouldReturnPixelValueOnRight)
 {
     int image[4] = {0, 0, 0, 4};
     int pixelIndex = 2;
-    ASSERT_THAT(occlusionFill(pixelIndex, image, 2, 2), Eq(4));
+    ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(4));
+}
+
+TEST_F(OcclusionFillTwoByTwoImageSecondRowTests, ShouldReturnPixelValueOnLeft)
+{
+    int image[4] = {0, 0, 4, 0};
+    int pixelIndex = 3;
+    ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(4));
 }
 
 
