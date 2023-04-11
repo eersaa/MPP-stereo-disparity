@@ -19,17 +19,17 @@ int occlusionFill(int pixel_index, int *image, int width, int height)
     {
         int distance = 0;
         int minDistance = width;
-        int rightLimit = width - 1;
-        for (int i = 0; i <= rightLimit; i++)
+
+        for (int i = 0; i < width; i++)
         {
             distance = abs(pixel_index - i);
-            if (*(image + i) != 0)
+            int pixelValue = *(image + i);
+
+            if (pixelValue != 0
+                && distance < minDistance)
             {
-                if (distance < minDistance)
-                {
-                    minDistance = distance;
-                    fillPixelValue = *(image + i);
-                }
+                minDistance = distance;
+                fillPixelValue = pixelValue;
             }
         }
     }
