@@ -1,9 +1,9 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-int verDistance(int pixel_index, int index)
+int verDistance(int pixel_index, int col_index, int width)
 {
-    return abs(pixel_index - index);
+    return abs(pixel_index - col_index / width);
 }
 
 int distance(int pixel_index, int index)
@@ -48,11 +48,47 @@ int occlusionFill(int pixel_index, int *image, int width, int height)
 
 using namespace testing;
 
-TEST(VerticalDistanceTests, ShouldReturnZeroWhenPixelIndexIsSameAsIndex)
+class VerticalDistanceOneColumnTests : public Test
+{
+public:
+    int width = 1;
+};
+
+TEST_F(VerticalDistanceOneColumnTests, ShouldReturnZeroWhenPixelIndexIsSameAsIndex)
 {
     int pixelIndex = 0;
     int index = 0;
-    ASSERT_THAT(verDistance(pixelIndex, index), Eq(0));
+    ASSERT_THAT(verDistance(pixelIndex, index, width), Eq(0));
+}
+
+TEST_F(VerticalDistanceOneColumnTests, ShouldReturnOneWhenPixelIndexIsOneLessThanIndex)
+{
+    int pixelIndex = 0;
+    int index = 1;
+    ASSERT_THAT(verDistance(pixelIndex, index, width), Eq(1));
+}
+
+TEST_F(VerticalDistanceOneColumnTests, ShouldReturnOneWhenPixelIndexIsOneMoreThanIndex)
+{
+    int pixelIndex = 1;
+    int index = 0;
+    ASSERT_THAT(verDistance(pixelIndex, index, width), Eq(1));
+}
+
+TEST_F(VerticalDistanceOneColumnTests, ShouldReturnTwoWhenPixelIndexIsTwoMoreThanIndex)
+{
+    int pixelIndex = 2;
+    int index = 0;
+    ASSERT_THAT(verDistance(pixelIndex, index, width), Eq(2));
+}
+
+
+TEST(VerticalDistanceOneRowTests, ShouldReturnZeroWhenIndexOnSameRowAsPixelIndex)
+{
+    int pixelIndex = 0;
+    int index = 1;
+    int width = 2;
+    ASSERT_THAT(verDistance(pixelIndex, index, width), Eq(0));
 }
 
 // TEST(OcclusionFillTwoByTwoImageTests, ShouldReturnNearestOnLeft)
