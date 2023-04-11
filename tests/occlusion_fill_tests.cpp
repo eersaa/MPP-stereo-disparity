@@ -23,7 +23,8 @@ int occlusionFill(int pixel_index, int *image, int width, int height)
             }
         }
     }
-    else if (width > 1)
+
+    if (width > 1)
     {
         int distance = 0;
         int minDistance = width;
@@ -50,6 +51,14 @@ int occlusionFill(int pixel_index, int *image, int width, int height)
 }
 
 using namespace testing;
+
+TEST(OcclusionFillTwoByTwoImageTests, ShouldReturnPixelValueOnRightInFirstRow)
+{
+    int image[4] = {0, 4, 0, 0};
+    int pixelIndex = 0;
+    ASSERT_THAT(occlusionFill(pixelIndex, image, 2, 2), Eq(4));
+}
+
 
 class OcclusionFillThreeVerticalPixelTests : public Test
 {
