@@ -4,11 +4,11 @@
 int occlusionFill(int pixel_index, int *image, int width, int height)
 {
     int fillPixelValue = 0;
-    if (height == 2)
+    if (height > 1)
     {
         if (pixel_index == 0)
         {
-            fillPixelValue = *(image + 1);
+            fillPixelValue = *(image + height - 1);
         }
         else
         {
@@ -43,6 +43,15 @@ int occlusionFill(int pixel_index, int *image, int width, int height)
 
 using namespace testing;
 
+
+TEST(OcclusionFillThreeVerticalPixelTests, ShouldReturnPixelValueOfBottomPixel)
+{
+    int image[3] = {0, 0, 3};
+    int width = 1;
+    int height = 3;
+    int pixelIndex = 0;
+    ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(3));
+}
 
 class OcclusionFillThreePixelTests : public ::testing::Test
 {
