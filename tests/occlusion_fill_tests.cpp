@@ -59,6 +59,19 @@ TEST(OcclusionFillTwoByTwoImageTests, ShouldReturnPixelValueOnRightInFirstRow)
     ASSERT_THAT(occlusionFill(pixelIndex, image, 2, 2), Eq(4));
 }
 
+TEST(OcclusionFillTwoByTwoImageTests, ShouldReturnPixelValueOnLeftInFirstRow)
+{
+    int image[4] = {4, 0, 0, 0};
+    int pixelIndex = 1;
+    ASSERT_THAT(occlusionFill(pixelIndex, image, 2, 2), Eq(4));
+}
+
+// TEST(OcclusionFillTwoByTwoImageSecondRowTests, ShouldReturnPixelValueOnRight)
+// {
+//     int image[4] = {0, 0, 0, 4};
+//     int pixelIndex = 2;
+//     ASSERT_THAT(occlusionFill(pixelIndex, image, 2, 2), Eq(4));
+// }
 
 class OcclusionFillThreeVerticalPixelTests : public Test
 {
