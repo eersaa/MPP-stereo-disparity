@@ -6,6 +6,11 @@ int verDistance(int pixel_index, int row_index, int width)
     return abs(pixel_index / width - row_index);
 }
 
+int horDistance(int pixel_index, int column_index)
+{
+    return 0;
+}
+
 int distance(int pixel_index, int index)
 {
     return abs(pixel_index - index);
@@ -47,6 +52,13 @@ int occlusionFill(int pixel_index, int *image, int width, int height)
 }
 
 using namespace testing;
+
+TEST(HorizontalDistanceTests, ShouldReturnZeroWhenPixelIsOnSameColumn)
+{
+    int pixelIndex = 0;
+    int columnIndex = 0;
+    ASSERT_THAT(horDistance(pixelIndex, columnIndex), Eq(0));
+}
 
 class VerticalDistanceTests : public Test
 {
