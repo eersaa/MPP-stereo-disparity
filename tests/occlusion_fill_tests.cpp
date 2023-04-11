@@ -17,14 +17,19 @@ int occlusionFill(int pixel_index, int *image, int width, int height)
     }
     else if (width > 1)
     {
+        int distance = 0;
+        int minDistance = width;
         int rightLimit = width - 1;
-
         for (int i = 0; i <= rightLimit; i++)
         {
-            fillPixelValue = *(image + i);
-            if (fillPixelValue != 0)
+            distance = abs(pixel_index - i);
+            if (*(image + i) != 0)
             {
-                break;
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    fillPixelValue = *(image + i);
+                }
             }
         }
     }
@@ -55,9 +60,16 @@ TEST_F(OcclusionFillThreePixelTests, ShouldReturnPixelValueOfRightMostPixel)
 
 TEST_F(OcclusionFillThreePixelTests, ShouldReturnPixelValueOfRightSideOfZeroPixel)
 {
-    int image[3] = {0, 2, 0};
+    int image[3] = {0, 3, 0};
     int pixelIndex = 0;
-    ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(2));
+    ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(3));
+}
+
+TEST_F(OcclusionFillThreePixelTests, ShouldReturnNearestOnLeft)
+{
+    int image[3] = {2, 3, 0};
+    int pixelIndex = 2;
+    ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(3));
 }
 
 
