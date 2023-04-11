@@ -11,42 +11,23 @@ int occlusionFill(int pixel_index, int *image, int width, int height)
     int fillPixelValue = 0;
     int pixelValue = 0;
 
-    if (height > 1)
+    double minDist = width + height;
+
+    for (int y = 0; y < height; y++)
     {
-        int hDistance = 0;
-        int minHorDist = height;
-
-        for (int y = 0; y < height; y++)
-        {
-            hDistance = distance(pixel_index, y);
-            pixelValue = *(image + y);
-            if (pixelValue != 0
-                && hDistance < minHorDist)
-            {
-                minHorDist = hDistance;
-                fillPixelValue = pixelValue;
-            }
-        }
-    }
-
-    if (width > 1)
-    {
-        int vDistance = 0;
-        int minVertDist = width;
-
         for (int x = 0; x < width; x++)
         {
-            vDistance = distance(pixel_index, x);
-            pixelValue = *(image + x);
+            double dist = sqrt(pow(distance(pixel_index, x), 2) + pow(distance(pixel_index, y), 2));
+            pixelValue = *(image + x + y * width);
 
             if (pixelValue != 0
-                && vDistance < minVertDist)
+                && dist < minDist)
             {
-                minVertDist = vDistance;
+                minDist = dist;
                 fillPixelValue = pixelValue;
             }
         }
-    }
+    }    
     
     if (fillPixelValue == 0)
     {
@@ -71,12 +52,13 @@ TEST(OcclusionFillTwoByTwoImageTests, ShouldReturnPixelValueOnLeftInFirstRow)
     ASSERT_THAT(occlusionFill(pixelIndex, image, 2, 2), Eq(4));
 }
 
-// TEST(OcclusionFillTwoByTwoImageSecondRowTests, ShouldReturnPixelValueOnRight)
-// {
-//     int image[4] = {0, 0, 0, 4};
-//     int pixelIndex = 2;
-//     ASSERT_THAT(occlusionFill(pixelIndex, image, 2, 2), Eq(4));
-// }
+TEST(OcclusionFillTwoByTwoImageSecondRowTests, ShouldReturnPixelValueOnRight)
+{
+    int image[4] = {0, 0, 0, 4};
+    int pixelIndex = 2;
+    ASSERT_THAT(occlusionFill(pixelIndex, image, 2, 2), Eq(4));
+}
+
 
 class OcclusionFillThreeVerticalPixelTests : public Test
 {
