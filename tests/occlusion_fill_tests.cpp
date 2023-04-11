@@ -1,6 +1,11 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+int distance(int pixel_index, int index)
+{
+    return abs(pixel_index - index);
+}
+
 int occlusionFill(int pixel_index, int *image, int width, int height)
 {
     int fillPixelValue = 0;
@@ -8,17 +13,17 @@ int occlusionFill(int pixel_index, int *image, int width, int height)
 
     if (height > 1)
     {
-        int vertDistance = 0;
-        int minVertDistance = height;
+        int hDistance = 0;
+        int minHorDist = height;
 
         for (int y = 0; y < height; y++)
         {
-            vertDistance = abs(pixel_index - y);
+            hDistance = distance(pixel_index, y);
             pixelValue = *(image + y);
             if (pixelValue != 0
-                && vertDistance < minVertDistance)
+                && hDistance < minHorDist)
             {
-                minVertDistance = vertDistance;
+                minHorDist = hDistance;
                 fillPixelValue = pixelValue;
             }
         }
@@ -26,18 +31,18 @@ int occlusionFill(int pixel_index, int *image, int width, int height)
 
     if (width > 1)
     {
-        int distance = 0;
-        int minDistance = width;
+        int vDistance = 0;
+        int minVertDist = width;
 
         for (int x = 0; x < width; x++)
         {
-            distance = abs(pixel_index - x);
+            vDistance = distance(pixel_index, x);
             pixelValue = *(image + x);
 
             if (pixelValue != 0
-                && distance < minDistance)
+                && vDistance < minVertDist)
             {
-                minDistance = distance;
+                minVertDist = vDistance;
                 fillPixelValue = pixelValue;
             }
         }
