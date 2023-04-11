@@ -60,6 +60,13 @@ TEST(HorizontalDistanceTests, ShouldReturnZeroWhenPixelIsOnSameColumn)
     ASSERT_THAT(horDistance(pixelIndex, columnIndex), Eq(0));
 }
 
+TEST(HorizontalDistanceTests, ShouldReturnTwoWhenPixelIsTwoColumnsRight)
+{
+    int pixelIndex = 2;
+    int columnIndex = 0;
+    ASSERT_THAT(horDistance(pixelIndex, columnIndex), Eq(2));
+}
+
 class VerticalDistanceTests : public Test
 {
 public:
