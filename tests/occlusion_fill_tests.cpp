@@ -44,24 +44,34 @@ int occlusionFill(int pixel_index, int *image, int width, int height)
 
 using namespace testing;
 
+class OcclusionFillThreeVerticalPixelTests : public ::testing::Test
+{
+public:
+    int width = 1;
+    int height = 3;
+};
 
-TEST(OcclusionFillThreeVerticalPixelTests, ShouldReturnPixelValueOfBottomPixel)
+TEST_F(OcclusionFillThreeVerticalPixelTests, ShouldReturnPixelValueOfBottomPixel)
 {
     int image[3] = {0, 0, 3};
-    int width = 1;
-    int height = 3;
     int pixelIndex = 0;
     ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(3));
 }
 
-TEST(OcclusionFillThreeVerticalPixelTests, ShouldReturnPixelValueOfPixelBelow)
+TEST_F(OcclusionFillThreeVerticalPixelTests, ShouldReturnPixelValueOfPixelBelow)
 {
     int image[3] = {0, 3, 0};
-    int width = 1;
-    int height = 3;
     int pixelIndex = 0;
     ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(3));
 }
+
+// TEST_F(OcclusionFillThreeVerticalPixelTests, ShouldReturnNearestOnTop)
+// {
+//     int image[3] = {2, 3, 0};
+//     int pixelIndex = 2;
+//     ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(3));
+// }
+
 
 class OcclusionFillThreePixelTests : public ::testing::Test
 {
