@@ -59,12 +59,12 @@ TEST_F(OcclusionFillThreeVerticalPixelTests, ShouldReturnPixelValueOfBottomPixel
     ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(3));
 }
 
-// TEST_F(OcclusionFillThreeVerticalPixelTests, ShouldReturnPixelValueOfTopPixel)
-// {
-//     int image[3] = {3, 0, 0};
-//     int pixelIndex = 2;
-//     ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(3));
-// }
+TEST_F(OcclusionFillThreeVerticalPixelTests, ShouldReturnPixelValueOfTopPixel)
+{
+    int image[3] = {3, 0, 0};
+    int pixelIndex = 2;
+    ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(3));
+}
 
 TEST_F(OcclusionFillThreeVerticalPixelTests, ShouldReturnPixelValueOfPixelBelow)
 {
