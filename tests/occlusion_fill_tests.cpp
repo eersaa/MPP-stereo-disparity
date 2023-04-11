@@ -81,13 +81,14 @@ TEST(VerticalDistanceTests, ShouldReturnOneWhenPixelIsOnNextRowIn2x2Image)
     ASSERT_THAT(verDistance(pixelIndex, rowIndex, width), Eq(1));
 }
 
-// TEST(VerticalDistanceTests, ShouldReturnOneWhenPixelIsOnPreviousRowIn2x2Image)
-// {
-//     int pixelIndex = 0;
-//     int rowIndex = 2;
-//     int width = 2;
-//     ASSERT_THAT(verDistance(pixelIndex, rowIndex, width), Eq(1));
-// }
+TEST(VerticalDistanceTests, ShouldReturnOneWhenPixelIsOnPreviousRowIn2x2Image)
+{
+    int pixelIndex = 0;
+    int rowIndex = 1;
+    int width = 2;
+    ASSERT_THAT(verDistance(pixelIndex, rowIndex, width), Eq(1));
+}
+
 
 // TEST(OcclusionFillTwoByTwoImageTests, ShouldReturnNearestOnLeft)
 // {
