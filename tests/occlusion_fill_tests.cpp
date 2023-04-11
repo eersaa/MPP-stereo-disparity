@@ -38,14 +38,21 @@ int occlusionFill(int pixel_index, int *image, int width, int height)
 
 using namespace testing;
 
-TEST(OcclusionFillTwoByTwoImageTests, ShouldReturnPixelValueOnRightInFirstRow)
+class OcclusionFillTwoByTwoImageFirstRowTests : public Test
+{
+public:
+    int width = 2;
+    int height = 2;
+};
+
+TEST_F(OcclusionFillTwoByTwoImageFirstRowTests, ShouldReturnPixelValueOnRight)
 {
     int image[4] = {0, 4, 0, 0};
     int pixelIndex = 0;
     ASSERT_THAT(occlusionFill(pixelIndex, image, 2, 2), Eq(4));
 }
 
-TEST(OcclusionFillTwoByTwoImageTests, ShouldReturnPixelValueOnLeftInFirstRow)
+TEST_F(OcclusionFillTwoByTwoImageFirstRowTests, ShouldReturnPixelValueOnLeft)
 {
     int image[4] = {4, 0, 0, 0};
     int pixelIndex = 1;
