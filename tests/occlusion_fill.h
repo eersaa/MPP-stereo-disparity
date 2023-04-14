@@ -20,11 +20,6 @@ int horDistance(int pixel_index, int column_index, int height)
     return abs(pixelColumn(pixel_index, height) - column_index);
 }
 
-int distance(int pixel_index, int index)
-{
-    return abs(pixel_index - index);
-}
-
 int euclideanDistanceBetweenTwoPixels(int pixel1_index, int pixel2_x_index, int pixel2_y_index, int width, int height)
 {
     return sqrt(pow(horDistance(pixel1_index, pixel2_x_index, height), 2) + pow(verDistance(pixel1_index, pixel2_y_index, width), 2));

@@ -121,14 +121,14 @@ TEST_F(VerticalDistance2x2ImageTests, ShouldReturnOneWhenPixelIsOnPreviousRow)
 }
 
 
-// TEST(OcclusionFillTwoByTwoImageTests, ShouldReturnNearestOnLeft)
-// {
-//     int image[4] = {4, 0, 3, 2};
-//     int pixelIndex = 1;
-//     int width = 2;
-//     int height = 2;
-//     ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(4));
-// }
+TEST(OcclusionFillTwoByTwoImageTests, ShouldReturnNearestOnLeft)
+{
+    int image[4] = {4, 0, 3, 2};
+    int pixelIndex = 1;
+    int width = 2;
+    int height = 2;
+    ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(4));
+}
 
 
 class OcclusionFillTwoByTwoImageFirstRowTests : public Test
