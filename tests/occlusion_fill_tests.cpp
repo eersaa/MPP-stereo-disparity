@@ -1,14 +1,24 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+int pixelRow(int pixel_index, int width)
+{
+    return pixel_index / width;
+}
+
 int verDistance(int pixel_index, int row_index, int width)
 {
-    return abs(pixel_index / width - row_index);
+    return abs(pixelRow(pixel_index, width) - row_index);
+}
+
+int pixelColumn(int pixel_index, int height)
+{
+    return pixel_index / height;
 }
 
 int horDistance(int pixel_index, int column_index, int height)
 {
-    return abs(pixel_index / height - column_index);
+    return abs(pixelColumn(pixel_index, height) - column_index);
 }
 
 int distance(int pixel_index, int index)
