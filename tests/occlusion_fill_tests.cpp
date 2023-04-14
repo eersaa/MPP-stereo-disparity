@@ -173,6 +173,13 @@ TEST_F(GetNearestFillPixelTwoByTwoImageSecondRowTests, ShouldReturnPixelValueOnL
     ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(4));
 }
 
+// TEST_F(GetNearestFillPixelTwoByTwoImageSecondRowTests, ShouldReturnNearestOnLeft)
+// {
+//     int image[4] = {4, 3, 2, 0};
+//     int pixelIndex = 3;
+//     ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(2));
+// }
+
 
 class GetNearestFillPixelThreeVerticalPixelTests : public Test
 {
@@ -299,3 +306,19 @@ TEST_F(GetNearestFillPixelTwoVerticalPixelTests, ShouldReturnPixelValueOnBottomO
     ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(2));
 }
 
+TEST(FillZeroPixels3x3ImageTests, ShouldFillAllZeroPixelsWithNearestNonZeroPixel)
+{
+    int image[9] = {9, 10, 11, 10, 0, 0, 11, 0, 0};
+    int width = 3;
+    int height = 3;
+    fillZeroPixels(image, width, height);
+    // print table in 3x3 format
+    for (int i = 0; i < 9; i++)
+    {
+        std::cout << image[i] << " ";
+        if ((i + 1) % 3 == 0)
+        {
+            std::cout << std::endl;
+        }
+    }
+}

@@ -30,9 +30,9 @@ int getPixelValueFromImage(int pixel_x_index, int pixel_y_index, int *image, int
     return *(image + pixel_x_index + pixel_y_index * width);
 }
 
-bool pixelIsNonZero(int pixel_value)
+bool pixelIsZero(int pixel_value)
 {
-    return pixel_value != 0;
+    return pixel_value == 0;
 }
 
 bool pixelDistanceIsLessThanLastMinimum(int distance, int last_min_distance)
@@ -54,7 +54,7 @@ int getNearestFillPixelValue(int pixel_index, int *image, int width, int height)
             int dist = euclideanDistanceBetweenTwoPixels(pixel_index, x, y, width, height);
             pixelValue = getPixelValueFromImage(x, y, image, width);
 
-            if (pixelIsNonZero(pixelValue)
+            if (!pixelIsZero(pixelValue)
                 && pixelDistanceIsLessThanLastMinimum(dist, minDist))
             {
                 minDist = dist;
@@ -68,4 +68,22 @@ int getNearestFillPixelValue(int pixel_index, int *image, int width, int height)
         fillPixelValue = 1;
     }
     return fillPixelValue;
+}
+
+int fillZeroPixels(int *image, int width, int height)
+{
+    int *outputImage = (int *)malloc(sizeof(int) * width * height);
+
+    for (int pixel_index = 0; pixel_index < width * height; pixel_index++)
+    {
+        *(outputImage + pixel_index) = getNearestFillPixelValue(pixel_index, image, width, height);
+    }
+
+    for (int pixel_index = 0; pixel_index < width * height; pixel_index++)
+    {
+        *(image + pixel_index) = *(outputImage + pixel_index);
+    }
+
+    free(outputImage);
+    return 0;
 }
