@@ -22,7 +22,7 @@ public:
     int height = 2;
 };
 
-TEST_F(EuclideanDistanceTests, ShouldReturnOneWhenPixel1IndexIsLastPixelAndPixel2IsFirst)
+TEST_F(EuclideanDistance2x2ImageTests, ShouldReturnOneWhenPixel1IndexIsLastPixelAndPixel2IsFirst)
 {
     int pixel1Index = 3;
     int pixel2xIndex = 0;
@@ -30,7 +30,7 @@ TEST_F(EuclideanDistanceTests, ShouldReturnOneWhenPixel1IndexIsLastPixelAndPixel
     ASSERT_THAT(euclideanDistanceBetweenTwoPixels(pixel1Index, pixel2xIndex, pixel2yIndex, width, height), Eq(1));
 }
 
-TEST_F(EuclideanDistanceTests, ShouldReturnOneWhenPixel1IndexIsFirstPixelAndPixel2IsLast)
+TEST_F(EuclideanDistance2x2ImageTests, ShouldReturnOneWhenPixel1IndexIsFirstPixelAndPixel2IsLast)
 {
     int pixel1Index = 0;
     int pixel2xIndex = 1;
