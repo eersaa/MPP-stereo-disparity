@@ -1,4 +1,4 @@
-#include "phase2.h"
+#include "phase4.h"
 
     lodepng_wrapper::LodepngWrapper img0;
 
@@ -58,10 +58,10 @@
     {
         int run() override
         {
-            img0.apply_filter_resized(ZNCCFilterOptimizedC, 9, 1);
+            img0.apply_filter_resized(ZNCCFilter, 9, 1);
             unsigned error = img0.save_depthimage("../../output-img/im0_grf.png");
 
-            img0.apply_filter_resized2(ZNCCFilterOptimizedC, 9, 2);
+            img0.apply_filter_resized2(ZNCCFilter, 9, 2);
             error = img0.save_depthimage2("../../output-img/im1_grf.png");
 
             return (int) error;
