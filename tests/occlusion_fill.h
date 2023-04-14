@@ -30,7 +30,7 @@ int occlusionFill(int pixel_index, int *image, int width, int height)
     int fillPixelValue = 0;
     int pixelValue = 0;
 
-    double minDist = width + height;
+    int minDist = width + height;
 
     for (int y = 0; y < height; y++)
     {
