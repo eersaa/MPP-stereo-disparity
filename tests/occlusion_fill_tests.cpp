@@ -127,7 +127,7 @@ TEST(OcclusionFillTwoByTwoImageTests, ShouldReturnNearestOnLeft)
     int pixelIndex = 1;
     int width = 2;
     int height = 2;
-    ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(4));
+    ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(4));
 }
 
 
@@ -142,14 +142,14 @@ TEST_F(OcclusionFillTwoByTwoImageFirstRowTests, ShouldReturnPixelValueOnRight)
 {
     int image[4] = {0, 4, 0, 0};
     int pixelIndex = 0;
-    ASSERT_THAT(occlusionFill(pixelIndex, image, 2, 2), Eq(4));
+    ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, 2, 2), Eq(4));
 }
 
 TEST_F(OcclusionFillTwoByTwoImageFirstRowTests, ShouldReturnPixelValueOnLeft)
 {
     int image[4] = {4, 0, 0, 0};
     int pixelIndex = 1;
-    ASSERT_THAT(occlusionFill(pixelIndex, image, 2, 2), Eq(4));
+    ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, 2, 2), Eq(4));
 }
 
 class OcclusionFillTwoByTwoImageSecondRowTests : public Test
@@ -163,14 +163,14 @@ TEST_F(OcclusionFillTwoByTwoImageSecondRowTests, ShouldReturnPixelValueOnRight)
 {
     int image[4] = {0, 0, 0, 4};
     int pixelIndex = 2;
-    ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(4));
+    ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(4));
 }
 
 TEST_F(OcclusionFillTwoByTwoImageSecondRowTests, ShouldReturnPixelValueOnLeft)
 {
     int image[4] = {0, 0, 4, 0};
     int pixelIndex = 3;
-    ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(4));
+    ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(4));
 }
 
 
@@ -185,35 +185,35 @@ TEST_F(OcclusionFillThreeVerticalPixelTests, ShouldReturnPixelValueOfBottomPixel
 {
     int image[3] = {0, 0, 3};
     int pixelIndex = 0;
-    ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(3));
+    ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(3));
 }
 
 TEST_F(OcclusionFillThreeVerticalPixelTests, ShouldReturnPixelValueOfTopPixel)
 {
     int image[3] = {3, 0, 0};
     int pixelIndex = 2;
-    ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(3));
+    ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(3));
 }
 
 TEST_F(OcclusionFillThreeVerticalPixelTests, ShouldReturnPixelValueOfPixelBelow)
 {
     int image[3] = {0, 3, 0};
     int pixelIndex = 0;
-    ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(3));
+    ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(3));
 }
 
 TEST_F(OcclusionFillThreeVerticalPixelTests, ShouldReturnNearestAbove)
 {
     int image[3] = {2, 3, 0};
     int pixelIndex = 2;
-    ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(3));
+    ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(3));
 }
 
 TEST_F(OcclusionFillThreeVerticalPixelTests, ShouldReturnNearestBelow)
 {
     int image[3] = {0, 3, 2};
     int pixelIndex = 0;
-    ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(3));
+    ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(3));
 }
 
 
@@ -228,21 +228,21 @@ TEST_F(OcclusionFillThreePixelTests, ShouldReturnPixelValueOfRightMostPixel)
 {
     int image[3] = {0, 0, 3};
     int pixelIndex = 0;
-    ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(3));
+    ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(3));
 }
 
 TEST_F(OcclusionFillThreePixelTests, ShouldReturnPixelValueOfRightSideOfZeroPixel)
 {
     int image[3] = {0, 3, 0};
     int pixelIndex = 0;
-    ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(3));
+    ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(3));
 }
 
 TEST_F(OcclusionFillThreePixelTests, ShouldReturnNearestOnLeft)
 {
     int image[3] = {2, 3, 0};
     int pixelIndex = 2;
-    ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(3));
+    ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(3));
 }
 
 
@@ -252,7 +252,7 @@ TEST(OcclusionFillOnePixelTest, ShouldReturnPixelWith1GivenPixelWith0Value)
     int width = 1;
     int height = 1;
     int pixelIndex = 0;
-    ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(1));
+    ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(1));
 }
 
 
@@ -267,14 +267,14 @@ TEST_F(OcclusionFillTwoPixelTests, ShouldReturnPixelValueOnRightSideOfZeroPixel)
 {
     int image[2] = {0, 2};
     int pixelIndex = 0;
-    ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(2));
+    ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(2));
 }
 
 TEST_F(OcclusionFillTwoPixelTests, ShouldReturnPixelValueOnLeftSideOfZeroPixel)
 {
     int image[2] = {2, 0};
     int pixelIndex = 1;
-    ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(2));
+    ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(2));
 }
 
 class OcclusionFillTwoVerticalPixelTests : public Test
@@ -289,13 +289,13 @@ TEST_F(OcclusionFillTwoVerticalPixelTests, ShouldReturnPixelValueOnTopOfZeroPixe
 {
     int image[2] = {2, 0};
     int pixelIndex = 1;
-    ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(2));
+    ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(2));
 }
 
 TEST_F(OcclusionFillTwoVerticalPixelTests, ShouldReturnPixelValueOnBottomOfZeroPixel)
 {
     int image[2] = {0, 2};
     int pixelIndex = 0;
-    ASSERT_THAT(occlusionFill(pixelIndex, image, width, height), Eq(2));
+    ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(2));
 }
 
