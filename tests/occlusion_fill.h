@@ -35,6 +35,11 @@ bool pixelIsNonZero(int pixel_value)
     return pixel_value != 0;
 }
 
+bool pixelDistanceIsLessThanLastMinimum(int distance, int last_min_distance)
+{
+    return distance < last_min_distance;
+}
+
 int occlusionFill(int pixel_index, int *image, int width, int height)
 {
     int fillPixelValue = 0;
@@ -50,7 +55,7 @@ int occlusionFill(int pixel_index, int *image, int width, int height)
             pixelValue = getPixelValueFromImage(x, y, image, width);
 
             if (pixelIsNonZero(pixelValue)
-                && dist < minDist)
+                && pixelDistanceIsLessThanLastMinimum(dist, minDist))
             {
                 minDist = dist;
                 fillPixelValue = pixelValue;
