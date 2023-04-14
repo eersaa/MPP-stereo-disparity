@@ -6,9 +6,9 @@ int verDistance(int pixel_index, int row_index, int width)
     return abs(pixel_index / width - row_index);
 }
 
-int horDistance(int pixel_index, int column_index)
+int horDistance(int pixel_index, int column_index, int height)
 {
-    return abs(pixel_index - column_index);
+    return abs(pixel_index / height - column_index);
 }
 
 int distance(int pixel_index, int index)
@@ -53,25 +53,39 @@ int occlusionFill(int pixel_index, int *image, int width, int height)
 
 using namespace testing;
 
-TEST(HorizontalDistanceTests, ShouldReturnZeroWhenPixelIsOnSameColumn)
+class HorizontalDistanceOneRowTests : public Test
+{
+public:
+    int height = 1;
+};
+
+TEST_F(HorizontalDistanceOneRowTests, ShouldReturnZeroWhenPixelIsOnSameColumn)
 {
     int pixelIndex = 0;
     int columnIndex = 0;
-    ASSERT_THAT(horDistance(pixelIndex, columnIndex), Eq(0));
+    ASSERT_THAT(horDistance(pixelIndex, columnIndex, height), Eq(0));
 }
 
-TEST(HorizontalDistanceTests, ShouldReturnTwoWhenPixelIsTwoColumnsRight)
+TEST_F(HorizontalDistanceOneRowTests, ShouldReturnTwoWhenPixelIsTwoColumnsRight)
 {
     int pixelIndex = 2;
     int columnIndex = 0;
-    ASSERT_THAT(horDistance(pixelIndex, columnIndex), Eq(2));
+    ASSERT_THAT(horDistance(pixelIndex, columnIndex, height), Eq(2));
 }
 
-TEST(HorizontalDistanceTests, ShouldReturnTwoWhenPixelIsTwoColumnsLeft)
+TEST_F(HorizontalDistanceOneRowTests, ShouldReturnTwoWhenPixelIsTwoColumnsLeft)
 {
     int pixelIndex = 0;
     int columnIndex = 2;
-    ASSERT_THAT(horDistance(pixelIndex, columnIndex), Eq(2));
+    ASSERT_THAT(horDistance(pixelIndex, columnIndex, height), Eq(2));
+}
+
+TEST(HorizontalDistanceTwoRowTests, ShouldReturnZeroWhenPixelInSameColumnButOnNextRow)
+{
+    int pixelIndex = 1;
+    int columnIndex = 0;
+    int height = 2;
+    ASSERT_THAT(horDistance(pixelIndex, columnIndex, height), Eq(0));
 }
 
 class VerticalDistanceTests : public Test
