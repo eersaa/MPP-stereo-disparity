@@ -20,9 +20,9 @@ int horDistance(int pixel_index, int column_index, int height)
     return abs(pixelColumn(pixel_index, height) - column_index);
 }
 
-int euclideanDistanceBetweenTwoPixels(int pixel1_index, int pixel2_x_index, int pixel2_y_index, int width, int height)
+int euclideanDistanceBetweenTwoPixels(int pixel1_index, int pixel2_x_index, int pixel2_y_index, int image_width, int image_height)
 {
-    return sqrt(pow(horDistance(pixel1_index, pixel2_x_index, height), 2) + pow(verDistance(pixel1_index, pixel2_y_index, width), 2));
+    return sqrt(pow(horDistance(pixel1_index, pixel2_x_index, image_height), 2) + pow(verDistance(pixel1_index, pixel2_y_index, image_width), 2));
 }
 
 int occlusionFill(int pixel_index, int *image, int width, int height)
