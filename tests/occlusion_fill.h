@@ -25,9 +25,9 @@ int distance(int pixel_index, int index)
     return abs(pixel_index - index);
 }
 
-double euclideanDistanceBetweenTwoPixels(int pixel1_index, int pixel2_x_index, int pixel2_y_index)
+int euclideanDistanceBetweenTwoPixels(int pixel1_index, int pixel2_x_index, int pixel2_y_index, int width, int height)
 {
-    return sqrt(pow(distance(pixel1_index, pixel2_x_index), 2) + pow(distance(pixel1_index, pixel2_y_index), 2));
+    return sqrt(pow(horDistance(pixel1_index, pixel2_x_index, height), 2) + pow(verDistance(pixel1_index, pixel2_y_index, width), 2));
 }
 
 int occlusionFill(int pixel_index, int *image, int width, int height)
@@ -41,7 +41,7 @@ int occlusionFill(int pixel_index, int *image, int width, int height)
     {
         for (int x = 0; x < width; x++)
         {
-            double dist = euclideanDistanceBetweenTwoPixels(pixel_index, x, y);
+            int dist = euclideanDistanceBetweenTwoPixels(pixel_index, x, y, width, height);
             pixelValue = *(image + x + y * width);
 
             if (pixelValue != 0
