@@ -8,7 +8,7 @@ int verDistance(int pixel_index, int row_index, int width)
 
 int horDistance(int pixel_index, int column_index)
 {
-    return pixel_index - column_index;
+    return abs(pixel_index - column_index);
 }
 
 int distance(int pixel_index, int index)
@@ -64,6 +64,13 @@ TEST(HorizontalDistanceTests, ShouldReturnTwoWhenPixelIsTwoColumnsRight)
 {
     int pixelIndex = 2;
     int columnIndex = 0;
+    ASSERT_THAT(horDistance(pixelIndex, columnIndex), Eq(2));
+}
+
+TEST(HorizontalDistanceTests, ShouldReturnTwoWhenPixelIsTwoColumnsLeft)
+{
+    int pixelIndex = 0;
+    int columnIndex = 2;
     ASSERT_THAT(horDistance(pixelIndex, columnIndex), Eq(2));
 }
 
