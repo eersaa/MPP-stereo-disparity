@@ -30,6 +30,11 @@ int getPixelValueFromImage(int pixel_x_index, int pixel_y_index, int *image, int
     return *(image + pixel_x_index + pixel_y_index * width);
 }
 
+bool pixelIsNotZero(int pixel_value)
+{
+    return pixel_value != 0;
+}
+
 int occlusionFill(int pixel_index, int *image, int width, int height)
 {
     int fillPixelValue = 0;
@@ -44,7 +49,7 @@ int occlusionFill(int pixel_index, int *image, int width, int height)
             int dist = euclideanDistanceBetweenTwoPixels(pixel_index, x, y, width, height);
             pixelValue = getPixelValueFromImage(x, y, image, width);
 
-            if (pixelValue != 0
+            if (pixelIsNotZero(pixelValue)
                 && dist < minDist)
             {
                 minDist = dist;
