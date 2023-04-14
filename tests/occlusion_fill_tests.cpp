@@ -8,7 +8,7 @@ int verDistance(int pixel_index, int row_index, int width)
 
 int horDistance(int pixel_index, int column_index)
 {
-    return 0;
+    return pixel_index - column_index;
 }
 
 int distance(int pixel_index, int index)
