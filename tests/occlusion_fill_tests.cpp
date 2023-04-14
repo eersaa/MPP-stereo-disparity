@@ -1,6 +1,7 @@
+#include "occlusion_fill.h"
+
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include "occlusion_fill.h"
 
 using namespace testing;
 

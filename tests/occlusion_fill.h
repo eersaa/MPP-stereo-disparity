@@ -1,3 +1,5 @@
+#include <math.h>
+
 int pixelRow(int pixel_index, int width)
 {
     return pixel_index / width;
