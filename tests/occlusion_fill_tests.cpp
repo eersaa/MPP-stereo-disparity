@@ -173,12 +173,12 @@ TEST_F(GetNearestFillPixelTwoByTwoImageSecondRowTests, ShouldReturnPixelValueOnL
     ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(4));
 }
 
-// TEST_F(GetNearestFillPixelTwoByTwoImageSecondRowTests, ShouldReturnNearestOnLeft)
-// {
-//     int image[4] = {4, 3, 2, 0};
-//     int pixelIndex = 3;
-//     ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(2));
-// }
+TEST_F(GetNearestFillPixelTwoByTwoImageSecondRowTests, ShouldReturnSameValueAsInIndex2)
+{
+    int image[4] = {4, 0, 3, 0};
+    int pixelIndex = 2;
+    ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(3));
+}
 
 
 class GetNearestFillPixelThreeVerticalPixelTests : public Test
