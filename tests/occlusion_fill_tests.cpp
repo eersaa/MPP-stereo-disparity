@@ -5,6 +5,14 @@
 
 using namespace testing;
 
+TEST(EuclideanDistanceTests, ShouldReturnZeroWhenPixelIsOnSamePosition)
+{
+    int pixel1Index = 0;
+    int pixel2xIndex = 0;
+    int pixel2yIndex = 0;
+    ASSERT_THAT(euclideanDistanceBetweenTwoPixels(pixel1Index, pixel2xIndex, pixel2yIndex), Eq(0));
+}
+
 class HorizontalDistanceOneRowTests : public Test
 {
 public:
