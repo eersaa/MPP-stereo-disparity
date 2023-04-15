@@ -35,3 +35,14 @@ TEST(CrossCheckPixelTests, ShouldReturnPixel1ValueIfDifferenceBelowThreshold)
     int threshold = 1;
     ASSERT_THAT(crossCheck(pixel1, pixel2, threshold), Eq(2));
 }
+
+TEST(CrossCheckTwoImagesTests, ShouldReplacePixelWithZeroIfPixelDifferenceOverThreshold)
+{
+    int image1[4] = {0, 1, 2, 3};
+    int image2[4] = {3, 2, 1, 0};
+    int threshold = 1;
+    int outputImage[4];
+    int imageSize = 4;
+    crossCheckTwoImages(image1, image2, threshold, outputImage, imageSize);
+    ASSERT_THAT(outputImage, AllOf(ElementsAre(0, 1, 2, 0)));
+}

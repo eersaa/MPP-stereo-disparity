@@ -152,3 +152,11 @@ int crossCheck(int pixel1, int pixel2, int threshold)
 
     return returnValue;
 }
+
+void crossCheckTwoImages(int* image1, int* image2, int threshold, int* outputImage, int imageSize)
+{
+    for (int i = 0; i < imageSize; i++)
+    {
+        outputImage[i] = crossCheck(image1[i], image2[i], threshold);
+    }
+}

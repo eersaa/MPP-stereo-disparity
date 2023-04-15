@@ -18,6 +18,7 @@ void movingAvgFilter(unsigned char* image, unsigned width, unsigned height, unsi
 bool differenceIsOverThreshold(int pixel1, int pixel2, int threshold);
 
 int crossCheck(int pixel1, int pixel2, int threshold);
+void crossCheckTwoImages(int* image1, int* image2, int threshold, int* outputImage, int imageSize);
 
 
 #endif  // UTIL_H
