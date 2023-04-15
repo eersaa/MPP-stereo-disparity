@@ -136,7 +136,7 @@ TEST_F(VerticalDistance2x2ImageTests, ShouldReturnZeroWhenPixelAndRowIndexAreOnS
 
 TEST(GetNearestFillPixelTwoByTwoImageTests, ShouldReturnNearestOnLeft)
 {
-    int image[4] = {4, 0, 3, 2};
+    unsigned char image[4] = {4, 0, 3, 2};
     int pixelIndex = 1;
     int width = 2;
     int height = 2;
@@ -153,14 +153,14 @@ public:
 
 TEST_F(GetNearestFillPixelTwoByTwoImageFirstRowTests, ShouldReturnPixelValueOnRight)
 {
-    int image[4] = {0, 4, 0, 0};
+    unsigned char image[4] = {0, 4, 0, 0};
     int pixelIndex = 0;
     ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, 2, 2), Eq(4));
 }
 
 TEST_F(GetNearestFillPixelTwoByTwoImageFirstRowTests, ShouldReturnPixelValueOnLeft)
 {
-    int image[4] = {4, 0, 0, 0};
+    unsigned char image[4] = {4, 0, 0, 0};
     int pixelIndex = 1;
     ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, 2, 2), Eq(4));
 }
@@ -174,14 +174,14 @@ public:
 
 TEST_F(GetNearestFillPixelTwoByTwoImageSecondRowTests, ShouldReturnPixelValueOnRight)
 {
-    int image[4] = {0, 0, 0, 4};
+    unsigned char image[4] = {0, 0, 0, 4};
     int pixelIndex = 2;
     ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(4));
 }
 
 TEST_F(GetNearestFillPixelTwoByTwoImageSecondRowTests, ShouldReturnPixelValueOnLeft)
 {
-    int image[4] = {0, 0, 4, 0};
+    unsigned char image[4] = {0, 0, 4, 0};
     int pixelIndex = 3;
     ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(4));
 }
@@ -196,35 +196,35 @@ public:
 
 TEST_F(GetNearestFillPixelThreeVerticalPixelTests, ShouldReturnPixelValueOfBottomPixel)
 {
-    int image[3] = {0, 0, 3};
+    unsigned char image[3] = {0, 0, 3};
     int pixelIndex = 0;
     ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(3));
 }
 
 TEST_F(GetNearestFillPixelThreeVerticalPixelTests, ShouldReturnPixelValueOfTopPixel)
 {
-    int image[3] = {3, 0, 0};
+    unsigned char image[3] = {3, 0, 0};
     int pixelIndex = 2;
     ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(3));
 }
 
 TEST_F(GetNearestFillPixelThreeVerticalPixelTests, ShouldReturnPixelValueOfPixelBelow)
 {
-    int image[3] = {0, 3, 0};
+    unsigned char image[3] = {0, 3, 0};
     int pixelIndex = 0;
     ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(3));
 }
 
 TEST_F(GetNearestFillPixelThreeVerticalPixelTests, ShouldReturnNearestAbove)
 {
-    int image[3] = {2, 3, 0};
+    unsigned char image[3] = {2, 3, 0};
     int pixelIndex = 2;
     ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(3));
 }
 
 TEST_F(GetNearestFillPixelThreeVerticalPixelTests, ShouldReturnNearestBelow)
 {
-    int image[3] = {0, 3, 2};
+    unsigned char image[3] = {0, 3, 2};
     int pixelIndex = 0;
     ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(3));
 }
@@ -239,21 +239,21 @@ public:
 
 TEST_F(GetNearestFillPixelThreePixelTests, ShouldReturnPixelValueOfRightMostPixel)
 {
-    int image[3] = {0, 0, 3};
+    unsigned char image[3] = {0, 0, 3};
     int pixelIndex = 0;
     ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(3));
 }
 
 TEST_F(GetNearestFillPixelThreePixelTests, ShouldReturnPixelValueOfRightSideOfZeroPixel)
 {
-    int image[3] = {0, 3, 0};
+    unsigned char image[3] = {0, 3, 0};
     int pixelIndex = 0;
     ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(3));
 }
 
 TEST_F(GetNearestFillPixelThreePixelTests, ShouldReturnNearestOnLeft)
 {
-    int image[3] = {2, 3, 0};
+    unsigned char image[3] = {2, 3, 0};
     int pixelIndex = 2;
     ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(3));
 }
@@ -261,7 +261,7 @@ TEST_F(GetNearestFillPixelThreePixelTests, ShouldReturnNearestOnLeft)
 
 TEST(GetNearestFillPixelOnePixelTest, ShouldReturnPixelWith1GivenPixelWith0Value)
 {
-    int image[1] = {0};
+    unsigned char image[1] = {0};
     int width = 1;
     int height = 1;
     int pixelIndex = 0;
@@ -278,14 +278,14 @@ public:
 
 TEST_F(GetNearestFillPixelTwoPixelTests, ShouldReturnPixelValueOnRightSideOfZeroPixel)
 {
-    int image[2] = {0, 2};
+    unsigned char image[2] = {0, 2};
     int pixelIndex = 0;
     ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(2));
 }
 
 TEST_F(GetNearestFillPixelTwoPixelTests, ShouldReturnPixelValueOnLeftSideOfZeroPixel)
 {
-    int image[2] = {2, 0};
+    unsigned char image[2] = {2, 0};
     int pixelIndex = 1;
     ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(2));
 }
@@ -300,21 +300,21 @@ public:
 
 TEST_F(GetNearestFillPixelTwoVerticalPixelTests, ShouldReturnPixelValueOnTopOfZeroPixel)
 {
-    int image[2] = {2, 0};
+    unsigned char image[2] = {2, 0};
     int pixelIndex = 1;
     ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(2));
 }
 
 TEST_F(GetNearestFillPixelTwoVerticalPixelTests, ShouldReturnPixelValueOnBottomOfZeroPixel)
 {
-    int image[2] = {0, 2};
+    unsigned char image[2] = {0, 2};
     int pixelIndex = 0;
     ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(2));
 }
 
 TEST(FillZeroPixels4x3ImageTests, ShouldFillAllZeroPixelsWithNearestNonZeroPixel)
 {
-    int image[12] = {9, 0, 0, 11, 10, 0, 0, 0, 11, 0, 0, 0};
+    unsigned char image[12] = {10, 0, 0, 12, 11, 0, 0, 0, 12, 0, 0, 0};
     int width = 4;
     int height = 3;
     fillZeroPixels(image, width, height);
@@ -325,6 +325,6 @@ TEST(FillZeroPixels4x3ImageTests, ShouldFillAllZeroPixelsWithNearestNonZeroPixel
         {
             std::cout << std::endl;
         }
-        std::cout << image[i] << " ";
+        std::cout << (int)image[i] << " ";
     }
 }

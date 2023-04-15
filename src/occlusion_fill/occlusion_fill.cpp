@@ -1,7 +1,7 @@
 #include "occlusion_fill.h"
 
 
-int getNearestFillPixelValue(int pixel_index, int *image, int width, int height)
+int getNearestFillPixelValue(int pixel_index, unsigned char *image, int width, int height)
 {
     int fillPixelValue = 0;
     int pixelValue = 0;
@@ -31,9 +31,9 @@ int getNearestFillPixelValue(int pixel_index, int *image, int width, int height)
     return fillPixelValue;
 }
 
-void fillZeroPixels(int *image, int width, int height)
+void fillZeroPixels(unsigned char *image, int width, int height)
 {
-    int *outputImage = (int *)malloc(sizeof(int) * width * height);
+    unsigned char *outputImage = (unsigned char *)malloc(sizeof(unsigned char) * width * height);
 
     for (int pixel_index = 0; pixel_index < width * height; pixel_index++)
     {
@@ -73,7 +73,7 @@ int euclideanDistanceBetweenTwoPixels(int pixel1_index, int pixel2_x_index, int 
     return sqrt(pow(horDistance(pixel1_index, pixel2_x_index, image_width), 2) + pow(verDistance(pixel1_index, pixel2_y_index, image_width), 2));
 }
 
-int getPixelValueFromImage(int pixel_x_index, int pixel_y_index, int *image, int width)
+int getPixelValueFromImage(int pixel_x_index, int pixel_y_index, unsigned char *image, int width)
 {
     return *(image + pixel_x_index + pixel_y_index * width);
 }
