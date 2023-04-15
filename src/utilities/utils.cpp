@@ -137,14 +137,14 @@ void movingAvgFilter(unsigned char* image, unsigned width, unsigned height, unsi
   free(imageCopy);
 }
 
-bool differenceIsOverThreshold(int pixel1, int pixel2, int threshold)
+bool differenceIsOverThreshold(unsigned char pixel1, unsigned char pixel2, int threshold)
 {
     return abs(pixel1 - pixel2) > threshold;
 }
 
-int crossCheck(int pixel1, int pixel2, int threshold)
+unsigned char crossCheck(unsigned char pixel1, unsigned char pixel2, int threshold)
 {
-    int returnValue = 0;
+    unsigned char returnValue = 0;
     if (!differenceIsOverThreshold(pixel1, pixel2, threshold))
     {
         returnValue = pixel1;
@@ -153,7 +153,7 @@ int crossCheck(int pixel1, int pixel2, int threshold)
     return returnValue;
 }
 
-void crossCheckTwoImages(int* image1, int* image2, int threshold, int* outputImage, int imageSize)
+void crossCheckTwoImages(unsigned char *image1, unsigned char *image2, int threshold, unsigned char *outputImage, int imageSize)
 {
     for (int i = 0; i < imageSize; i++)
     {

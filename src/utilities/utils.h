@@ -10,15 +10,13 @@
 #endif
 #include <CL/opencl.h>
 
-
 int printPlatformProfile(bool print_extras);
 
-void movingAvgFilter(unsigned char* image, unsigned width, unsigned height, unsigned windowSize);
+void movingAvgFilter(unsigned char *image, unsigned width, unsigned height, unsigned windowSize);
 
-bool differenceIsOverThreshold(int pixel1, int pixel2, int threshold);
+bool differenceIsOverThreshold(unsigned char pixel1, unsigned char pixel2, int threshold);
 
-int crossCheck(int pixel1, int pixel2, int threshold);
-void crossCheckTwoImages(int* image1, int* image2, int threshold, int* outputImage, int imageSize);
+unsigned char crossCheck(unsigned char pixel1, unsigned char pixel2, int threshold);
+void crossCheckTwoImages(unsigned char *image1, unsigned char *image2, int threshold, unsigned char *outputImage, int imageSize);
 
-
-#endif  // UTIL_H
+#endif // UTIL_H
