@@ -10,14 +10,14 @@ int verDistance(int pixel_index, int row_index, int width)
     return abs(pixelRow(pixel_index, width) - row_index);
 }
 
-int pixelColumn(int pixel_index, int height)
+int pixelColumn(int pixel_index, int width)
 {
-    return pixel_index / height;
+    return pixel_index % width;
 }
 
-int horDistance(int pixel_index, int column_index, int height)
+int horDistance(int pixel_index, int column_index, int width)
 {
-    return abs(pixelColumn(pixel_index, height) - column_index);
+    return abs(pixelColumn(pixel_index, width) - column_index);
 }
 
 int euclideanDistanceBetweenTwoPixels(int pixel1_index, int pixel2_x_index, int pixel2_y_index, int image_width, int image_height)
