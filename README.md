@@ -9,15 +9,16 @@ Correlation (ZNCC) algorithm for calculating depth map for stereo images taking 
 
 ## Todo - C/C++
 
-- Image resize?
-- Normalization for depth map to range from 0 to 255.
-  - Depth map contains values from 0 to *ndisp* and those needs to be normalized to range of grayscale pixel in image.
-- Post processing
-  - Cross-check
-  - Occlusion filling
+
 
 ## Done - C/C++
 
+- Normalization for depth map to range from 0 to 255.
+  - Depth map contains values from 0 to *ndisp* and those needs to be normalized to range of grayscale pixel in image.
+- Image resize?
+- Post processing
+  - Cross-check
+  - Occlusion filling
 - Grayscale conversion
 - Applying a filter to image
 - Profiling info
