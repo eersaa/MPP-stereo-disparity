@@ -70,7 +70,7 @@ int getNearestFillPixelValue(int pixel_index, int *image, int width, int height)
     return fillPixelValue;
 }
 
-int fillZeroPixels(int *image, int width, int height)
+void fillZeroPixels(int *image, int width, int height)
 {
     int *outputImage = (int *)malloc(sizeof(int) * width * height);
 
@@ -85,5 +85,4 @@ int fillZeroPixels(int *image, int width, int height)
     }
 
     free(outputImage);
-    return 0;
 }
