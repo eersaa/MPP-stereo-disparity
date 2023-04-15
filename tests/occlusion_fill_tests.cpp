@@ -11,15 +11,13 @@ TEST(EuclideanDistanceTests, ShouldReturnZeroWhenPixelIsOnSamePosition)
     int pixel2xIndex = 0;
     int pixel2yIndex = 0;
     int width = 1;
-    int height = 1;
-    ASSERT_THAT(euclideanDistanceBetweenTwoPixels(pixel1Index, pixel2xIndex, pixel2yIndex, width, height), Eq(0));
+    ASSERT_THAT(euclideanDistanceBetweenTwoPixels(pixel1Index, pixel2xIndex, pixel2yIndex, width), Eq(0));
 }
 
 class EuclideanDistance2x2ImageTests : public Test
 {
 public:
     int width = 2;
-    int height = 2;
 };
 
 TEST_F(EuclideanDistance2x2ImageTests, ShouldReturnOneWhenPixel1IndexIsLastPixelAndPixel2IsFirst)
@@ -27,7 +25,7 @@ TEST_F(EuclideanDistance2x2ImageTests, ShouldReturnOneWhenPixel1IndexIsLastPixel
     int pixel1Index = 3;
     int pixel2xIndex = 0;
     int pixel2yIndex = 0;
-    ASSERT_THAT(euclideanDistanceBetweenTwoPixels(pixel1Index, pixel2xIndex, pixel2yIndex, width, height), Eq(1));
+    ASSERT_THAT(euclideanDistanceBetweenTwoPixels(pixel1Index, pixel2xIndex, pixel2yIndex, width), Eq(1));
 }
 
 TEST_F(EuclideanDistance2x2ImageTests, ShouldReturnOneWhenPixel1IndexIsFirstPixelAndPixel2IsLast)
@@ -35,7 +33,7 @@ TEST_F(EuclideanDistance2x2ImageTests, ShouldReturnOneWhenPixel1IndexIsFirstPixe
     int pixel1Index = 0;
     int pixel2xIndex = 1;
     int pixel2yIndex = 1;
-    ASSERT_THAT(euclideanDistanceBetweenTwoPixels(pixel1Index, pixel2xIndex, pixel2yIndex, width, height), Eq(1));
+    ASSERT_THAT(euclideanDistanceBetweenTwoPixels(pixel1Index, pixel2xIndex, pixel2yIndex, width), Eq(1));
 }
 
 class HorizontalDistanceOneRowTests : public Test
