@@ -1,5 +1,4 @@
-add_library(occlusion_fill occlusion_fill.h)
-set_target_properties(occlusion_fill PROPERTIES LINKER_LANGUAGE CXX)
+add_library(occlusion_fill occlusion_fill.cpp)
 
 target_include_directories(occlusion_fill
     INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}
