@@ -1,3 +1,6 @@
+#ifndef OCCLUSION_FILL_H
+#define OCCLUSION_FILL_H
+
 #include <math.h>
 
 int pixelRow(int pixel_index, int width)
@@ -86,3 +89,5 @@ void fillZeroPixels(int *image, int width, int height)
 
     free(outputImage);
 }
+
+#endif  // OCCLUSION_FILL_H
