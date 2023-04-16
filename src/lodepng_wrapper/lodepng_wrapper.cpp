@@ -59,9 +59,22 @@ unsigned LodepngWrapper::transform_to_grayscale()
     return 0;
 }
 
+void LodepngWrapper::clone_image(unsigned char* dest)
+{
+    memcpy(dest, image, this->width * this->height * 4);
+}
+
 void LodepngWrapper::clone_greyimage(unsigned char* dest)
 {
     memcpy(dest, grey_image, this->width * this->height);
+}
+
+void LodepngWrapper::set_image(unsigned char* src, unsigned width, unsigned height)
+{
+    this->width = width;
+    this->height = height;
+    image = (unsigned char*)malloc(width * height * 4);
+    memcpy(image, src, width * height * 4);
 }
 
 void LodepngWrapper::set_greyimage(unsigned char* src, unsigned width, unsigned height)
