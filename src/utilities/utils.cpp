@@ -418,3 +418,26 @@ void ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* image, unsigne
   // Free the memory
   free(imageCopy);
 }
+bool differenceIsOverThreshold(unsigned char pixel1, unsigned char pixel2, int threshold)
+{
+    return abs(pixel1 - pixel2) > threshold;
+}
+
+unsigned char crossCheck(unsigned char pixel1, unsigned char pixel2, int threshold)
+{
+    unsigned char returnValue = 0;
+    if (!differenceIsOverThreshold(pixel1, pixel2, threshold))
+    {
+        returnValue = pixel1;
+    }
+
+    return returnValue;
+}
+
+void crossCheckTwoImages(unsigned char *image1, unsigned char *image2, int threshold, unsigned char *outputImage, int imageSize)
+{
+    for (int i = 0; i < imageSize; i++)
+    {
+        outputImage[i] = crossCheck(image1[i], image2[i], threshold);
+    }
+}

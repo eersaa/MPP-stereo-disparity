@@ -25,7 +25,9 @@ class LodepngWrapper
     unsigned save_depthimage2(const char* filename2);
     unsigned transform_to_grayscale();
     unsigned transform_to_grayscale2();
+    void clone_image(unsigned char* dest);
     void clone_greyimage(unsigned char* dest);
+    void set_image(unsigned char* src, unsigned width, unsigned height);
     void set_greyimage(unsigned char* src, unsigned width, unsigned height);
     void apply_filter(void (*filter)(unsigned char* image, unsigned width, unsigned height, unsigned windowSize), unsigned windowSize);
     void apply_filter_resized(void (*filter)(unsigned char* imageOut, unsigned char* image, unsigned char* image2, unsigned width, unsigned height, unsigned windowSize, unsigned leftToRight), unsigned windowSize, unsigned leftToRight);
