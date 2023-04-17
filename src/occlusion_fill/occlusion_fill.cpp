@@ -1,53 +1,73 @@
 #include "occlusion_fill.h"
 
 
-int getNearestFillPixelValue(int pixel_index, unsigned char *image, int width, int height)
+int getNearestFillPixelValue(int pixel_index, int pix_x, int pix_y, unsigned char *image, int width, int height)
 {
     int fillPixelValue = 0;
     int pixelValue = 0;
+    int windowSizeHalf = 10;
 
     int minDist = width + height;
 
-    for (int y = 0; y < height; y++)
-    {
-        for (int x = 0; x < width; x++)
-        {
-            int dist = euclideanDistanceBetweenTwoPixels(pixel_index, x, y, width);
-            pixelValue = getPixelValueFromImage(x, y, image, width);
+    // Loop through the window to get the average value
+    for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
+        for (int j = -windowSizeHalf; j <= windowSizeHalf; j++) {
+            int x2 = pix_x + j;
+            int y2 = pix_y + i;
 
-            if (!pixelIsZero(pixelValue)
-                && pixelDistanceIsLessThanLastMinimum(dist, minDist))
-            {
-                minDist = dist;
-                fillPixelValue = pixelValue;
+            // Check that the pixel is inside the image
+            if (x2 >= 0 && x2 < (int)width &&  y2 >= 0 && y2 < (int)height) {
+                int dist = euclideanDistanceBetweenTwoPixels(pixel_index, x2, y2, width);
+                pixelValue = getPixelValueFromImage(x2, y2, image, width);
+
+                if (!pixelIsZero(pixelValue)
+                    && pixelDistanceIsLessThanLastMinimum(dist, minDist))
+                {
+                    minDist = dist;
+                    fillPixelValue = pixelValue;
+                }
+                
             }
         }
-    }    
+    }
+     
     
     if (fillPixelValue == 0)
     {
-        fillPixelValue = 1;
+        fillPixelValue = 0;
     }
     return fillPixelValue;
 }
 
 void fillZeroPixels(unsigned char *image, unsigned char *outImage, int width, int height)
 {
-
-    for (int pixel_index = 0; pixel_index < width * height; pixel_index++)
-    {
-        *(outImage + pixel_index) = getNearestFillPixelValue(pixel_index, image, width, height);
+    int pixel_index = 0;
+    for (int runs = 0; runs < 10; runs++) {
+        pixel_index = 0;
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                if (image[pixel_index] == 0)
+                {
+                    outImage[pixel_index] = getNearestFillPixelValue(pixel_index, x, y, image, width, height);
+                }
+                else
+                {
+                    outImage[pixel_index] = image[pixel_index];
+                }
+                pixel_index++;
+            }
+        }
+        image = outImage;
     }
-
-    for (int pixel_index = 0; pixel_index < width * height; pixel_index++)
-    {
-        *(image + pixel_index) = *(outImage + pixel_index);
-    }
-
 }
 
 void occFillOptimizedC(unsigned char *image, unsigned char *outImage, int width, int height)
 {
+
+    //side search
+    /*
     bool flip = false;
     bool found = false;
     int seeker = 0;
@@ -85,6 +105,60 @@ void occFillOptimizedC(unsigned char *image, unsigned char *outImage, int width,
         else
         {
             outImage[pixel_index] = image[pixel_index];
+        }
+        
+
+
+    }*/
+
+    //8-way search
+    int dir = 0;
+    int x2 = 0;
+    int y2 = 0;
+    bool found = false;
+
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+
+            if (image[y * width + x] == 0)
+            {
+                found = false;
+                // Loop through 8 directions to find the nearest non-zero pixel
+                for (int maxDist = 0; maxDist < 60; maxDist++) {
+                    if (found) {
+                        break;
+                    }
+
+                    for (dir = 0; dir < 8; dir++) {
+                        switch (dir) {
+                        case 0: x2 = x + maxDist; y2 = y; break;
+                        case 1: x2 = x + maxDist; y2 = y + maxDist; break;
+                        case 2: x2 = x; y2 = y + maxDist; break;
+                        case 3: x2 = x - maxDist; y2 = y + maxDist; break;
+                        case 4: x2 = x - maxDist; y2 = y; break;
+                        case 5: x2 = x - maxDist; y2 = y - maxDist; break;
+                        case 6: x2 = x; y2 = y - maxDist; break;
+                        case 7: x2 = x + maxDist; y2 = y - maxDist; break;
+                        }
+                        // Check that the pixel is inside the image
+                        if (x2 >= 0 && x2 < (int)width && y2 >= 0 && y2 < (int)height) {
+                            if (image[y2 * width + x2] != 0) {
+                                outImage[y * width + x] = image[y2 * width + x2];
+                                found = true;
+                            }
+                        }
+
+                        if (found) {
+                            break;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                outImage[y * width + x] = image[y * width + x];
+            }
+
         }
     }
 }
