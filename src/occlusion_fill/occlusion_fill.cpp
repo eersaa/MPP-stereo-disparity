@@ -31,13 +31,18 @@ int getNearestFillPixelValue(int pixel_index, unsigned char *image, int width, i
     return fillPixelValue;
 }
 
-void fillZeroPixels(unsigned char *image, int width, int height)
+int fillZeroPixels(unsigned char *image, int width, int height)
 {
     unsigned char *outputImage = (unsigned char *)malloc(sizeof(unsigned char) * width * height);
+    int accessedPixelCount = 0;
 
     for (int pixel_index = 0; pixel_index < width * height; pixel_index++)
     {
-        *(outputImage + pixel_index) = getNearestFillPixelValue(pixel_index, image, width, height);
+        if (pixelIsZero(*(image + pixel_index)))
+        {
+            *(outputImage + pixel_index) = getNearestFillPixelValue(pixel_index, image, width, height);
+            accessedPixelCount++;
+        }
     }
 
     for (int pixel_index = 0; pixel_index < width * height; pixel_index++)
@@ -46,6 +51,7 @@ void fillZeroPixels(unsigned char *image, int width, int height)
     }
 
     free(outputImage);
+    return accessedPixelCount;
 }
 
 int pixelRow(int pixel_index, int width)

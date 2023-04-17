@@ -312,6 +312,14 @@ TEST_F(GetNearestFillPixelTwoVerticalPixelTests, ShouldReturnPixelValueOnBottomO
     ASSERT_THAT(getNearestFillPixelValue(pixelIndex, image, width, height), Eq(2));
 }
 
+TEST(FillZeroPixels1x3ImageTests, ShouldReturnAccessedPixelCountOf2)
+{
+    unsigned char image[3] = {3, 0, 0};
+    int width = 3;
+    int height = 1;
+    ASSERT_THAT(fillZeroPixels(image, width, height), Eq(2));
+}
+
 TEST(FillZeroPixels4x3ImageTests, ShouldFillAllZeroPixelsWithNearestNonZeroPixel)
 {
     unsigned char image[12] = {10, 0, 0, 12, 11, 0, 0, 0, 12, 0, 0, 0};
