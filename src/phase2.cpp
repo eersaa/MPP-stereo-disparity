@@ -87,7 +87,7 @@
         int run() override
         {
             unsigned error = 0;
-            img0.occlusion_fill(fillZeroPixels);
+            img0.occlusion_fill(occFillOptimizedC);
 
             int imWidth = img0.get_width() / scaling_factor;
             int imHeight = img0.get_height() / scaling_factor;

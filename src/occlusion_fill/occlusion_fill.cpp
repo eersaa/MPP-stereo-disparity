@@ -33,20 +33,60 @@ int getNearestFillPixelValue(int pixel_index, unsigned char *image, int width, i
 
 void fillZeroPixels(unsigned char *image, unsigned char *outImage, int width, int height)
 {
-    unsigned char *outputImage = (unsigned char *)malloc(sizeof(unsigned char) * width * height);
 
     for (int pixel_index = 0; pixel_index < width * height; pixel_index++)
     {
-        *(outputImage + pixel_index) = getNearestFillPixelValue(pixel_index, image, width, height);
+        *(outImage + pixel_index) = getNearestFillPixelValue(pixel_index, image, width, height);
     }
 
     for (int pixel_index = 0; pixel_index < width * height; pixel_index++)
     {
-        *(image + pixel_index) = *(outputImage + pixel_index);
+        *(image + pixel_index) = *(outImage + pixel_index);
     }
 
-    outImage = outputImage;
-    free(outputImage);
+}
+
+void occFillOptimizedC(unsigned char *image, unsigned char *outImage, int width, int height)
+{
+    bool flip = false;
+    bool found = false;
+    int seeker = 0;
+
+    for (int pixel_index = 0; pixel_index < width * height; pixel_index++)
+    {
+        if (image[pixel_index] == 0)
+        {
+            found = false;
+            for (int ind = 0; ind < 65; ind++)
+            {
+                if (flip)
+                {
+                    seeker = -ind;
+                    flip = false;
+                } 
+                else
+                {
+                    seeker = ind;
+                    flip = true;
+                }
+
+                if (image[pixel_index + seeker] != 0)
+                {
+                    outImage[pixel_index] = image[pixel_index + seeker];
+                    found = true;
+                    break;
+                }
+            }
+            if (!found)
+            {
+                outImage[pixel_index] = 1;
+            }
+        }
+        else
+        {
+            outImage[pixel_index] = image[pixel_index];
+        }
+    }
 }
 
 int pixelRow(int pixel_index, int width)
