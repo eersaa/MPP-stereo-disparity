@@ -18,6 +18,9 @@ LodepngWrapper::~LodepngWrapper()
     free(grey_image2);
     free(resized_image2);
     free(depth_image2);
+
+    free(crossCheck_image);
+    free(occlusion_fill_image);
 }
 
 unsigned LodepngWrapper::load_image(const char* filename)
@@ -83,6 +86,54 @@ unsigned LodepngWrapper::save_depthimage2(const char* filename2)
     return error;
 }
 
+unsigned LodepngWrapper::save_image(const char* filename, int savedImageID, int imWidth, int imHeight, int saveType)
+{
+
+    unsigned char* savedImage = 0;
+    savedImage = (unsigned char*)malloc(imHeight * imWidth);
+    switch (savedImageID)
+    {
+    case 0:
+        savedImage = image;
+        break;
+    case 1:
+        savedImage = grey_image;
+        break;
+    case 2:
+        savedImage = resized_image;
+        break;
+    case 3: 
+        savedImage = depth_image;
+        break;
+    case 4:
+        savedImage = image2;
+        break;
+    case 5:
+        savedImage = grey_image2;
+        break;
+    case 6:
+        savedImage = resized_image2;
+        break;
+    case 7:
+        savedImage = depth_image2;
+        break;
+    case 8:
+        savedImage = crossCheck_image;
+        break;
+    }
+
+    if (saveType == 0) {
+        unsigned error = lodepng_encode_file(filename, savedImage, imWidth, imHeight, LCT_GREY, 8);
+    if (error) std::cout << "encoder error " << error << ": " << lodepng_error_text(error) << std::endl;
+    return error;
+    }
+    else {
+        unsigned error = lodepng_encode_file(filename, savedImage, imWidth, imHeight, LCT_RGBA, 8);
+    if (error) std::cout << "encoder error " << error << ": " << lodepng_error_text(error) << std::endl;
+    return error;
+    }
+}
+
 unsigned LodepngWrapper::transform_to_grayscale()
 {
     // transform image buffer to greyscale with following formula: Y=0.2126R+0.7152G+0.0722B
@@ -129,6 +180,8 @@ unsigned LodepngWrapper::transform_to_grayscale2()
     }
 
     return 0;
+}
+
 void LodepngWrapper::clone_image(unsigned char* dest)
 {
     memcpy(dest, image, this->width * this->height * 4);
@@ -216,6 +269,18 @@ void LodepngWrapper::apply_filter_resized2(void (*filter)(unsigned char* imageOu
 {
     depth_image2 = (unsigned char*)malloc(resized_width * resized_height);
     filter(depth_image2, resized_image2, resized_image, resized_width, resized_height, windowSize, leftToRight);
+}
+
+void LodepngWrapper::crossCheck(void (*filter)(unsigned char *image1, unsigned char *image2, int threshold, unsigned char *outputImage, int imageSize))
+{
+    crossCheck_image = (unsigned char*)malloc(resized_width * resized_height);
+    filter(depth_image, depth_image2, 27, crossCheck_image, (resized_width * resized_height));
+}
+
+void LodepngWrapper::occlusion_fill(void (*filter)(unsigned char *image, unsigned char *outImage, int width, int height))
+{
+    occlusion_fill_image = (unsigned char*)malloc(resized_width * resized_height);
+    filter(crossCheck_image, occlusion_fill_image, resized_width, resized_height);
 }
 
 unsigned LodepngWrapper::get_width()

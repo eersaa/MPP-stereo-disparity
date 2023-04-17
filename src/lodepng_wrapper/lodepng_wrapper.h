@@ -23,6 +23,7 @@ class LodepngWrapper
     unsigned save_Resizedimage2(const char* filename2);
     unsigned save_depthimage(const char* filename);
     unsigned save_depthimage2(const char* filename2);
+    unsigned save_image(const char* filename, int savedImageID, int imWidth, int imHeight, int saveType);
     unsigned transform_to_grayscale();
     unsigned transform_to_grayscale2();
     void clone_image(unsigned char* dest);
@@ -32,6 +33,8 @@ class LodepngWrapper
     void apply_filter(void (*filter)(unsigned char* image, unsigned width, unsigned height, unsigned windowSize), unsigned windowSize);
     void apply_filter_resized(void (*filter)(unsigned char* imageOut, unsigned char* image, unsigned char* image2, unsigned width, unsigned height, unsigned windowSize, unsigned leftToRight), unsigned windowSize, unsigned leftToRight);
     void apply_filter_resized2(void (*filter)(unsigned char* imageOut, unsigned char* image, unsigned char* image2, unsigned width, unsigned height, unsigned windowSize, unsigned leftToRight), unsigned windowSize, unsigned leftToRight);
+    void crossCheck(void (*filter)(unsigned char *image1, unsigned char *image2, int threshold, unsigned char *outputImage, int imageSize));
+    void occlusion_fill(void (*filter)(unsigned char *image, unsigned char *outImage, int width, int height));
     unsigned resize_image(unsigned scalingFactor);
     unsigned resize_image2(unsigned scalingFactor2);
     unsigned get_width();
@@ -42,6 +45,9 @@ class LodepngWrapper
     unsigned char* grey_image = 0;
     unsigned char* resized_image = 0;
     unsigned char* depth_image = 0;
+
+    unsigned char* crossCheck_image = 0;
+    unsigned char* occlusion_fill_image = 0;
 
     unsigned char* image2 = 0;
     unsigned char* grey_image2 = 0;

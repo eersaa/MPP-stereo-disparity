@@ -29,6 +29,7 @@ target_link_libraries(phase2
   lodepng_wrapper
   utilities
   stopwatches
+  occlusion_fill
   )
 
 add_executable(phase3 phase3.cpp)
@@ -37,6 +38,7 @@ target_link_libraries(phase3
   lodepng_wrapper
   utilities
   stopwatches
+  occlusion_fill
   )
 
 add_executable(phase4 phase4.cpp)
@@ -45,4 +47,5 @@ target_link_libraries(phase4
   lodepng_wrapper
   utilities
   stopwatches
+  occlusion_fill
   )

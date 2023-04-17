@@ -67,6 +67,35 @@
             return (int) error;
         }
     };
+
+    struct CrosscheckImage : public IProgram
+    {
+        int run() override
+        {
+
+            int imWidth = img0.get_width() / scaling_factor;
+            int imHeight = img0.get_height() / scaling_factor;
+
+            img0.crossCheck(crossCheckTwoImages);
+            unsigned error = img0.save_image("../../output-img/im_cc.png", 8, imWidth, imHeight, 0);
+            return (int) error;
+        }
+    };
+
+    struct OcclusionFilterImage : public IProgram
+    {
+        int run() override
+        {
+            unsigned error = 0;
+            img0.occlusion_fill(fillZeroPixels);
+
+            int imWidth = img0.get_width() / scaling_factor;
+            int imHeight = img0.get_height() / scaling_factor;
+
+            error = img0.save_image("../../output-img/im_of.png", 8, imWidth, imHeight, 0);
+            return (int) error;
+        }
+    };
     
 
 int main()
@@ -86,6 +115,9 @@ int main()
     TransformToGreyscale transformToGreyscale;
     SaveGreyscaleImage saveGreyscaleImage;
     FilterResizedImage filterResizedImage;
+    CrosscheckImage crosscheckImage;
+    OcclusionFilterImage occlusionFilterImage;
+
 
     int result = Program_sw.runProgram(loadImage);
     std::cout << "Load image return result: " << result << std::endl;
@@ -108,7 +140,15 @@ int main()
     std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
     result = Program_sw.runProgram(filterResizedImage);
-    std::cout << "Clone, filter and save resized image return result: " << result << std::endl;
+    std::cout << "ZNCC filter and save resized images return result: " << result << std::endl;
+    std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
+
+    result = Program_sw.runProgram(crosscheckImage);
+    std::cout << "crosscheck and save resized image return result: " << result << std::endl;
+    std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
+
+    result = Program_sw.runProgram(occlusionFilterImage);
+    std::cout << "Occlusion fill and save resized image return result: " << result << std::endl;
     std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
     sw.saveEndPoint();

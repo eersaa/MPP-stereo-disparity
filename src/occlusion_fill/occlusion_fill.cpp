@@ -31,7 +31,7 @@ int getNearestFillPixelValue(int pixel_index, unsigned char *image, int width, i
     return fillPixelValue;
 }
 
-void fillZeroPixels(unsigned char *image, int width, int height)
+void fillZeroPixels(unsigned char *image, unsigned char *outImage, int width, int height)
 {
     unsigned char *outputImage = (unsigned char *)malloc(sizeof(unsigned char) * width * height);
 
@@ -45,6 +45,7 @@ void fillZeroPixels(unsigned char *image, int width, int height)
         *(image + pixel_index) = *(outputImage + pixel_index);
     }
 
+    outImage = outputImage;
     free(outputImage);
 }
 
