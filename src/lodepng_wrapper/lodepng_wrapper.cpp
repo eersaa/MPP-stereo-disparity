@@ -91,6 +91,7 @@ unsigned LodepngWrapper::save_image(const char* filename, int savedImageID, int 
 
     unsigned char* savedImage = 0;
     savedImage = (unsigned char*)malloc(imHeight * imWidth);
+
     switch (savedImageID)
     {
     case 0:
@@ -119,6 +120,9 @@ unsigned LodepngWrapper::save_image(const char* filename, int savedImageID, int 
         break;
     case 8:
         savedImage = crossCheck_image;
+        break;
+    case 9:
+        savedImage = occlusion_fill_image;
         break;
     }
 
@@ -274,7 +278,7 @@ void LodepngWrapper::apply_filter_resized2(void (*filter)(unsigned char* imageOu
 void LodepngWrapper::crossCheck(void (*filter)(unsigned char *image1, unsigned char *image2, int threshold, unsigned char *outputImage, int imageSize))
 {
     crossCheck_image = (unsigned char*)malloc(resized_width * resized_height);
-    filter(depth_image, depth_image2, 27, crossCheck_image, (resized_width * resized_height));
+    filter(depth_image, depth_image2, 50, crossCheck_image, (resized_width * resized_height));
 }
 
 void LodepngWrapper::occlusion_fill(void (*filter)(unsigned char *image, unsigned char *outImage, int width, int height))

@@ -92,7 +92,7 @@
             int imWidth = img0.get_width() / scaling_factor;
             int imHeight = img0.get_height() / scaling_factor;
 
-            error = img0.save_image("../../output-img/im_of.png", 8, imWidth, imHeight, 0);
+            error = img0.save_image("../../output-img/im_of.png", 9, imWidth, imHeight, 0);
             return (int) error;
         }
     };
