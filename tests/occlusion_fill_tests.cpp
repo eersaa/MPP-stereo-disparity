@@ -320,6 +320,15 @@ TEST(FillZeroPixels1x3ImageTests, ShouldReturnAccessedPixelCountOf2)
     ASSERT_THAT(fillZeroPixels(image, width, height), Eq(2));
 }
 
+TEST(FillZeroPixels1x3ImageTests, ShouldKeepExistingPixelValues)
+{
+    unsigned char image[3] = {1, 2, 3};
+    int width = 3;
+    int height = 1;
+    fillZeroPixels(image, width, height);
+    ASSERT_THAT(image, ElementsAre(1, 2, 3));
+}
+
 TEST(FillZeroPixels4x3ImageTests, ShouldFillAllZeroPixelsWithNearestNonZeroPixel)
 {
     unsigned char image[12] = {10, 0, 0, 12, 11, 0, 0, 0, 12, 0, 0, 0};

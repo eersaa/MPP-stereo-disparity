@@ -43,6 +43,10 @@ int fillZeroPixels(unsigned char *image, int width, int height)
             *(outputImage + pixel_index) = getNearestFillPixelValue(pixel_index, image, width, height);
             accessedPixelCount++;
         }
+        else
+        {
+            *(outputImage + pixel_index) = *(image + pixel_index);
+        }
     }
 
     for (int pixel_index = 0; pixel_index < width * height; pixel_index++)
