@@ -1,5 +1,6 @@
 #include "utils.h"
 #include <math.h>
+#include <omp.h>
 
 
 int printPlatformProfile(bool print_extras)
@@ -418,6 +419,159 @@ void ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* image, unsigne
   // Free the memory
   free(imageCopy);
 }
+
+void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* image, unsigned char* image2, unsigned width, unsigned height, unsigned windowSize, unsigned leftToRight) {
+  unsigned char* imageCopy = (unsigned char*)malloc(sizeof(unsigned char) * width * height);
+
+  float* avgMat = (float*)malloc(sizeof(float) * width * height);
+  float* avgMat2 = (float*)malloc(sizeof(float) * width * height);
+
+  float* stdMat = (float*)malloc(sizeof(float) * width * height);
+  float* stdMat2 = (float*)malloc(sizeof(float) * width * height);
+
+  int windowSizeHalf = windowSize / 2;
+
+  float zncc = 0;
+  int minDisp = 0;
+  int maxDisp = 65;
+  int dispRange = maxDisp - minDisp;
+  int d = 0;
+  int x2r = 0;
+
+  #pragma omp parallel for
+  // Loop through the image
+  for (unsigned y = 0; y < height; y++) {
+    for (unsigned x = 0; x < width; x++) {
+      float sum = 0;
+      float sum2 = 0;
+      int count = 0;
+
+      zncc = 0;
+
+        // Loop through the window to get the average value
+        for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
+          for (int j = -windowSizeHalf; j <= windowSizeHalf; j++) {
+            int x2 = x + j;
+            int y2 = y + i;
+
+            // Check that the pixel is inside the image
+            if (x2 >= 0 && x2 < (int)width && x2r >= 0 && x2r < (int)width && y2 >= 0 && y2 < (int)height) {
+              sum += image[y2 * width + x2];
+              sum2 += image2[y2 * width + x2];
+
+              count++;
+            }
+          }
+        }
+
+        if (count == 0) {
+          count = 1;
+        }
+
+        float avg = sum / count;
+        float avg2 = sum2 / count;
+
+        avgMat[y * width + x] = avg;
+        avgMat2[y * width + x] = avg2;
+
+        count = 0;
+        sum = 0;
+        sum2 = 0;
+        
+        // Loop through the window to get the standard deviation
+        for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
+          for (int j = -windowSizeHalf; j <= windowSizeHalf; j++) {
+            int x2 = x + j;
+            int y2 = y + i;
+
+            // Check that the pixel is inside the image
+            if (x2 >= 0 && x2 < (int)width && x2r >= 0 && x2r < (int)width && y2 >= 0 && y2 < (int)height) {
+              sum += pow((image[y2 * width + x2] - avg), 2);
+              sum2 += pow((image2[y2 * width + x2] - avg2), 2);
+
+              count++;
+            }
+          }
+        }
+        float std = pow(sum, 0.5);
+        float std2 = pow(sum2, 0.5);
+
+        stdMat[y * width + x] = std;
+        stdMat2[y * width + x] = std2;
+
+        count = 0;
+        sum = 0;
+
+    }
+  }
+
+
+  float znccVal = 0;
+  int x2mr = 0;
+
+  for (unsigned y = 0; y < height; y++) {
+    for (unsigned x = 0; x < width; x++) {
+      
+      zncc = 0;
+
+      for (d = minDisp; d < maxDisp; d++) {
+        int sum = 0;
+        int count = 0;
+
+          // Loop through the window to get the ZNCC value
+          for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
+            for (int j = -windowSizeHalf; j <= windowSizeHalf; j++) {
+              int x2 = x + j;
+              int y2 = y + i;
+
+              if (leftToRight == 1) {
+                x2r = x2 - d;
+                x2mr = x - d;
+              }
+              else {
+                x2r = x2 + d;
+                x2mr = x + d;
+              }
+
+              // Check that the pixel is inside the image
+              if (x2 >= 0 && x2 < (int)width && x2r >= 0 && x2r < (int)width && y2 >= 0 && y2 < (int)height && x2mr >= 0 && x2mr < (int)width) {
+                sum += (image[y2 * width + x2] - avgMat[y * width + x]) * (image2[y2 * width + x2r] - avgMat2[y * width + x2mr]);
+
+                count++;
+              }
+            }
+          }
+
+          if (leftToRight == 1) {
+            x2mr = x - d;
+          }
+          else {
+            x2mr = x + d;
+          }
+
+          if (x2mr >= 0 && x2mr < (int)width) {
+                znccVal = sum / (stdMat[y * width + x] * stdMat2[y * width + x2mr]);
+              }
+          
+          
+          if (znccVal > zncc) {
+            zncc = znccVal;
+            imageCopy[y * width + x] = (255*abs(d))/dispRange;
+          }
+
+        }
+      
+      // Set the pixel value
+    }
+  }
+
+  // Copy the image back
+  memcpy(imageOut, imageCopy, sizeof(unsigned char) * width * height);
+
+  // Free the memory
+  free(imageCopy);
+}
+
 bool differenceIsOverThreshold(unsigned char pixel1, unsigned char pixel2, int threshold)
 {
     return abs(pixel1 - pixel2) > threshold;
