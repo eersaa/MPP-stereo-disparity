@@ -1,6 +1,8 @@
 #include "phase2.h"
 
     lodepng_wrapper::LodepngWrapper img0;
+    lodepng_wrapper::LodepngWrapper img1;
+    lodepng_wrapper::LodepngWrapper combinedImage;
 
     int scaling_factor = 4;
 
@@ -9,7 +11,7 @@
         int run() override
         {
             unsigned error = img0.load_image("../../source-img/im0.png");
-            error = img0.load_image2("../../source-img/im1.png");
+            error = img1.load_image("../../source-img/im1.png");
             return (int) error;
         }
     };
@@ -19,7 +21,7 @@
         int run() override
         {
             unsigned error = img0.resize_image(scaling_factor);
-            error = img0.resize_image2(scaling_factor);
+            error = img1.resize_image(scaling_factor);
             return (int) error;
         }
     };
@@ -29,7 +31,7 @@
         int run() override
         {
             unsigned error = img0.transform_to_grayscale();
-            error = img0.transform_to_grayscale2();
+            error = img1.transform_to_grayscale();
             return (int) error;
         }
     };
@@ -38,8 +40,8 @@
     {
         int run() override
         {
-            unsigned error = img0.save_greyimage("../../output-img/im0_grey.png");
-            error = img0.save_greyimage2("../../output-img/im1_grey.png");
+            unsigned error = img0.save_image("../../output-img/im0_grey.png");
+            error = img1.save_image("../../output-img/im1_grey.png");
             return (int) error;
         }
     };
@@ -48,23 +50,46 @@
     {
         int run() override
         {
-            unsigned error = img0.save_Resizedimage("../../output-img/im0_grey_resized.png");
-            error = img0.save_Resizedimage2("../../output-img/im1_grey_resized.png");
+            unsigned error = img0.save_image("../../output-img/im0_grey_resized.png");
+            error = img1.save_image("../../output-img/im1_grey_resized.png");
             return (int) error;
         }
     };
 
-    struct FilterResizedImage : public IProgram
+    struct ZNCCResizedImage : public IProgram
     {
         int run() override
         {
-            img0.apply_filter_resized(ZNCCFilterOptimizedC, 9, 1);
-            unsigned error = img0.save_depthimage("../../output-img/im0_grf.png");
+            unsigned char * t_img0 = (unsigned char*)malloc(img0.get_width() * img0.get_height());
 
-            img0.apply_filter_resized2(ZNCCFilterOptimizedC, 9, 2);
-            error = img0.save_depthimage2("../../output-img/im1_grf.png");
+            unsigned char * t_img1 = (unsigned char*)malloc(img1.get_width() *
+                                                            img1.get_height());
 
-            return (int) error;
+            img0.clone_image(t_img0);
+            img1.clone_image(t_img1);
+            
+            unsigned char *t_leftToRightImage = (unsigned char*)malloc(img0.get_width() *
+                                                            img0.get_height());
+
+            unsigned char *t_rightToLeftImage = (unsigned char*)malloc(img0.get_width() *
+                                                            img0.get_height());
+
+            // run the ZNCC
+            ZNCCFilterOptimizedC(t_leftToRightImage, t_img0, t_img1, img0.get_width(), img0.get_height(), 9, 1);
+            ZNCCFilterOptimizedC(t_rightToLeftImage, t_img1, t_img0, img0.get_width(), img0.get_height(), 9, 2);
+
+            img0.set_image(t_leftToRightImage, img0.get_width(), img0.get_height(), GREY_CHANNELS);
+            img1.set_image(t_rightToLeftImage, img1.get_width(), img1.get_height(), GREY_CHANNELS);
+            
+            img0.save_image("../../output-img/im0_grey_resized_zncc.png");
+            img1.save_image("../../output-img/im1_grey_resized_zncc.png");
+            
+            free(t_img0);
+            free(t_img1);
+            free(t_leftToRightImage);
+            free(t_rightToLeftImage);
+
+            return 0;
         }
     };
 
@@ -72,12 +97,23 @@
     {
         int run() override
         {
+            unsigned char * t_img0 = (unsigned char*)malloc(img0.get_width() * img0.get_height());
+                                                            
+            unsigned char * t_img1 = (unsigned char*)malloc(img1.get_width() * img1.get_height());
 
-            int imWidth = img0.get_width() / scaling_factor;
-            int imHeight = img0.get_height() / scaling_factor;
+            unsigned char * t_combinedImg = (unsigned char*)malloc(img1.get_width() * img1.get_height());
 
-            img0.crossCheck(crossCheckTwoImages);
-            unsigned error = img0.save_image("../../output-img/im_cc.png", 8, imWidth, imHeight, 0);
+            img0.clone_image(t_img0);
+            img1.clone_image(t_img1);
+
+            crossCheckTwoImages(t_img0, t_img1, 50, t_combinedImg, img0.get_width() * img0.get_height());
+            combinedImage.set_image(t_combinedImg, img0.get_width(), img0.get_height(), GREY_CHANNELS);
+
+            unsigned error = combinedImage.save_image("../../output-img/im_cc.png");
+            free(t_img0);
+            free(t_img1);
+            free(t_combinedImg);
+
             return (int) error;
         }
     };
@@ -88,13 +124,10 @@
         {
             unsigned error = 0;
 
-            img0.occlusion_fill(fillZeroPixels);
+            combinedImage.occlusion_fill(fillZeroPixels);
             //img0.occlusion_fill(occFillOptimizedC);
 
-            int imWidth = img0.get_width() / scaling_factor;
-            int imHeight = img0.get_height() / scaling_factor;
-
-            error = img0.save_image("../../output-img/im_of.png", 9, imWidth, imHeight, 0);
+            error = combinedImage.save_image("../../output-img/im_of.png");
             return (int) error;
         }
     };
@@ -116,7 +149,7 @@ int main()
     
     TransformToGreyscale transformToGreyscale;
     SaveGreyscaleImage saveGreyscaleImage;
-    FilterResizedImage filterResizedImage;
+    ZNCCResizedImage ZNCCResizedImage;
     CrosscheckImage crosscheckImage;
     OcclusionFilterImage occlusionFilterImage;
 
@@ -141,7 +174,7 @@ int main()
     std::cout << "Save resized image return result: " << result << std::endl;
     std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
-    result = Program_sw.runProgram(filterResizedImage);
+    result = Program_sw.runProgram(ZNCCResizedImage);
     std::cout << "ZNCC filter and save resized images return result: " << result << std::endl;
     std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
