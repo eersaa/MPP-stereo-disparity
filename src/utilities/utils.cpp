@@ -440,6 +440,8 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* image, uns
   int dispRange = maxDisp - minDisp;
 
   double start = omp_get_wtime();
+
+  #pragma omp parallel for  
   // Loop through the image
   for (unsigned y = 0; y < height; y++) {
     for (unsigned x = 0; x < width; x++) {
