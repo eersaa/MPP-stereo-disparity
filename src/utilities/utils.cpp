@@ -439,8 +439,6 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* image, uns
   int maxDisp = 65;
   int dispRange = maxDisp - minDisp;
 
-  double start = omp_get_wtime();
-
   #pragma omp parallel for  
   // Loop through the image
   for (unsigned y = 0; y < height; y++) {
@@ -486,7 +484,8 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* image, uns
             int y2 = y + i;
 
             // Check that the pixel is inside the image
-            if (x2 >= 0 && x2 < (int)width && y2 >= 0 && y2 < (int)height) {
+            if (x2 >= 0 && x2 < (int)width && y2 >= 0 && y2 < (int)height) 
+            {
               sum += pow((image[y2 * width + x2] - avg), 2);
               sum2 += pow((image2[y2 * width + x2] - avg2), 2);
 
@@ -506,8 +505,6 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* image, uns
     }
   }
 
-  double mid = omp_get_wtime();
-  
 
   #pragma omp parallel
   {
@@ -543,7 +540,8 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* image, uns
               if (x2 >= 0 && x2 < (int)width 
                 && x2r >= 0 && x2r < (int)width 
                 && y2 >= 0 && y2 < (int)height 
-                && x2mr >= 0 && x2mr < (int)width) {
+                && x2mr >= 0 && x2mr < (int)width) 
+                {
                 sum += (image[y2 * width + x2] - avgMat[y * width + x]) 
                       * (image2[y2 * width + x2r] - avgMat2[y * width + x2mr]);
               }
@@ -572,8 +570,6 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* image, uns
   }
   }
 
-  double end = omp_get_wtime();
-
   // Copy the image back
   memcpy(imageOut, imageCopy, sizeof(unsigned char) * width * height);
 
@@ -583,10 +579,6 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* image, uns
   free(avgMat2);
   free(stdMat);
   free(stdMat2);
-
-  printf("Total time taken: %f\n", end - start);
-  printf("First loop time taken: %f\n", mid - start);
-  printf("Second loop time taken: %f\n", end - mid);
 
 }
 
