@@ -418,6 +418,10 @@ void ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* image, unsigne
 
   // Free the memory
   free(imageCopy);
+  free(avgMat);
+  free(avgMat2);
+  free(stdMat);
+  free(stdMat2);
 }
 
 void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* image, unsigned char* image2, unsigned width, unsigned height, unsigned windowSize, unsigned leftToRight) {
@@ -438,7 +442,7 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* image, uns
   int d = 0;
   int x2r = 0;
 
-  #pragma omp parallel for
+  double start = omp_get_wtime();
   // Loop through the image
   for (unsigned y = 0; y < height; y++) {
     for (unsigned x = 0; x < width; x++) {
@@ -505,6 +509,8 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* image, uns
     }
   }
 
+  double mid = omp_get_wtime();
+  
 
   float znccVal = 0;
   int x2mr = 0;
@@ -565,11 +571,18 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* image, uns
     }
   }
 
+  double end = omp_get_wtime();
+
   // Copy the image back
   memcpy(imageOut, imageCopy, sizeof(unsigned char) * width * height);
 
   // Free the memory
   free(imageCopy);
+  free(avgMat);
+  free(avgMat2);
+  free(stdMat);
+  free(stdMat2);
+
 }
 
 bool differenceIsOverThreshold(unsigned char pixel1, unsigned char pixel2, int threshold)
