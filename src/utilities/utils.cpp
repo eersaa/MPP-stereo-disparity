@@ -435,7 +435,6 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* image, uns
 
   int windowSizeHalf = windowSize / 2;
 
-  float zncc = 0;
   int minDisp = 0;
   int maxDisp = 65;
   int dispRange = maxDisp - minDisp;
@@ -447,8 +446,6 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* image, uns
       float sum = 0;
       float sum2 = 0;
       int count = 0;
-
-      zncc = 0;
 
         // Loop through the window to get the average value
         for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
@@ -520,7 +517,7 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* image, uns
   for (unsigned y = 0; y < height; y++) {
     for (unsigned x = 0; x < width; x++) {
       
-      zncc = 0;
+      double zncc = 0;
 
       for (int d = minDisp; d < maxDisp; d++) {
         int sum = 0;
