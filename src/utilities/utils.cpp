@@ -511,7 +511,6 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* image, uns
 
   double mid = omp_get_wtime();
   
-
   float znccVal = 0;
   int x2mr = 0;
 
@@ -582,6 +581,10 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* image, uns
   free(avgMat2);
   free(stdMat);
   free(stdMat2);
+
+  printf("Total time taken: %f\n", end - start);
+  printf("First loop time taken: %f\n", mid - start);
+  printf("Second loop time taken: %f\n", end - mid);
 
 }
 
