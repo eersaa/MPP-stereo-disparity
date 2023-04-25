@@ -523,7 +523,6 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* image, uns
 
       for (int d = minDisp; d < maxDisp; d++) {
         int sum = 0;
-        int count = 0;
 
           // Loop through the window to get the ZNCC value
           for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
@@ -547,8 +546,6 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* image, uns
                 && x2mr >= 0 && x2mr < (int)width) {
                 sum += (image[y2 * width + x2] - avgMat[y * width + x]) 
                       * (image2[y2 * width + x2r] - avgMat2[y * width + x2mr]);
-
-                count++;
               }
             }
           }
