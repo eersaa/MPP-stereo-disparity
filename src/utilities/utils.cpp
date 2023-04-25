@@ -439,8 +439,6 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* image, uns
   int minDisp = 0;
   int maxDisp = 65;
   int dispRange = maxDisp - minDisp;
-  int d = 0;
-  int x2r = 0;
 
   double start = omp_get_wtime();
   // Loop through the image
@@ -459,7 +457,7 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* image, uns
             int y2 = y + i;
 
             // Check that the pixel is inside the image
-            if (x2 >= 0 && x2 < (int)width && x2r >= 0 && x2r < (int)width && y2 >= 0 && y2 < (int)height) {
+            if (x2 >= 0 && x2 < (int)width && y2 >= 0 && y2 < (int)height) {
               sum += image[y2 * width + x2];
               sum2 += image2[y2 * width + x2];
 
@@ -489,7 +487,7 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* image, uns
             int y2 = y + i;
 
             // Check that the pixel is inside the image
-            if (x2 >= 0 && x2 < (int)width && x2r >= 0 && x2r < (int)width && y2 >= 0 && y2 < (int)height) {
+            if (x2 >= 0 && x2 < (int)width && y2 >= 0 && y2 < (int)height) {
               sum += pow((image[y2 * width + x2] - avg), 2);
               sum2 += pow((image2[y2 * width + x2] - avg2), 2);
 
@@ -511,16 +509,20 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* image, uns
 
   double mid = omp_get_wtime();
   
+
+  #pragma omp parallel
+  {
   float znccVal = 0;
   int x2mr = 0;
+  int x2r = 0;
 
-  #pragma omp parallel for private(znccVal, x2r, x2mr, d)
+  #pragma omp for
   for (unsigned y = 0; y < height; y++) {
     for (unsigned x = 0; x < width; x++) {
       
       zncc = 0;
 
-      for (d = minDisp; d < maxDisp; d++) {
+      for (int d = minDisp; d < maxDisp; d++) {
         int sum = 0;
         int count = 0;
 
@@ -571,6 +573,7 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* image, uns
 
       }
     }
+  }
   }
 
   double end = omp_get_wtime();
