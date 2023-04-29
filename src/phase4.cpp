@@ -29,7 +29,7 @@ public:
         inputBuffer = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
                                             width * height * 4 * sizeof(unsigned char), image, NULL);
         outputBuffer = clCreateBuffer(context, CL_MEM_WRITE_ONLY,
-                                            width * height * 4 * sizeof(unsigned char), NULL, NULL);
+                                            width * height * sizeof(unsigned char), NULL, NULL);
 
         cl_program prog = CreateProgramFromFile("kernels/grayscale.cl");
         CreateKernelFromProgram(prog, "grayscale_rgba");
@@ -46,7 +46,7 @@ public:
     void clone_image(unsigned char *dest, int width, int height)
     {
         clEnqueueReadBuffer(commandQueue, outputBuffer, CL_TRUE, 0,
-                    width * height * 4 * sizeof(unsigned char), dest, 0, NULL, NULL);
+                    width * height * sizeof(unsigned char), dest, 0, NULL, NULL);
     }
 
 private:
@@ -100,10 +100,10 @@ struct SaveGreyscaleImage : public IProgram
         unsigned height = img0.get_height();
         unsigned char *grayscale_image = (unsigned char *)malloc(width
                                                             * height 
-                                                            * 4 * sizeof(unsigned char));
+                                                            * sizeof(unsigned char));
 
         ocl_phase4.clone_image(grayscale_image, width, height);
-        img0.set_image(grayscale_image, width, height, 4);
+        img0.set_image(grayscale_image, width, height, GREY_CHANNELS);
         unsigned error = img0.save_image("../../output-img/im0_grey.png");
         // error = img1.save_image("../../output-img/im1_grey.png");
         free(grayscale_image);
