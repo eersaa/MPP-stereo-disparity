@@ -48,4 +48,6 @@ target_link_libraries(phase4
   utilities
   stopwatches
   occlusion_fill
+  opencl_base
+  compiler_flags
   )
