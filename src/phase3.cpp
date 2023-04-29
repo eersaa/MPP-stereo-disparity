@@ -1,4 +1,4 @@
-#include "phase2.h"
+#include "phase3.h"
 
     lodepng_wrapper::LodepngWrapper img0;
     lodepng_wrapper::LodepngWrapper img1;
