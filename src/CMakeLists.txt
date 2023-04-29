@@ -51,3 +51,12 @@ target_link_libraries(phase4
   opencl_base
   compiler_flags
   )
+
+# Copy all opencl kernels to the build directory
+add_custom_target(copy_kernels ALL
+  COMMAND ${CMAKE_COMMAND} -E copy_directory
+  ${CMAKE_CURRENT_SOURCE_DIR}/kernels
+  ${CMAKE_CURRENT_BINARY_DIR}/kernels
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/kernels
+  )
+add_dependencies(phase4 copy_kernels)
