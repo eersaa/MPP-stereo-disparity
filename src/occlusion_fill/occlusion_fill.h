@@ -3,8 +3,9 @@
 
 #include <math.h>
 
-int fillZeroPixels(unsigned char *image, int width, int height);
-int getNearestFillPixelValue(int pixel_index, unsigned char *image, int width, int height);
+void fillZeroPixels(unsigned char *image, unsigned char *outImage, int width, int height);
+void occFillOptimizedC(unsigned char *image, unsigned char *outImage, int width, int height);
+int getNearestFillPixelValue(int pixel_index, int pix_x, int pix_y, unsigned char *image, int width, int height);
 
 int pixelRow(int pixel_index, int width);
 int verDistance(int pixel_index, int row_index, int width);

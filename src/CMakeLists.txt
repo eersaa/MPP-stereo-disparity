@@ -22,3 +22,30 @@ target_link_libraries(phase1
   utilities
   stopwatches
   )
+
+add_executable(phase2 phase2.cpp)
+target_link_libraries(phase2
+  PRIVATE
+  lodepng_wrapper
+  utilities
+  stopwatches
+  occlusion_fill
+  )
+
+add_executable(phase3 phase3.cpp)
+target_link_libraries(phase3
+  PRIVATE
+  lodepng_wrapper
+  utilities
+  stopwatches
+  occlusion_fill
+  )
+
+add_executable(phase4 phase4.cpp)
+target_link_libraries(phase4
+  PRIVATE
+  lodepng_wrapper
+  utilities
+  stopwatches
+  occlusion_fill
+  )
