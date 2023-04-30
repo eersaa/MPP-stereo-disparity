@@ -103,6 +103,7 @@ void fillZeroPixels(unsigned char *image, unsigned char *outImage, int width, in
         }
         image = outImage;
     }
+    free(imageCopy);
 }
 
 void occFillOptimizedC(unsigned char *image, unsigned char *outImage, int width, int height)
