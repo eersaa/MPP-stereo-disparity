@@ -17,6 +17,7 @@ public:
     {
         clReleaseMemObject(inputBuffer);
         clReleaseMemObject(outputBuffer);
+        clReleaseMemObject(outputBufferResized);
     }
 
     void Run() override
@@ -59,8 +60,11 @@ public:
 
     void resize(int scale)
     {
+        _width = _width / scale;
+        _height = _height / scale;
+        
         outputBufferResized = clCreateBuffer(context, CL_MEM_WRITE_ONLY,
-                                            (_width * _height / scale) * sizeof(unsigned char), NULL, NULL);
+                                            (_width * _height) * sizeof(unsigned char), NULL, NULL);
 
         CreateKernelFromProgram(prog, "resize");
 
@@ -69,15 +73,13 @@ public:
         status = clSetKernelArg(GetKernel(1), 2, sizeof(cl_mem), (void *)&outputBufferResized);
 
         size_t global_work_size[2];
-        global_work_size[0] = {_width / scale * sizeof(unsigned char)};
-        global_work_size[1] = {_height / scale * sizeof(unsigned char)};
+        global_work_size[0] = {_width * sizeof(unsigned char)};
+        global_work_size[1] = {_height * sizeof(unsigned char)};
 
         clEnqueueNDRangeKernel(commandQueue, GetKernel(1), 2, NULL,
                             global_work_size, NULL, 0, NULL, NULL);
 
         isResized = true;
-        _width = _width / scale;
-        _height = _height / scale;
     }
 
     int get_width()
