@@ -1,10 +1,13 @@
-bool is_alpha_channel(int x) {
-    return x % 4 == 3;
-}
+__kernel void resize(int scale, __global unsigned char* input, __global unsigned char* output) {
+    int col = get_global_id(0);
+    int row = get_global_id(1);
+    int width = get_global_size(0);
+    int height = get_global_size(1);
+    int x = row * width + col;
+    int x2 = (row * scale) * width * scale + (col * scale);
 
-__kernel void shrink(__global unsigned char* input, __global unsigned char* output) {
-    int x = get_global_id(0);
-    output[x/4] = input[x];
+    output[x] = input[x2];
+    
 }
 
 __kernel void grayscale_rgba(__global unsigned char* input, __global unsigned char* output) {

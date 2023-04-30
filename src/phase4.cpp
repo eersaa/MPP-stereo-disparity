@@ -30,10 +30,10 @@ public:
         
         inputBuffer = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
                                             _width * _height * 4 * sizeof(unsigned char), image, NULL);
-        outputBuffer = clCreateBuffer(context, CL_MEM_WRITE_ONLY,
+        outputBuffer = clCreateBuffer(context, CL_MEM_READ_WRITE,
                                             _width * _height * sizeof(unsigned char), NULL, NULL);
 
-        cl_program prog = CreateProgramFromFile("kernels/grayscale.cl");
+        prog = CreateProgramFromFile("kernels/grayscale.cl");
         CreateKernelFromProgram(prog, "grayscale_rgba");
 
         clSetKernelArg(GetKernel(0), 0, sizeof(cl_mem), (void *)&inputBuffer);
@@ -47,8 +47,47 @@ public:
 
     void clone_image(unsigned char *dest)
     {
+        if (isResized)
+        {
+            clEnqueueReadBuffer(commandQueue, outputBufferResized, CL_TRUE, 0,
+                    _width * _height * sizeof(unsigned char), dest, 0, NULL, NULL);
+            return;
+        }
         clEnqueueReadBuffer(commandQueue, outputBuffer, CL_TRUE, 0,
                     _width * _height * sizeof(unsigned char), dest, 0, NULL, NULL);
+    }
+
+    void resize(int scale)
+    {
+        outputBufferResized = clCreateBuffer(context, CL_MEM_WRITE_ONLY,
+                                            (_width * _height / scale) * sizeof(unsigned char), NULL, NULL);
+
+        CreateKernelFromProgram(prog, "resize");
+
+        status = clSetKernelArg(GetKernel(1), 0, sizeof(scale), &scale);
+        status = clSetKernelArg(GetKernel(1), 1, sizeof(cl_mem), (void *)&outputBuffer);
+        status = clSetKernelArg(GetKernel(1), 2, sizeof(cl_mem), (void *)&outputBufferResized);
+
+        size_t global_work_size[2];
+        global_work_size[0] = {_width / scale * sizeof(unsigned char)};
+        global_work_size[1] = {_height / scale * sizeof(unsigned char)};
+
+        clEnqueueNDRangeKernel(commandQueue, GetKernel(1), 2, NULL,
+                            global_work_size, NULL, 0, NULL, NULL);
+
+        isResized = true;
+        _width = _width / scale;
+        _height = _height / scale;
+    }
+
+    int get_width()
+    {
+        return _width;
+    }
+
+    int get_height()
+    {
+        return _height;
     }
 
 private:
@@ -57,6 +96,13 @@ private:
 
     int _width;
     int _height;
+
+    cl_mem outputBufferResized;
+
+    cl_program prog;
+
+    int channels = 4;
+    bool isResized = false;
 };
 
 OCL_Phase4 ocl_phase4;
@@ -71,15 +117,14 @@ struct LoadImage : public IProgram
     }
 };
 
-// struct ResizeImage : public IProgram
-// {
-//     int run() override
-//     {
-//         unsigned error = img0.resize_image(scaling_factor);
-//         error = img1.resize_image(scaling_factor);
-//         return (int) error;
-//     }
-// };
+struct ResizeImage : public IProgram
+{
+    int run() override
+    {
+        ocl_phase4.resize(scaling_factor);
+        return 0;
+    }
+};
 
 struct TransformToGreyscale : public IProgram
 {
@@ -116,15 +161,24 @@ struct SaveGreyscaleImage : public IProgram
     }
 };
 
-// struct SaveResizedImage : public IProgram
-// {
-//     int run() override
-//     {
-//         unsigned error = img0.save_image("../../output-img/im0_grey_resized.png");
-//         error = img1.save_image("../../output-img/im1_grey_resized.png");
-//         return (int) error;
-//     }
-// };
+struct SaveResizedImage : public IProgram
+{
+    int run() override
+    {
+        unsigned width = ocl_phase4.get_width();
+        unsigned height = ocl_phase4.get_height();
+        unsigned char *resized_image = (unsigned char *)malloc(width
+                                                            * height 
+                                                            * sizeof(unsigned char));
+        
+        ocl_phase4.clone_image(resized_image);
+        img0.set_image(resized_image, width, height, GREY_CHANNELS);
+        unsigned error = img0.save_image("../../output-img/im0_grey_resized.png");
+        // error = img1.save_image("../../output-img/im1_grey_resized.png");
+        free(resized_image);
+        return (int) error;
+    }
+};
 
 // struct ZNCCResizedImage : public IProgram
 // {
@@ -214,8 +268,8 @@ int main()
     // Step 3
     ProgramStopwatch Program_sw(clock);
     LoadImage loadImage;
-    // ResizeImage resizeImage;
-    // SaveResizedImage saveResizedImage;
+    ResizeImage resizeImage;
+    SaveResizedImage saveResizedImage;
     
     TransformToGreyscale transformToGreyscale;
     SaveGreyscaleImage saveGreyscaleImage;
@@ -236,13 +290,13 @@ int main()
     std::cout << "Save greyscale image return result: " << result << std::endl;
     std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
-    // result = Program_sw.runProgram(resizeImage);
-    // std::cout << "Resize image return result: " << result << std::endl;
-    // std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
+    result = Program_sw.runProgram(resizeImage);
+    std::cout << "Resize image return result: " << result << std::endl;
+    std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
-    // result = Program_sw.runProgram(saveResizedImage);
-    // std::cout << "Save resized image return result: " << result << std::endl;
-    // std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
+    result = Program_sw.runProgram(saveResizedImage);
+    std::cout << "Save resized image return result: " << result << std::endl;
+    std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
     // result = Program_sw.runProgram(ZNCCResizedImage);
     // std::cout << "ZNCC filter and save resized images return result: " << result << std::endl;
