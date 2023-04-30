@@ -25,11 +25,13 @@ public:
 
     void Convert_RGBA_to_grayscale(unsigned char *image, int width, int height)
     {
-
+        _width = width;
+        _height = height;
+        
         inputBuffer = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
-                                            width * height * 4 * sizeof(unsigned char), image, NULL);
+                                            _width * _height * 4 * sizeof(unsigned char), image, NULL);
         outputBuffer = clCreateBuffer(context, CL_MEM_WRITE_ONLY,
-                                            width * height * sizeof(unsigned char), NULL, NULL);
+                                            _width * _height * sizeof(unsigned char), NULL, NULL);
 
         cl_program prog = CreateProgramFromFile("kernels/grayscale.cl");
         CreateKernelFromProgram(prog, "grayscale_rgba");
@@ -37,21 +39,24 @@ public:
         clSetKernelArg(GetKernel(0), 0, sizeof(cl_mem), (void *)&inputBuffer);
         clSetKernelArg(GetKernel(0), 1, sizeof(cl_mem), (void *)&outputBuffer);
 
-        size_t global_work_size[1] = {width * height * 4 * sizeof(unsigned char)};
+        size_t global_work_size[1] = {_width * _height * 4 * sizeof(unsigned char)};
         clEnqueueNDRangeKernel(commandQueue, GetKernel(0), 1, NULL,
                             global_work_size, NULL, 0, NULL, NULL);
 
     }
 
-    void clone_image(unsigned char *dest, int width, int height)
+    void clone_image(unsigned char *dest)
     {
         clEnqueueReadBuffer(commandQueue, outputBuffer, CL_TRUE, 0,
-                    width * height * sizeof(unsigned char), dest, 0, NULL, NULL);
+                    _width * _height * sizeof(unsigned char), dest, 0, NULL, NULL);
     }
 
 private:
     cl_mem inputBuffer;
     cl_mem outputBuffer;
+
+    int _width;
+    int _height;
 };
 
 OCL_Phase4 ocl_phase4;
@@ -102,7 +107,7 @@ struct SaveGreyscaleImage : public IProgram
                                                             * height 
                                                             * sizeof(unsigned char));
 
-        ocl_phase4.clone_image(grayscale_image, width, height);
+        ocl_phase4.clone_image(grayscale_image);
         img0.set_image(grayscale_image, width, height, GREY_CHANNELS);
         unsigned error = img0.save_image("../../output-img/im0_grey.png");
         // error = img1.save_image("../../output-img/im1_grey.png");
