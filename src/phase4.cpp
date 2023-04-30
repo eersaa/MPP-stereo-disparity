@@ -63,8 +63,8 @@ public:
         status = clSetKernelArg(GetKernel(1), 2, sizeof(cl_mem), (void *)&outputBuffer);
 
         size_t global_work_size[2];
-        global_work_size[0] = {_width * sizeof(unsigned char)};
-        global_work_size[1] = {_height * sizeof(unsigned char)};
+        global_work_size[0] = _width * sizeof(unsigned char);
+        global_work_size[1] = _height * sizeof(unsigned char);
 
         clEnqueueNDRangeKernel(commandQueue, GetKernel(1), 2, NULL,
                             global_work_size, NULL, 0, NULL, NULL);
