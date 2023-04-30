@@ -6,14 +6,14 @@ lodepng_wrapper::LodepngWrapper combinedImage;
 
 int scaling_factor = 4;
 
-class OCL_Phase4 : public OCL_Base
+class OCL_image : public OCL_Base
 {
 public:
-    OCL_Phase4() : OCL_Base()
+    OCL_image() : OCL_Base()
     {
     }
 
-    ~OCL_Phase4()
+    ~OCL_image()
     {
         clReleaseMemObject(outputBuffer);
     }
@@ -89,6 +89,25 @@ private:
     int _height;
 };
 
+class OCL_Phase4 : public OCL_Base
+{
+public:
+    OCL_Phase4()
+    {
+        img0.reset(new OCL_image());
+    }
+
+    ~OCL_Phase4()
+    {
+    }
+
+    void Run() override
+    {
+    }
+
+    std::unique_ptr<OCL_image> img0;
+};
+
 OCL_Phase4 ocl_phase4;
 
 struct LoadImage : public IProgram
@@ -105,7 +124,7 @@ struct ResizeImage : public IProgram
 {
     int run() override
     {
-        ocl_phase4.resize(scaling_factor);
+        ocl_phase4.img0->resize(scaling_factor);
         return 0;
     }
 };
@@ -119,7 +138,7 @@ struct TransformToGreyscale : public IProgram
         unsigned char *RGBA_image = (unsigned char *)malloc(width * height * 4 * sizeof(unsigned char));
 
         img0.clone_image(RGBA_image);
-        ocl_phase4.Convert_RGBA_to_grayscale(RGBA_image, width, height);
+        ocl_phase4.img0->Convert_RGBA_to_grayscale(RGBA_image, width, height);
 
         free(RGBA_image);
         return 0;
@@ -136,7 +155,7 @@ struct SaveGreyscaleImage : public IProgram
                                                             * height 
                                                             * sizeof(unsigned char));
 
-        ocl_phase4.clone_image(grayscale_image);
+        ocl_phase4.img0->clone_image(grayscale_image);
         img0.set_image(grayscale_image, width, height, GREY_CHANNELS);
         unsigned error = img0.save_image("../../output-img/im0_grey.png");
         // error = img1.save_image("../../output-img/im1_grey.png");
@@ -149,13 +168,13 @@ struct SaveResizedImage : public IProgram
 {
     int run() override
     {
-        unsigned width = ocl_phase4.get_width();
-        unsigned height = ocl_phase4.get_height();
+        unsigned width = ocl_phase4.img0->get_width();
+        unsigned height = ocl_phase4.img0->get_height();
         unsigned char *resized_image = (unsigned char *)malloc(width
                                                             * height 
                                                             * sizeof(unsigned char));
         
-        ocl_phase4.clone_image(resized_image);
+        ocl_phase4.img0->clone_image(resized_image);
         img0.set_image(resized_image, width, height, GREY_CHANNELS);
         unsigned error = img0.save_image("../../output-img/im0_grey_resized.png");
         // error = img1.save_image("../../output-img/im1_grey_resized.png");
