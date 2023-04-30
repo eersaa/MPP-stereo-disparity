@@ -15,9 +15,7 @@ public:
 
     ~OCL_Phase4()
     {
-        clReleaseMemObject(inputBuffer);
         clReleaseMemObject(outputBuffer);
-        clReleaseMemObject(outputBufferResized);
     }
 
     void Run() override
@@ -29,7 +27,7 @@ public:
         _width = width;
         _height = height;
         
-        inputBuffer = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+        cl_mem inputBuffer = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
                                             _width * _height * 4 * sizeof(unsigned char), image, NULL);
         outputBuffer = clCreateBuffer(context, CL_MEM_READ_WRITE,
                                             _width * _height * sizeof(unsigned char), NULL, NULL);
@@ -44,16 +42,11 @@ public:
         clEnqueueNDRangeKernel(commandQueue, GetKernel(0), 1, NULL,
                             global_work_size, NULL, 0, NULL, NULL);
 
+        clReleaseMemObject(inputBuffer);
     }
 
     void clone_image(unsigned char *dest)
     {
-        if (isResized)
-        {
-            clEnqueueReadBuffer(commandQueue, outputBufferResized, CL_TRUE, 0,
-                    _width * _height * sizeof(unsigned char), dest, 0, NULL, NULL);
-            return;
-        }
         clEnqueueReadBuffer(commandQueue, outputBuffer, CL_TRUE, 0,
                     _width * _height * sizeof(unsigned char), dest, 0, NULL, NULL);
     }
@@ -62,15 +55,12 @@ public:
     {
         _width = _width / scale;
         _height = _height / scale;
-        
-        outputBufferResized = clCreateBuffer(context, CL_MEM_WRITE_ONLY,
-                                            (_width * _height) * sizeof(unsigned char), NULL, NULL);
 
         CreateKernelFromProgram(prog, "resize");
 
         status = clSetKernelArg(GetKernel(1), 0, sizeof(scale), &scale);
         status = clSetKernelArg(GetKernel(1), 1, sizeof(cl_mem), (void *)&outputBuffer);
-        status = clSetKernelArg(GetKernel(1), 2, sizeof(cl_mem), (void *)&outputBufferResized);
+        status = clSetKernelArg(GetKernel(1), 2, sizeof(cl_mem), (void *)&outputBuffer);
 
         size_t global_work_size[2];
         global_work_size[0] = {_width * sizeof(unsigned char)};
@@ -78,8 +68,6 @@ public:
 
         clEnqueueNDRangeKernel(commandQueue, GetKernel(1), 2, NULL,
                             global_work_size, NULL, 0, NULL, NULL);
-
-        isResized = true;
     }
 
     int get_width()
@@ -93,18 +81,12 @@ public:
     }
 
 private:
-    cl_mem inputBuffer;
     cl_mem outputBuffer;
+    
+    cl_program prog;
 
     int _width;
     int _height;
-
-    cl_mem outputBufferResized;
-
-    cl_program prog;
-
-    int channels = 4;
-    bool isResized = false;
 };
 
 OCL_Phase4 ocl_phase4;
