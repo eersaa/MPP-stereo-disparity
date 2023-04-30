@@ -10,12 +10,12 @@ LodepngWrapper::LodepngWrapper()
 
 LodepngWrapper::~LodepngWrapper()
 {
-    free(image);
+    free(_image);
 }
 
 unsigned LodepngWrapper::load_image(const char* filename)
 {
-    unsigned error = lodepng_decode32_file(&image, &_width, &_height, filename);
+    unsigned error = lodepng_decode32_file(&_image, &_width, &_height, filename);
     if (error) std::cout << "decoder error " << error << ": " << lodepng_error_text(error) << std::endl;
     _imageIsGrayscaled = false;
     return error;
@@ -33,14 +33,14 @@ unsigned LodepngWrapper::save_image(const char* filename)
 }
 unsigned LodepngWrapper::save_RGBAimage(const char* filename)
 {
-    unsigned error = lodepng_encode_file(filename, image, _width, _height, LCT_RGBA, 8);
+    unsigned error = lodepng_encode_file(filename, _image, _width, _height, LCT_RGBA, 8);
     if (error) std::cout << "encoder error " << error << ": " << lodepng_error_text(error) << std::endl;
     return error;
 }
 
 unsigned LodepngWrapper::save_greyimage(const char* filename)
 {
-    unsigned error = lodepng_encode_file(filename, image, _width, _height, LCT_GREY, 8);
+    unsigned error = lodepng_encode_file(filename, _image, _width, _height, LCT_GREY, 8);
     if (error) std::cout << "encoder error " << error << ": " << lodepng_error_text(error) << std::endl;
     return error;
 }
@@ -52,16 +52,16 @@ unsigned LodepngWrapper::transform_to_grayscale()
 
     for (unsigned i = 0; i < _width * _height * 4; i += 4)
     {
-        unsigned char r = image[i];
-        unsigned char g = image[i + 1];
-        unsigned char b = image[i + 2];
+        unsigned char r = _image[i];
+        unsigned char g = _image[i + 1];
+        unsigned char b = _image[i + 2];
         unsigned char y = (unsigned char)(0.2126 * r + 0.7152 * g + 0.0722 * b);
         grey_image[i / 4] = y;
     }
 
     //reallocate image size and replace it with grey image
-    image = (unsigned char*)realloc(image, _width * _height);
-    memcpy(image, grey_image, _width * _height);
+    _image = (unsigned char*)realloc(_image, _width * _height);
+    memcpy(_image, grey_image, _width * _height);
     
     _imageIsGrayscaled = true;
 
@@ -73,10 +73,10 @@ unsigned LodepngWrapper::transform_to_grayscale()
 void LodepngWrapper::clone_image(unsigned char* dest)
 {
     if (_imageIsGrayscaled) {
-        memcpy(dest, image, _width * _height);
+        memcpy(dest, _image, _width * _height);
     }
     else {
-        memcpy(dest, image, _width * _height * 4);
+        memcpy(dest, _image, _width * _height * 4);
     }
 }
 
@@ -84,8 +84,8 @@ void LodepngWrapper::set_image(unsigned char* src, unsigned width, unsigned heig
 {
     this->_width = width;
     this->_height = height;
-    if (image != 0) {
-        free(image);
+    if (_image != 0) {
+        free(_image);
     }
 
     if (channels == GREY_CHANNELS) {
@@ -95,8 +95,8 @@ void LodepngWrapper::set_image(unsigned char* src, unsigned width, unsigned heig
         _imageIsGrayscaled = false;
     }
     
-    image = (unsigned char*)malloc(width * height * channels);
-    memcpy(image, src, width * height * channels);
+    _image = (unsigned char*)malloc(width * height * channels);
+    memcpy(_image, src, width * height * channels);
 }
 
 unsigned LodepngWrapper::resize_image(unsigned scalingFactor)
@@ -112,7 +112,7 @@ unsigned LodepngWrapper::resize_image(unsigned scalingFactor)
         unsigned int currow = 0;
         for (unsigned i = 0; i < (resized_width * resized_height); i++)
         {   
-            resized_image[i] = image[ind];
+            resized_image[i] = _image[ind];
             ind = ind + scalingFactor;
             if (ind >= (_width + (currow * _width))) {
                 currow = currow + scalingFactor;
@@ -120,8 +120,8 @@ unsigned LodepngWrapper::resize_image(unsigned scalingFactor)
             }
         }
 
-        image = (unsigned char*)realloc(image, resized_width * resized_height);
-        memcpy(image, resized_image, resized_width * resized_height);
+        _image = (unsigned char*)realloc(_image, resized_width * resized_height);
+        memcpy(_image, resized_image, resized_width * resized_height);
 
         _width = resized_width;
         _height = resized_height;
@@ -136,15 +136,15 @@ unsigned LodepngWrapper::resize_image(unsigned scalingFactor)
 
 void LodepngWrapper::apply_filter(void (*filter)(unsigned char* image, unsigned width, unsigned height, unsigned windowSize), unsigned windowSize)
 {
-    filter(image, _width, _height, windowSize);
+    filter(_image, _width, _height, windowSize);
 }
 
 void LodepngWrapper::occlusion_fill(void (*filter)(unsigned char *image, unsigned char *outImage, int width, int height))
 {
     if (_imageIsGrayscaled) {
         unsigned char *occlusion_fill_image = (unsigned char*)malloc(_width * _height);
-        filter(image, occlusion_fill_image, _width, _height);
-        memcpy(image, occlusion_fill_image, _width * _height);
+        filter(_image, occlusion_fill_image, _width, _height);
+        memcpy(_image, occlusion_fill_image, _width * _height);
         free(occlusion_fill_image);
     }
 }
