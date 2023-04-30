@@ -1,12 +1,8 @@
 #include "phase4.h"
 
-lodepng_wrapper::LodepngWrapper img0;
-lodepng_wrapper::LodepngWrapper img1;
-lodepng_wrapper::LodepngWrapper combinedImage;
-
 int scaling_factor = 4;
 
-class OCL_image : public OCL_Base
+class OCL_image : public OCL_Base, public lodepng_wrapper::LodepngWrapper
 {
 public:
     OCL_image() : OCL_Base()
@@ -22,13 +18,10 @@ public:
     {
     }
 
-    void Convert_RGBA_to_grayscale(unsigned char *image, int width, int height)
+    unsigned transform_to_grayscale() override
     {
-        _width = width;
-        _height = height;
-        
         cl_mem inputBuffer = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
-                                            _width * _height * 4 * sizeof(unsigned char), image, NULL);
+                                            _width * _height * 4 * sizeof(unsigned char), _image, NULL);
         outputBuffer = clCreateBuffer(context, CL_MEM_READ_WRITE,
                                             _width * _height * sizeof(unsigned char), NULL, NULL);
 
@@ -43,22 +36,26 @@ public:
                             global_work_size, NULL, 0, NULL, NULL);
 
         clReleaseMemObject(inputBuffer);
+
+        _imageIsGrayscaled = true;
+
+        return 0;
     }
 
-    void clone_image(unsigned char *dest)
+    void clone_image(unsigned char *dest) override
     {
         clEnqueueReadBuffer(commandQueue, outputBuffer, CL_TRUE, 0,
                     _width * _height * sizeof(unsigned char), dest, 0, NULL, NULL);
     }
 
-    void resize(int scale)
+    unsigned resize_image(unsigned scalingFactor) override
     {
-        _width = _width / scale;
-        _height = _height / scale;
+        _width = _width / scalingFactor;
+        _height = _height / scalingFactor;
 
         CreateKernelFromProgram(prog, "resize");
 
-        status = clSetKernelArg(GetKernel(1), 0, sizeof(scale), &scale);
+        status = clSetKernelArg(GetKernel(1), 0, sizeof(scalingFactor), &scalingFactor);
         status = clSetKernelArg(GetKernel(1), 1, sizeof(cl_mem), (void *)&outputBuffer);
         status = clSetKernelArg(GetKernel(1), 2, sizeof(cl_mem), (void *)&outputBuffer);
 
@@ -68,6 +65,21 @@ public:
 
         clEnqueueNDRangeKernel(commandQueue, GetKernel(1), 2, NULL,
                             global_work_size, NULL, 0, NULL, NULL);
+        return (unsigned)status;
+    }
+
+    unsigned save_image(const char* filename) override
+    {
+        if(_imageIsGrayscaled)
+        {
+            _image = (unsigned char *)realloc(_image, _width * _height * sizeof(unsigned char));
+            clone_image(_image);
+            return LodepngWrapper::save_image(filename);
+        }
+        else
+        {
+            return LodepngWrapper::save_image(filename);
+        }
     }
 
     int get_width()
@@ -84,9 +96,6 @@ private:
     cl_mem outputBuffer;
     
     cl_program prog;
-
-    int _width;
-    int _height;
 };
 
 class OCL_Phase4 : public OCL_Base
@@ -114,7 +123,7 @@ struct LoadImage : public IProgram
 {
     int run() override
     {
-        unsigned error = img0.load_image("../../source-img/im0.png");
+        unsigned error = ocl_phase4.img0->load_image("../../source-img/im0.png");
         // error = img1.load_image("../../source-img/im1.png");
         return (int) error;
     }
@@ -124,7 +133,7 @@ struct ResizeImage : public IProgram
 {
     int run() override
     {
-        ocl_phase4.img0->resize(scaling_factor);
+        ocl_phase4.img0->resize_image(scaling_factor);
         return 0;
     }
 };
@@ -133,14 +142,7 @@ struct TransformToGreyscale : public IProgram
 {
     int run() override
     {
-        unsigned width = img0.get_width();
-        unsigned height = img0.get_height();
-        unsigned char *RGBA_image = (unsigned char *)malloc(width * height * 4 * sizeof(unsigned char));
-
-        img0.clone_image(RGBA_image);
-        ocl_phase4.img0->Convert_RGBA_to_grayscale(RGBA_image, width, height);
-
-        free(RGBA_image);
+        ocl_phase4.img0->transform_to_grayscale();
         return 0;
     }
 };
@@ -149,17 +151,8 @@ struct SaveGreyscaleImage : public IProgram
 {
     int run() override
     {
-        unsigned width = img0.get_width();
-        unsigned height = img0.get_height();
-        unsigned char *grayscale_image = (unsigned char *)malloc(width
-                                                            * height 
-                                                            * sizeof(unsigned char));
-
-        ocl_phase4.img0->clone_image(grayscale_image);
-        img0.set_image(grayscale_image, width, height, GREY_CHANNELS);
-        unsigned error = img0.save_image("../../output-img/im0_grey.png");
+        unsigned error = ocl_phase4.img0->save_image("../../output-img/im0_grey.png");
         // error = img1.save_image("../../output-img/im1_grey.png");
-        free(grayscale_image);
         return (int) error;
     }
 };
@@ -168,17 +161,8 @@ struct SaveResizedImage : public IProgram
 {
     int run() override
     {
-        unsigned width = ocl_phase4.img0->get_width();
-        unsigned height = ocl_phase4.img0->get_height();
-        unsigned char *resized_image = (unsigned char *)malloc(width
-                                                            * height 
-                                                            * sizeof(unsigned char));
-        
-        ocl_phase4.img0->clone_image(resized_image);
-        img0.set_image(resized_image, width, height, GREY_CHANNELS);
-        unsigned error = img0.save_image("../../output-img/im0_grey_resized.png");
+        unsigned error = ocl_phase4.img0->save_image("../../output-img/im0_grey_resized.png");
         // error = img1.save_image("../../output-img/im1_grey_resized.png");
-        free(resized_image);
         return (int) error;
     }
 };
