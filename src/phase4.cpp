@@ -104,6 +104,7 @@ public:
     OCL_Phase4()
     {
         img0.reset(new OCL_image());
+        img1.reset(new OCL_image());
     }
 
     ~OCL_Phase4()
@@ -114,7 +115,13 @@ public:
     {
     }
 
+    void ZNCC()
+    {
+
+    }
+
     std::unique_ptr<OCL_image> img0;
+    std::unique_ptr<OCL_image> img1;
 };
 
 OCL_Phase4 ocl_phase4;
@@ -124,7 +131,7 @@ struct LoadImage : public IProgram
     int run() override
     {
         unsigned error = ocl_phase4.img0->load_image("../../source-img/im0.png");
-        // error = img1.load_image("../../source-img/im1.png");
+        error = ocl_phase4.img1->load_image("../../source-img/im1.png");
         return (int) error;
     }
 };
@@ -134,6 +141,7 @@ struct ResizeImage : public IProgram
     int run() override
     {
         ocl_phase4.img0->resize_image(scaling_factor);
+        ocl_phase4.img1->resize_image(scaling_factor);
         return 0;
     }
 };
@@ -143,6 +151,7 @@ struct TransformToGreyscale : public IProgram
     int run() override
     {
         ocl_phase4.img0->transform_to_grayscale();
+        ocl_phase4.img1->transform_to_grayscale();
         return 0;
     }
 };
@@ -152,7 +161,7 @@ struct SaveGreyscaleImage : public IProgram
     int run() override
     {
         unsigned error = ocl_phase4.img0->save_image("../../output-img/im0_grey.png");
-        // error = img1.save_image("../../output-img/im1_grey.png");
+        error = ocl_phase4.img1->save_image("../../output-img/im1_grey.png");
         return (int) error;
     }
 };
@@ -162,7 +171,7 @@ struct SaveResizedImage : public IProgram
     int run() override
     {
         unsigned error = ocl_phase4.img0->save_image("../../output-img/im0_grey_resized.png");
-        // error = img1.save_image("../../output-img/im1_grey_resized.png");
+        error = ocl_phase4.img1->save_image("../../output-img/im1_grey_resized.png");
         return (int) error;
     }
 };
