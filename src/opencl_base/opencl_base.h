@@ -24,13 +24,12 @@ public:
         return Kernels[index];
     }
 
-protected:
-    virtual void Run() = 0;
-
-    cl_int status;
-
     cl_context context;
     cl_command_queue commandQueue;
+
+protected:
+    void Run();
+    cl_int status;
 
 private:
     void Init();
