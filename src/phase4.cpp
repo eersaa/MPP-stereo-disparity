@@ -2,10 +2,11 @@
 
 int scaling_factor = 4;
 
-class OCL_image : public OCL_Base, public lodepng_wrapper::LodepngWrapper
+class OCL_image : public lodepng_wrapper::LodepngWrapper
 {
 public:
-    OCL_image() : OCL_Base()
+    OCL_image(std::unique_ptr<OCL_Base>& ocl_base)
+        : _ocl_base(ocl_base)
     {
     }
 
@@ -14,25 +15,18 @@ public:
         clReleaseMemObject(outputBuffer);
     }
 
-    void Run() override
-    {
-    }
-
     unsigned transform_to_grayscale() override
     {
-        cl_mem inputBuffer = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+        cl_mem inputBuffer = clCreateBuffer(_ocl_base->context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
                                             _width * _height * 4 * sizeof(unsigned char), _image, NULL);
-        outputBuffer = clCreateBuffer(context, CL_MEM_READ_WRITE,
+        outputBuffer = clCreateBuffer(_ocl_base->context, CL_MEM_READ_WRITE,
                                             _width * _height * sizeof(unsigned char), NULL, NULL);
 
-        prog = CreateProgramFromFile("kernels/grayscale.cl");
-        CreateKernelFromProgram(prog, "grayscale_rgba");
-
-        clSetKernelArg(GetKernel(0), 0, sizeof(cl_mem), (void *)&inputBuffer);
-        clSetKernelArg(GetKernel(0), 1, sizeof(cl_mem), (void *)&outputBuffer);
+        clSetKernelArg(_ocl_base->GetKernel(0), 0, sizeof(cl_mem), (void *)&inputBuffer);
+        clSetKernelArg(_ocl_base->GetKernel(0), 1, sizeof(cl_mem), (void *)&outputBuffer);
 
         size_t global_work_size[1] = {_width * _height * 4 * sizeof(unsigned char)};
-        clEnqueueNDRangeKernel(commandQueue, GetKernel(0), 1, NULL,
+        clEnqueueNDRangeKernel(_ocl_base->commandQueue, _ocl_base->GetKernel(0), 1, NULL,
                             global_work_size, NULL, 0, NULL, NULL);
 
         clReleaseMemObject(inputBuffer);
@@ -44,7 +38,7 @@ public:
 
     void clone_image(unsigned char *dest) override
     {
-        clEnqueueReadBuffer(commandQueue, outputBuffer, CL_TRUE, 0,
+        clEnqueueReadBuffer(_ocl_base->commandQueue, outputBuffer, CL_TRUE, 0,
                     _width * _height * sizeof(unsigned char), dest, 0, NULL, NULL);
     }
 
@@ -53,17 +47,16 @@ public:
         _width = _width / scalingFactor;
         _height = _height / scalingFactor;
 
-        CreateKernelFromProgram(prog, "resize");
-
-        status = clSetKernelArg(GetKernel(1), 0, sizeof(scalingFactor), &scalingFactor);
-        status = clSetKernelArg(GetKernel(1), 1, sizeof(cl_mem), (void *)&outputBuffer);
-        status = clSetKernelArg(GetKernel(1), 2, sizeof(cl_mem), (void *)&outputBuffer);
+        cl_int status;
+        status = clSetKernelArg(_ocl_base->GetKernel(1), 0, sizeof(scalingFactor), &scalingFactor);
+        status = clSetKernelArg(_ocl_base->GetKernel(1), 1, sizeof(cl_mem), (void *)&outputBuffer);
+        status = clSetKernelArg(_ocl_base->GetKernel(1), 2, sizeof(cl_mem), (void *)&outputBuffer);
 
         size_t global_work_size[2];
         global_work_size[0] = _width * sizeof(unsigned char);
         global_work_size[1] = _height * sizeof(unsigned char);
 
-        clEnqueueNDRangeKernel(commandQueue, GetKernel(1), 2, NULL,
+        clEnqueueNDRangeKernel(_ocl_base->commandQueue, _ocl_base->GetKernel(1), 2, NULL,
                             global_work_size, NULL, 0, NULL, NULL);
         return (unsigned)status;
     }
@@ -95,24 +88,35 @@ public:
 private:
     cl_mem outputBuffer;
     
-    cl_program prog;
+    std::unique_ptr<OCL_Base>& _ocl_base;
 };
 
-class OCL_Phase4 : public OCL_Base
+class OCL_Phase4
 {
 public:
     OCL_Phase4()
     {
-        img0.reset(new OCL_image());
-        img1.reset(new OCL_image());
+        _ocl_base.reset(new OCL_Base());
+        img0.reset(new OCL_image(_ocl_base));
+        img1.reset(new OCL_image(_ocl_base));
+        
+        init_programs();
+        init_kernels();
     }
 
     ~OCL_Phase4()
     {
     }
 
-    void Run() override
+    void init_programs()
     {
+        prog = _ocl_base->CreateProgramFromFile("kernels/grayscale.cl");
+    }
+
+    void init_kernels()
+    {
+        _ocl_base->CreateKernelFromProgram(prog, "grayscale_rgba");
+        _ocl_base->CreateKernelFromProgram(prog, "resize");
     }
 
     void ZNCC()
@@ -122,6 +126,12 @@ public:
 
     std::unique_ptr<OCL_image> img0;
     std::unique_ptr<OCL_image> img1;
+
+    std::unique_ptr<OCL_Base> _ocl_base;
+
+private:
+    cl_program prog;
+
 };
 
 OCL_Phase4 ocl_phase4;
