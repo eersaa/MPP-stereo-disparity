@@ -17,7 +17,7 @@ public:
     OCL_HelloWorld();
     ~OCL_HelloWorld();
 
-    void Run() override;
+    void Run();
 private:
 
     cl_mem inputBuffer;
