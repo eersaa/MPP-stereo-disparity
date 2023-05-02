@@ -8,7 +8,7 @@
 #define CL_TARGET_OPENCL_VERSION 120
 #endif
 #include <CL/opencl.h>
-
+#include <cstring>
 
 class OCL_Base
 {
