@@ -1,6 +1,52 @@
-#include "occlusion_fill.h"
+__kernel void cross_check(__global char* image1, __global char* image2, int threshold, __global char* outImage)
+{
+  int col = get_global_id(0);
+  int row = get_global_id(1);
+  int width = get_global_size(0);
+  int height = get_global_size(1);
+  int pixel_index = (row*width + col);
 
+  outputImage[pixel_index] = crossCheck(image1[pixel_index], image2[pixel_index], threshold);
+}
 
+__kernel void occlusion_fill(__global char* image, __global char* outImage, int windowSize)
+{
+  int col = get_global_id(0);
+  int row = get_global_id(1);
+  int width = get_global_size(0);
+  int height = get_global_size(1);
+  int pixel_index = (row*width + col);
+
+  if (image[pixel_index] == 0)
+  {
+    
+    outImage[pixel_index] = getNearestFillPixelValue(pixel_index, row, col, image, width, height);
+  }
+
+  else
+  {
+    outImage[pixel_index] = image[pixel_index];
+  }
+}
+
+//cross check functions
+bool differenceIsOverThreshold(unsigned char pixel1, unsigned char pixel2, int threshold)
+{
+    return abs(pixel1 - pixel2) > threshold;
+}
+
+unsigned char crossCheck(unsigned char pixel1, unsigned char pixel2, int threshold)
+{
+    unsigned char returnValue = 0;
+    if (!differenceIsOverThreshold(pixel1, pixel2, threshold))
+    {
+        returnValue = pixel1;
+    }
+
+    return returnValue;
+}
+
+//occlusion fill functions
 int getNearestFillPixelValue(int pixel_index, int pix_x, int pix_y, unsigned char *image, int width, int height)
 {
     int fillPixelValue = 0;
@@ -32,26 +78,6 @@ int getNearestFillPixelValue(int pixel_index, int pix_x, int pix_y, unsigned cha
     }
      
     return fillPixelValue;
-}
-
-void fillZeroPixels(unsigned char *image, unsigned char *outImage, int width, int height)
-{
-    int pixel_index = 0;
-    for (int y = 0; y < height; y++)
-    {
-        for (int x = 0; x < width; x++)
-        {
-            if (image[pixel_index] == 0)
-            {
-                outImage[pixel_index] = getNearestFillPixelValue(pixel_index, x, y, image, width, height);
-            }
-            else
-            {
-                outImage[pixel_index] = image[pixel_index];
-            }
-            pixel_index++;
-        }
-    }
 }
 
 int pixelRow(int pixel_index, int width)
