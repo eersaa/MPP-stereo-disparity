@@ -208,7 +208,7 @@ public:
                                         NULL,
                                         NULL);
 
-        int leftToRight = 0;
+        int leftToRight = 1;
         cl_int status;
         status = clSetKernelArg(_ocl_base->GetKernel(4), 0, sizeof(cl_mem), (void *)&img0->imageBuffer);
         status = clSetKernelArg(_ocl_base->GetKernel(4), 1, sizeof(cl_mem), (void *)&img1->imageBuffer);
