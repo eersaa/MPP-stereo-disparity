@@ -19,7 +19,6 @@ __kernel void occlusion_fill(__global char* image, __global char* outImage, int 
 
   if (image[pixel_index] == 0)
   {
-    
     outImage[pixel_index] = getNearestFillPixelValue(pixel_index, row, col, image, width, height);
   }
 
