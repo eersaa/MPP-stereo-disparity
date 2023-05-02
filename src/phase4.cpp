@@ -149,10 +149,11 @@ public:
         return _height;
     }
 
-private:
+
     cl_mem imageBuffer = nullptr;
     cl_mem averageBuffer = nullptr;
     cl_mem stdDeviationBuffer = nullptr;
+private:
     
     std::unique_ptr<OCL_Base>& _ocl_base;
 };
@@ -179,6 +180,7 @@ public:
         prog = _ocl_base->CreateProgramFromFile("kernels/grayscale.cl");
         prog_average = _ocl_base->CreateProgramFromFile("kernels/p4-average.cl");
         prog_stdDeviation = _ocl_base->CreateProgramFromFile("kernels/p4-standard-deviation.cl");
+        prog_ZNCC = _ocl_base->CreateProgramFromFile("kernels/p4-zncc-max.cl");
     }
 
     void init_kernels()
@@ -187,14 +189,63 @@ public:
         _ocl_base->CreateKernelFromProgram(prog, "resize");
         _ocl_base->CreateKernelFromProgram(prog_average, "average");
         _ocl_base->CreateKernelFromProgram(prog_stdDeviation, "standardDeviation");
+        _ocl_base->CreateKernelFromProgram(prog_ZNCC, "znccMax");
     }
 
-    void ZNCC(int windowSize)
+    unsigned ZNCC(int windowSize, int maxDisparity)
     {
         img0->average(windowSize);
         img1->average(windowSize);
         img0->standard_deviation(windowSize);
         img1->standard_deviation(windowSize);
+
+        int width = img0->get_width();
+        int height = img0->get_height();
+
+        cl_mem znccBuffer = clCreateBuffer(_ocl_base->context,
+                                        CL_MEM_READ_WRITE,
+                                        width * height * sizeof(unsigned char),
+                                        NULL,
+                                        NULL);
+
+        int leftToRight = 0;
+        cl_int status;
+        status = clSetKernelArg(_ocl_base->GetKernel(4), 0, sizeof(cl_mem), (void *)&img0->imageBuffer);
+        status = clSetKernelArg(_ocl_base->GetKernel(4), 1, sizeof(cl_mem), (void *)&img1->imageBuffer);
+        status = clSetKernelArg(_ocl_base->GetKernel(4), 2, sizeof(cl_mem), (void *)&img0->averageBuffer);
+        status = clSetKernelArg(_ocl_base->GetKernel(4), 3, sizeof(cl_mem), (void *)&img1->averageBuffer);
+        status = clSetKernelArg(_ocl_base->GetKernel(4), 4, sizeof(cl_mem), (void *)&img0->stdDeviationBuffer);
+        status = clSetKernelArg(_ocl_base->GetKernel(4), 5, sizeof(cl_mem), (void *)&img1->stdDeviationBuffer);
+        status = clSetKernelArg(_ocl_base->GetKernel(4), 6, sizeof(cl_mem), (void *)&znccBuffer);
+        status = clSetKernelArg(_ocl_base->GetKernel(4), 7, sizeof(int), &windowSize);
+        status = clSetKernelArg(_ocl_base->GetKernel(4), 8, sizeof(int), &leftToRight);
+        status = clSetKernelArg(_ocl_base->GetKernel(4), 9, sizeof(int), &maxDisparity);
+
+        size_t global_work_size[2];
+        global_work_size[0] = width * sizeof(unsigned char);
+        global_work_size[1] = height * sizeof(unsigned char);
+
+        status = clEnqueueNDRangeKernel(_ocl_base->commandQueue,
+                                        _ocl_base->GetKernel(4),
+                                        2,
+                                        NULL,
+                                        global_work_size,
+                                        NULL,
+                                        0,
+                                        NULL,
+                                        NULL);
+
+        status = clEnqueueCopyBuffer(_ocl_base->commandQueue,
+                                    znccBuffer,
+                                    img0->imageBuffer,
+                                    0,
+                                    0,
+                                    width * height * sizeof(unsigned char),
+                                    0,
+                                    NULL,
+                                    NULL);
+
+        return (unsigned)status;
     }
     
     std::unique_ptr<OCL_image> img0;
@@ -206,6 +257,7 @@ private:
     cl_program prog;
     cl_program prog_average;
     cl_program prog_stdDeviation;
+    cl_program prog_ZNCC;
 
 };
 
@@ -266,7 +318,11 @@ struct ZNCCResizedImage : public IProgram
     int run() override
     {
         int windowSize = 9;
-        ocl_phase4.ZNCC(windowSize);
+        int maxDisparity = 65;
+        ocl_phase4.ZNCC(windowSize, maxDisparity);
+
+        ocl_phase4.img0->save_image("../../output-img/im0_grey_resized_zncc.png");
+
         return 0;
     }
 };
