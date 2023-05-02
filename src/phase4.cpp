@@ -12,19 +12,20 @@ public:
 
     ~OCL_image()
     {
-        if(outputBuffer != nullptr) clReleaseMemObject(outputBuffer);
+        if(imageBuffer != nullptr) clReleaseMemObject(imageBuffer);
         if(averageBuffer != nullptr) clReleaseMemObject(averageBuffer);
+        if(stdDeviationBuffer != nullptr) clReleaseMemObject(stdDeviationBuffer);
     }
 
     unsigned transform_to_grayscale() override
     {
         cl_mem inputBuffer = clCreateBuffer(_ocl_base->context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
                                             _width * _height * 4 * sizeof(unsigned char), _image, NULL);
-        outputBuffer = clCreateBuffer(_ocl_base->context, CL_MEM_READ_WRITE,
+        imageBuffer = clCreateBuffer(_ocl_base->context, CL_MEM_READ_WRITE,
                                             _width * _height * sizeof(unsigned char), NULL, NULL);
 
         clSetKernelArg(_ocl_base->GetKernel(0), 0, sizeof(cl_mem), (void *)&inputBuffer);
-        clSetKernelArg(_ocl_base->GetKernel(0), 1, sizeof(cl_mem), (void *)&outputBuffer);
+        clSetKernelArg(_ocl_base->GetKernel(0), 1, sizeof(cl_mem), (void *)&imageBuffer);
 
         size_t global_work_size[1] = {_width * _height * 4 * sizeof(unsigned char)};
         clEnqueueNDRangeKernel(_ocl_base->commandQueue, _ocl_base->GetKernel(0), 1, NULL,
@@ -39,7 +40,7 @@ public:
 
     void clone_image(unsigned char *dest) override
     {
-        clEnqueueReadBuffer(_ocl_base->commandQueue, outputBuffer, CL_TRUE, 0,
+        clEnqueueReadBuffer(_ocl_base->commandQueue, imageBuffer, CL_TRUE, 0,
                     _width * _height * sizeof(unsigned char), dest, 0, NULL, NULL);
     }
 
@@ -50,8 +51,8 @@ public:
 
         cl_int status;
         status = clSetKernelArg(_ocl_base->GetKernel(1), 0, sizeof(scalingFactor), &scalingFactor);
-        status = clSetKernelArg(_ocl_base->GetKernel(1), 1, sizeof(cl_mem), (void *)&outputBuffer);
-        status = clSetKernelArg(_ocl_base->GetKernel(1), 2, sizeof(cl_mem), (void *)&outputBuffer);
+        status = clSetKernelArg(_ocl_base->GetKernel(1), 1, sizeof(cl_mem), (void *)&imageBuffer);
+        status = clSetKernelArg(_ocl_base->GetKernel(1), 2, sizeof(cl_mem), (void *)&imageBuffer);
 
         size_t global_work_size[2];
         global_work_size[0] = _width * sizeof(unsigned char);
@@ -71,7 +72,7 @@ public:
                                         NULL);
 
         cl_int status;
-        status = clSetKernelArg(_ocl_base->GetKernel(2), 0, sizeof(cl_mem), (void *)&outputBuffer);
+        status = clSetKernelArg(_ocl_base->GetKernel(2), 0, sizeof(cl_mem), (void *)&imageBuffer);
         status = clSetKernelArg(_ocl_base->GetKernel(2), 1, sizeof(cl_mem), (void *)&averageBuffer);
         status = clSetKernelArg(_ocl_base->GetKernel(2), 2, sizeof(int), &windowSize);
 
@@ -91,6 +92,38 @@ public:
 
         return (unsigned)status;
     }
+
+    unsigned standard_deviation(int windowSize)
+    {
+        stdDeviationBuffer = clCreateBuffer(_ocl_base->context,
+                                        CL_MEM_READ_WRITE,
+                                        _width * _height * sizeof(float),
+                                        NULL,
+                                        NULL);
+
+        cl_int status;
+        status = clSetKernelArg(_ocl_base->GetKernel(3), 0, sizeof(cl_mem), (void *)&imageBuffer);
+        status = clSetKernelArg(_ocl_base->GetKernel(3), 1, sizeof(cl_mem), (void *)&stdDeviationBuffer);
+        status = clSetKernelArg(_ocl_base->GetKernel(3), 2, sizeof(cl_mem), (void *)&averageBuffer);
+        status = clSetKernelArg(_ocl_base->GetKernel(3), 3, sizeof(int), &windowSize);
+
+        size_t global_work_size[2];
+        global_work_size[0] = _width * sizeof(unsigned char);
+        global_work_size[1] = _height * sizeof(unsigned char);
+
+        status = clEnqueueNDRangeKernel(_ocl_base->commandQueue,
+                                        _ocl_base->GetKernel(3),
+                                        2,
+                                        NULL,
+                                        global_work_size,
+                                        NULL,
+                                        0,
+                                        NULL,
+                                        NULL);
+
+        return (unsigned)status;
+    }
+
 
     unsigned save_image(const char* filename) override
     {
@@ -117,8 +150,9 @@ public:
     }
 
 private:
-    cl_mem outputBuffer = nullptr;
+    cl_mem imageBuffer = nullptr;
     cl_mem averageBuffer = nullptr;
+    cl_mem stdDeviationBuffer = nullptr;
     
     std::unique_ptr<OCL_Base>& _ocl_base;
 };
@@ -144,6 +178,7 @@ public:
     {
         prog = _ocl_base->CreateProgramFromFile("kernels/grayscale.cl");
         prog_average = _ocl_base->CreateProgramFromFile("kernels/p4-average.cl");
+        prog_stdDeviation = _ocl_base->CreateProgramFromFile("kernels/p4-standard-deviation.cl");
     }
 
     void init_kernels()
@@ -151,11 +186,15 @@ public:
         _ocl_base->CreateKernelFromProgram(prog, "grayscale_rgba");
         _ocl_base->CreateKernelFromProgram(prog, "resize");
         _ocl_base->CreateKernelFromProgram(prog_average, "average");
+        _ocl_base->CreateKernelFromProgram(prog_stdDeviation, "standardDeviation");
     }
 
     void ZNCC(int windowSize)
     {
         img0->average(windowSize);
+        img1->average(windowSize);
+        img0->standard_deviation(windowSize);
+        img1->standard_deviation(windowSize);
     }
     
     std::unique_ptr<OCL_image> img0;
@@ -166,6 +205,7 @@ public:
 private:
     cl_program prog;
     cl_program prog_average;
+    cl_program prog_stdDeviation;
 
 };
 
