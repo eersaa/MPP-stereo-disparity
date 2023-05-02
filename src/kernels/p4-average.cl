@@ -1,22 +1,24 @@
-__kernel void average(__global char* in, __global char* out, int windowSize, int height, int width)
+__kernel void average(__global char* image, __global float* out, int windowSize)
 {
-	int ind = get_global_id(0);
+    int col = get_global_id(0);
+    int row = get_global_id(1);
+    int width = get_global_size(0);
+    int height = get_global_size(1);
+
 
     int windowSizeHalf = windowSize / 2;
-    int x = ind % width;
-    int y = ind / width;
     int sum = 0;
     int count = 0;
 
     // Loop through the window to get the average value
         for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
           for (int j = -windowSizeHalf; j <= windowSizeHalf; j++) {
-            int x2 = x + j;
-            int y2 = y + i;
+            int x2 = col + j;
+            int y2 = row + i;
 
             // Check that the pixel is inside the image
             if (x2 >= 0 && x2 < (int)width && y2 >= 0 && y2 < (int)height) {
-              sum += in[y2 * width + x2];
+              sum += image[y2 * width + x2];
 
               count++;
             }
@@ -29,8 +31,6 @@ __kernel void average(__global char* in, __global char* out, int windowSize, int
 
         float avg = sum / count;
 
-        out[ind] = avg;
-
-
-	
+        out[row * width + col] = avg;
+  
 }
