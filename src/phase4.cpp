@@ -12,7 +12,8 @@ public:
 
     ~OCL_image()
     {
-        clReleaseMemObject(outputBuffer);
+        if(outputBuffer != nullptr) clReleaseMemObject(outputBuffer);
+        if(averageBuffer != nullptr) clReleaseMemObject(averageBuffer);
     }
 
     unsigned transform_to_grayscale() override
@@ -61,6 +62,36 @@ public:
         return (unsigned)status;
     }
 
+    unsigned average(int windowSize)
+    {
+        averageBuffer = clCreateBuffer(_ocl_base->context,
+                                        CL_MEM_READ_WRITE,
+                                        _width * _height * sizeof(float),
+                                        NULL,
+                                        NULL);
+
+        cl_int status;
+        status = clSetKernelArg(_ocl_base->GetKernel(2), 0, sizeof(cl_mem), (void *)&outputBuffer);
+        status = clSetKernelArg(_ocl_base->GetKernel(2), 1, sizeof(cl_mem), (void *)&averageBuffer);
+        status = clSetKernelArg(_ocl_base->GetKernel(2), 2, sizeof(int), &windowSize);
+
+        size_t global_work_size[2];
+        global_work_size[0] = _width * sizeof(unsigned char);
+        global_work_size[1] = _height * sizeof(unsigned char);
+
+        status = clEnqueueNDRangeKernel(_ocl_base->commandQueue,
+                                        _ocl_base->GetKernel(2),
+                                        2,
+                                        NULL,
+                                        global_work_size,
+                                        NULL,
+                                        0,
+                                        NULL,
+                                        NULL);
+
+        return (unsigned)status;
+    }
+
     unsigned save_image(const char* filename) override
     {
         if(_imageIsGrayscaled)
@@ -86,7 +117,8 @@ public:
     }
 
 private:
-    cl_mem outputBuffer;
+    cl_mem outputBuffer = nullptr;
+    cl_mem averageBuffer = nullptr;
     
     std::unique_ptr<OCL_Base>& _ocl_base;
 };
@@ -111,19 +143,21 @@ public:
     void init_programs()
     {
         prog = _ocl_base->CreateProgramFromFile("kernels/grayscale.cl");
+        prog_average = _ocl_base->CreateProgramFromFile("kernels/p4-average.cl");
     }
 
     void init_kernels()
     {
         _ocl_base->CreateKernelFromProgram(prog, "grayscale_rgba");
         _ocl_base->CreateKernelFromProgram(prog, "resize");
+        _ocl_base->CreateKernelFromProgram(prog_average, "average");
     }
 
-    void ZNCC()
+    void ZNCC(int windowSize)
     {
-
+        img0->average(windowSize);
     }
-
+    
     std::unique_ptr<OCL_image> img0;
     std::unique_ptr<OCL_image> img1;
 
@@ -131,6 +165,7 @@ public:
 
 private:
     cl_program prog;
+    cl_program prog_average;
 
 };
 
@@ -186,42 +221,15 @@ struct SaveResizedImage : public IProgram
     }
 };
 
-// struct ZNCCResizedImage : public IProgram
-// {
-//     int run() override
-//     {
-//         unsigned char * t_img0 = (unsigned char*)malloc(img0.get_width() * img0.get_height());
-
-//         unsigned char * t_img1 = (unsigned char*)malloc(img1.get_width() *
-//                                                         img1.get_height());
-
-//         img0.clone_image(t_img0);
-//         img1.clone_image(t_img1);
-        
-//         unsigned char *t_leftToRightImage = (unsigned char*)malloc(img0.get_width() *
-//                                                         img0.get_height());
-
-//         unsigned char *t_rightToLeftImage = (unsigned char*)malloc(img0.get_width() *
-//                                                         img0.get_height());
-
-//         // run the ZNCC
-//         OMP_ZNCCFilterOptimizedC(t_leftToRightImage, t_img0, t_img1, img0.get_width(), img0.get_height(), 9, 1);
-//         OMP_ZNCCFilterOptimizedC(t_rightToLeftImage, t_img1, t_img0, img0.get_width(), img0.get_height(), 9, 2);
-
-//         img0.set_image(t_leftToRightImage, img0.get_width(), img0.get_height(), GREY_CHANNELS);
-//         img1.set_image(t_rightToLeftImage, img1.get_width(), img1.get_height(), GREY_CHANNELS);
-        
-//         img0.save_image("../../output-img/im0_grey_resized_zncc.png");
-//         img1.save_image("../../output-img/im1_grey_resized_zncc.png");
-        
-//         free(t_img0);
-//         free(t_img1);
-//         free(t_leftToRightImage);
-//         free(t_rightToLeftImage);
-
-//         return 0;
-//     }
-// };
+struct ZNCCResizedImage : public IProgram
+{
+    int run() override
+    {
+        int windowSize = 9;
+        ocl_phase4.ZNCC(windowSize);
+        return 0;
+    }
+};
 
 // struct CrosscheckImage : public IProgram
 // {
@@ -279,7 +287,7 @@ int main()
     
     TransformToGreyscale transformToGreyscale;
     SaveGreyscaleImage saveGreyscaleImage;
-    // ZNCCResizedImage ZNCCResizedImage;
+    ZNCCResizedImage ZNCCResizedImage;
     // CrosscheckImage crosscheckImage;
     // OcclusionFilterImage occlusionFilterImage;
 
@@ -304,9 +312,9 @@ int main()
     std::cout << "Save resized image return result: " << result << std::endl;
     std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
-    // result = Program_sw.runProgram(ZNCCResizedImage);
-    // std::cout << "ZNCC filter and save resized images return result: " << result << std::endl;
-    // std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
+    result = Program_sw.runProgram(ZNCCResizedImage);
+    std::cout << "ZNCC filter and save resized images return result: " << result << std::endl;
+    std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
     // result = Program_sw.runProgram(crosscheckImage);
     // std::cout << "crosscheck and save resized image return result: " << result << std::endl;
