@@ -1,3 +1,36 @@
+//occlusion fill prototypes
+int getNearestFillPixelValue(int pixel_index, int pix_x, int pix_y, char *image, int width, int height);
+int pixelRow(int pixel_index, int width);
+int verDistance(int pixel_index, int row_index, int width);
+int pixelColumn(int pixel_index, int width);
+int horDistance(int pixel_index, int column_index, int width);
+int euclideanDistanceBetweenTwoPixels(int pixel1_index, int pixel2_x_index, int pixel2_y_index, int image_width);
+int getPixelValueFromImage(int pixel_x_index, int pixel_y_index, char *image, int width);
+bool pixelIsZero(int pixel_value);
+bool pixelDistanceIsLessThanLastMinimum(int distance, int last_min_distance);
+
+
+__kernel void occlusion_fill(__global char* image, __global char* outImage)
+{
+  int col = get_global_id(0);
+  int row = get_global_id(1);
+  int width = get_global_size(0);
+  int height = get_global_size(1);
+  int pixel_index = (row*width + col);
+
+    
+  if (image[pixel_index] == 0)
+  {
+    outImage[pixel_index] = getNearestFillPixelValue(pixel_index, col, row, image, width, height);
+  }
+
+  else
+  {
+    outImage[pixel_index] = image[pixel_index];
+  }
+  
+  //outImage[pixel_index] = image[pixel_index];
+}
 
 //occlusion fill functions
 int getNearestFillPixelValue(int pixel_index, int pix_x, int pix_y, char *image, int width, int height)
@@ -71,25 +104,4 @@ bool pixelIsZero(int pixel_value)
 bool pixelDistanceIsLessThanLastMinimum(int distance, int last_min_distance)
 {
     return distance < last_min_distance;
-}
-
-__kernel void occlusion_fill(__global char* image, __global char* outImage, int windowSize)
-{
-  int col = get_global_id(0);
-  int row = get_global_id(1);
-  int width = get_global_size(0);
-  int height = get_global_size(1);
-  int pixel_index = (row*width + col);
-
-  if (image[pixel_index] == 0)
-  {
-    outImage[pixel_index] = getNearestFillPixelValue(pixel_index, row, col, image, width, height);
-  }
-
-  else
-  {
-    outImage[pixel_index] = image[pixel_index];
-  }
-  
-  //outImage[pixel_index] = image[pixel_index];
 }

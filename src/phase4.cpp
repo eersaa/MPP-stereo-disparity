@@ -340,6 +340,48 @@ public:
 
         return (unsigned)status;
     }
+
+    unsigned occlusion_fill_image()
+    {
+        int width = img0->get_width();
+        int height = img0->get_height();
+
+        cl_mem ofBuffer = clCreateBuffer(_ocl_base->context,
+                                        CL_MEM_READ_WRITE,
+                                        width * height * sizeof(unsigned char),
+                                        NULL,
+                                        NULL);
+
+        cl_int status;
+        status = clSetKernelArg(_ocl_base->GetKernel(6), 0, sizeof(cl_mem), (void *)&img0->imageBuffer);
+        status = clSetKernelArg(_ocl_base->GetKernel(6), 1, sizeof(cl_mem), (void *)&ofBuffer);
+
+        size_t global_work_size[2];
+        global_work_size[0] = width * sizeof(unsigned char);
+        global_work_size[1] = height * sizeof(unsigned char);
+
+        status = clEnqueueNDRangeKernel(_ocl_base->commandQueue,
+                                        _ocl_base->GetKernel(6),
+                                        2,
+                                        NULL,
+                                        global_work_size,
+                                        NULL,
+                                        0,
+                                        NULL,
+                                        NULL);
+
+        status = clEnqueueCopyBuffer(_ocl_base->commandQueue,
+                                    ofBuffer,
+                                    img0->imageBuffer,
+                                    0,
+                                    0,
+                                    width * height * sizeof(unsigned char),
+                                    0,
+                                    NULL,
+                                    NULL);
+
+        return (unsigned)status;
+    }
     
     std::unique_ptr<OCL_image> img0;
     std::unique_ptr<OCL_image> img1;
@@ -435,19 +477,17 @@ struct CrosscheckImage : public IProgram
     }
 };
 
-// struct OcclusionFilterImage : public IProgram
-// {
-//     int run() override
-//     {
-//         unsigned error = 0;
+struct OcclusionFilterImage : public IProgram
+{
+    int run() override
+    {
+        ocl_phase4.occlusion_fill_image();
 
-//         combinedImage.occlusion_fill(fillZeroPixels);
-//         //img0.occlusion_fill(occFillOptimizedC);
+        ocl_phase4.img0->save_image("../../output-img/im0_grey_resized_zncc_cc_of.png");
 
-//         error = combinedImage.save_image("../../output-img/im_of.png");
-//         return (int) error;
-//     }
-// };
+        return 0;
+    }
+};
 
 
 int main()
@@ -468,7 +508,7 @@ int main()
     SaveGreyscaleImage saveGreyscaleImage;
     ZNCCResizedImage ZNCCResizedImage;
     CrosscheckImage crosscheckImage;
-    // OcclusionFilterImage occlusionFilterImage;
+    OcclusionFilterImage occlusionFilterImage;
 
 
     int result = Program_sw.runProgram(loadImage);
@@ -499,9 +539,9 @@ int main()
     std::cout << "crosscheck and save resized image return result: " << result << std::endl;
     std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
-    // result = Program_sw.runProgram(occlusionFilterImage);
-    // std::cout << "Occlusion fill and save resized image return result: " << result << std::endl;
-    // std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
+    result = Program_sw.runProgram(occlusionFilterImage);
+    std::cout << "Occlusion fill and save resized image return result: " << result << std::endl;
+    std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
     sw.saveEndPoint();
     std::cout << "Total elapsed time: " << sw.getElapsedTime() << " us\n" << std::endl;
