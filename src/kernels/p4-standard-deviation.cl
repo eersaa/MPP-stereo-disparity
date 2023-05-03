@@ -6,7 +6,7 @@ __kernel void standardDeviation(__global char *image, __global float *out,
   int height = get_global_size(1);
 
   int windowSizeHalf = windowSize / 2;
-  int sum = 0;
+  float sum = 0;
 
   for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
     for (int j = -windowSizeHalf; j <= windowSizeHalf; j++) {
@@ -20,7 +20,7 @@ __kernel void standardDeviation(__global char *image, __global float *out,
     }
   }
 
-  float std = pow(sum, 0.5);
+  float std = pow(sum, (float)0.5);
 
   out[row * width + col] = std;
 }
