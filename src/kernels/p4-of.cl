@@ -1,61 +1,6 @@
-__kernel void cross_check(__global char* image1, __global char* image2, int threshold, __global char* outImage)
-{
-  int col = get_global_id(0);
-  int row = get_global_id(1);
-  int width = get_global_size(0);
-  int height = get_global_size(1);
-  int pixel_index = (row*width + col);
-
-  //outImage[pixel_index] = crossCheck(image1[pixel_index], image2[pixel_index], threshold);
-
-  // test code without functions
-    unsigned char returnValue = 0;
-    if (!(abs(image1[pixel_index] - image2[pixel_index]) > threshold))
-    {
-        returnValue = image1[pixel_index];
-    }
-
-    outImage[pixel_index] = returnValue;
-}
-/*
-__kernel void occlusion_fill(__global char* image, __global char* outImage, int windowSize)
-{
-  int col = get_global_id(0);
-  int row = get_global_id(1);
-  int width = get_global_size(0);
-  int height = get_global_size(1);
-  int pixel_index = (row*width + col);
-
-  if (image[pixel_index] == 0)
-  {
-    outImage[pixel_index] = getNearestFillPixelValue(pixel_index, row, col, image, width, height);
-  }
-
-  else
-  {
-    outImage[pixel_index] = image[pixel_index];
-  }
-}
-
-//cross check functions
-bool differenceIsOverThreshold(unsigned char pixel1, unsigned char pixel2, int threshold)
-{
-    return abs(pixel1 - pixel2) > threshold;
-}
-
-unsigned char crossCheck(unsigned char pixel1, unsigned char pixel2, int threshold)
-{
-    unsigned char returnValue = 0;
-    if (!differenceIsOverThreshold(pixel1, pixel2, threshold))
-    {
-        returnValue = pixel1;
-    }
-
-    return returnValue;
-}
 
 //occlusion fill functions
-int getNearestFillPixelValue(int pixel_index, int pix_x, int pix_y, unsigned char *image, int width, int height)
+int getNearestFillPixelValue(int pixel_index, int pix_x, int pix_y, char *image, int width, int height)
 {
     int fillPixelValue = 0;
     int pixelValue = 0;
@@ -113,7 +58,7 @@ int euclideanDistanceBetweenTwoPixels(int pixel1_index, int pixel2_x_index, int 
     return sqrt(pow(horDistance(pixel1_index, pixel2_x_index, image_width), 2) + pow(verDistance(pixel1_index, pixel2_y_index, image_width), 2));
 }
 
-int getPixelValueFromImage(int pixel_x_index, int pixel_y_index, unsigned char *image, int width)
+int getPixelValueFromImage(int pixel_x_index, int pixel_y_index, char *image, int width)
 {
     return *(image + pixel_x_index + pixel_y_index * width);
 }
@@ -127,4 +72,24 @@ bool pixelDistanceIsLessThanLastMinimum(int distance, int last_min_distance)
 {
     return distance < last_min_distance;
 }
-*/
+
+__kernel void occlusion_fill(__global char* image, __global char* outImage, int windowSize)
+{
+  int col = get_global_id(0);
+  int row = get_global_id(1);
+  int width = get_global_size(0);
+  int height = get_global_size(1);
+  int pixel_index = (row*width + col);
+
+  if (image[pixel_index] == 0)
+  {
+    outImage[pixel_index] = getNearestFillPixelValue(pixel_index, row, col, image, width, height);
+  }
+
+  else
+  {
+    outImage[pixel_index] = image[pixel_index];
+  }
+  
+  //outImage[pixel_index] = image[pixel_index];
+}

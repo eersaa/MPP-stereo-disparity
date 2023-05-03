@@ -181,7 +181,8 @@ public:
         prog_average = _ocl_base->CreateProgramFromFile("kernels/p4-average.cl");
         prog_stdDeviation = _ocl_base->CreateProgramFromFile("kernels/p4-standard-deviation.cl");
         prog_ZNCC = _ocl_base->CreateProgramFromFile("kernels/p4-zncc-max.cl");
-        prog_cc_of = _ocl_base->CreateProgramFromFile("kernels/p4-cc-of.cl");
+        prog_cc = _ocl_base->CreateProgramFromFile("kernels/p4-cc.cl");
+        prog_of = _ocl_base->CreateProgramFromFile("kernels/p4-of.cl");
     }
 
     void init_kernels()
@@ -191,7 +192,8 @@ public:
         _ocl_base->CreateKernelFromProgram(prog_average, "average");
         _ocl_base->CreateKernelFromProgram(prog_stdDeviation, "standardDeviation");
         _ocl_base->CreateKernelFromProgram(prog_ZNCC, "znccMax");
-        _ocl_base->CreateKernelFromProgram(prog_cc_of, "cross_check");
+        _ocl_base->CreateKernelFromProgram(prog_cc, "cross_check");
+        _ocl_base->CreateKernelFromProgram(prog_of, "occlusion_fill");
     }
 
     unsigned ZNCC(int windowSize, int maxDisparity)
@@ -349,7 +351,8 @@ private:
     cl_program prog_average;
     cl_program prog_stdDeviation;
     cl_program prog_ZNCC;
-    cl_program prog_cc_of;
+    cl_program prog_cc;
+    cl_program prog_of;
 };
 
 OCL_Phase4 ocl_phase4;
