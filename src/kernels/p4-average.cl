@@ -6,7 +6,7 @@ __kernel void average(__global char *image, __global float *out,
   int height = get_global_size(1);
 
   int windowSizeHalf = windowSize / 2;
-  int sum = 0;
+  float sum = 0;
   int count = 0;
 
   // Loop through the window to get the average value
