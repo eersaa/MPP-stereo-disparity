@@ -229,8 +229,6 @@ public:
         global_work_size[0] = width * sizeof(unsigned char);
         global_work_size[1] = height * sizeof(unsigned char);
 
-        cl_event event;
-
         status = clEnqueueNDRangeKernel(_ocl_base->commandQueue,
                                         _ocl_base->GetKernel(4),
                                         2,
@@ -239,19 +237,9 @@ public:
                                         NULL,
                                         0,
                                         NULL,
-                                        &event);
+                                        &_event);
 
-        clFinish(_ocl_base->commandQueue);
-
-        cl_ulong time_start;
-        cl_ulong time_end;
-
-        status = clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_START, sizeof(time_start), &time_start, NULL);
-        status = clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_END, sizeof(time_end), &time_end, NULL);
-
-        unsigned long nanoSeconds = time_end - time_start;
-
-        printf("First disparity execution time: %0.3f milliseconds \n", nanoSeconds / 1000000.0);
+        kernel_execution_times[0] = get_kernel_execution_time(_event, _ocl_base->commandQueue);
 
         cl_mem znccBuffer2 = clCreateBuffer(_ocl_base->context,
                                         CL_MEM_READ_WRITE,
@@ -283,16 +271,9 @@ public:
                                         NULL,
                                         0,
                                         NULL,
-                                        &event);
+                                        &_event);
 
-        clFinish(_ocl_base->commandQueue);
-
-        status = clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_START, sizeof(time_start), &time_start, NULL);
-        status = clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_END, sizeof(time_end), &time_end, NULL);
-
-        nanoSeconds = time_end - time_start;
-
-        printf("Second disparity execution time: %0.3f milliseconds \n", nanoSeconds / 1000000.0);
+        kernel_execution_times[1] = get_kernel_execution_time(_event, _ocl_base->commandQueue);
         
         status = clEnqueueCopyBuffer(_ocl_base->commandQueue,
                                     znccBuffer,
@@ -346,7 +327,9 @@ public:
                                         NULL,
                                         0,
                                         NULL,
-                                        NULL);
+                                        &_event);
+
+        kernel_execution_times[2] = get_kernel_execution_time(_event, _ocl_base->commandQueue);
 
         status = clEnqueueCopyBuffer(_ocl_base->commandQueue,
                                     ccBuffer,
@@ -388,7 +371,9 @@ public:
                                         NULL,
                                         0,
                                         NULL,
-                                        NULL);
+                                        &_event);
+
+        kernel_execution_times[3] = get_kernel_execution_time(_event, _ocl_base->commandQueue);
 
         status = clEnqueueCopyBuffer(_ocl_base->commandQueue,
                                     ofBuffer,
@@ -402,7 +387,34 @@ public:
 
         return (unsigned)status;
     }
-    
+
+    // Get kernel execution time in microseconds
+    unsigned long get_kernel_execution_time(cl_event &event, cl_command_queue &command_queue)
+    {
+        clFinish(command_queue);
+
+        cl_ulong time_start;
+        cl_ulong time_end;
+
+        clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_START, sizeof(time_start), &time_start, NULL);
+        clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_END, sizeof(time_end), &time_end, NULL);
+
+        return (time_end - time_start) / 1000;
+    }
+
+    void print_kernel_execution_times()
+    {
+        printf("ZNCC image0 execution time: %lu microseconds \n", kernel_execution_times[0]);
+        printf("ZNCC image1 execution time: %lu microseconds \n", kernel_execution_times[1]);
+        printf("Cross check execution time: %lu microseconds \n", kernel_execution_times[2]);
+        printf("Occlusion fill execution time: %lu microseconds \n", kernel_execution_times[3]);
+
+        printf("Total execution time: %lu microseconds \n\n", kernel_execution_times[0] 
+                                                            + kernel_execution_times[1] 
+                                                            + kernel_execution_times[2] 
+                                                            + kernel_execution_times[3]);
+    }
+
     std::unique_ptr<OCL_image> img0;
     std::unique_ptr<OCL_image> img1;
 
@@ -415,6 +427,14 @@ private:
     cl_program prog_ZNCC;
     cl_program prog_cc;
     cl_program prog_of;
+
+    cl_event _event;
+
+    // 0 - ZNCC image0
+    // 1 - ZNCC image1
+    // 2 - cross check
+    // 3 - occlusion fill
+    unsigned long kernel_execution_times[4] = {0, 0, 0, 0};
 };
 
 OCL_Phase4 ocl_phase4;
@@ -566,6 +586,7 @@ int main()
     sw.saveEndPoint();
     std::cout << "Total elapsed time: " << sw.getElapsedTime() << " us\n" << std::endl;
 
+    ocl_phase4.print_kernel_execution_times();
     printPlatformProfile(false);
     return 0;
 }
