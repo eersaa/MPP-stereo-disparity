@@ -174,15 +174,15 @@ public:
 
     void print_kernel_execution_times()
     {
-        std::cout << "Grayscale kernel execution time: " << kernel_execution_times[0] << " ns\n";
-        std::cout << "Resize kernel execution time: " << kernel_execution_times[1] << " ns\n";
-        std::cout << "Average kernel execution time: " << kernel_execution_times[2] << " ns\n";
-        std::cout << "Standard deviation kernel execution time: " << kernel_execution_times[3] << " ns\n";
+        std::cout << "Grayscale kernel execution time: " << kernel_execution_times[0] << " us\n";
+        std::cout << "Resize kernel execution time: " << kernel_execution_times[1] << " us\n";
+        std::cout << "Average kernel execution time: " << kernel_execution_times[2] << " us\n";
+        std::cout << "Standard deviation kernel execution time: " << kernel_execution_times[3] << " us\n";
 
         std::cout << "Total kernel execution time: " << kernel_execution_times[0] 
                                                         + kernel_execution_times[1] 
                                                         + kernel_execution_times[2] 
-                                                        + kernel_execution_times[3] << " ns\n" << std::endl;
+                                                        + kernel_execution_times[3] << " us\n" << std::endl;
     }
 
 
@@ -439,15 +439,15 @@ public:
         std::cout << "Image1:\n";
         img1->print_kernel_execution_times();
 
-        std::cout << "ZNCC image0: " << kernel_execution_times[0] << " ns\n";
-        std::cout << "ZNCC image1: " << kernel_execution_times[1] << " ns\n";
-        std::cout << "Cross check: " << kernel_execution_times[2] << " ns\n";
-        std::cout << "Occlusion fill: " << kernel_execution_times[3] << " ns\n";
+        std::cout << "ZNCC image0: " << kernel_execution_times[0] << " us\n";
+        std::cout << "ZNCC image1: " << kernel_execution_times[1] << " us\n";
+        std::cout << "Cross check: " << kernel_execution_times[2] << " us\n";
+        std::cout << "Occlusion fill: " << kernel_execution_times[3] << " us\n";
 
         std::cout << "Total: " << kernel_execution_times[0] 
                                     + kernel_execution_times[1] 
                                     + kernel_execution_times[2] 
-                                    + kernel_execution_times[3] << " ns\n" << std::endl;
+                                    + kernel_execution_times[3] << " us\n" << std::endl;
     }
 
     std::unique_ptr<OCL_image> img0;
