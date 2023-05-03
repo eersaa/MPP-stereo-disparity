@@ -43,7 +43,9 @@ public:
 
         size_t global_work_size[1] = {_width * _height * 4 * sizeof(unsigned char)};
         clEnqueueNDRangeKernel(_ocl_base->commandQueue, _ocl_base->GetKernel(0), 1, NULL,
-                            global_work_size, NULL, 0, NULL, NULL);
+                            global_work_size, NULL, 0, NULL, &_event);
+
+        kernel_execution_times[0] = get_kernel_execution_time(_event, _ocl_base->commandQueue);
 
         clReleaseMemObject(inputBuffer);
 
@@ -73,7 +75,10 @@ public:
         global_work_size[1] = _height * sizeof(unsigned char);
 
         clEnqueueNDRangeKernel(_ocl_base->commandQueue, _ocl_base->GetKernel(1), 2, NULL,
-                            global_work_size, NULL, 0, NULL, NULL);
+                            global_work_size, NULL, 0, NULL, &_event);
+
+        kernel_execution_times[1] = get_kernel_execution_time(_event, _ocl_base->commandQueue);
+
         return (unsigned)status;
     }
 
@@ -102,7 +107,9 @@ public:
                                         NULL,
                                         0,
                                         NULL,
-                                        NULL);
+                                        &_event);
+
+        kernel_execution_times[2] = get_kernel_execution_time(_event, _ocl_base->commandQueue);
 
         return (unsigned)status;
     }
@@ -133,7 +140,9 @@ public:
                                         NULL,
                                         0,
                                         NULL,
-                                        NULL);
+                                        &_event);
+
+        kernel_execution_times[3] = get_kernel_execution_time(_event, _ocl_base->commandQueue);
 
         return (unsigned)status;
     }
@@ -163,6 +172,19 @@ public:
         return _height;
     }
 
+    void print_kernel_execution_times()
+    {
+        std::cout << "Grayscale kernel execution time: " << kernel_execution_times[0] << " ns\n";
+        std::cout << "Resize kernel execution time: " << kernel_execution_times[1] << " ns\n";
+        std::cout << "Average kernel execution time: " << kernel_execution_times[2] << " ns\n";
+        std::cout << "Standard deviation kernel execution time: " << kernel_execution_times[3] << " ns\n";
+
+        std::cout << "Total kernel execution time: " << kernel_execution_times[0] 
+                                                        + kernel_execution_times[1] 
+                                                        + kernel_execution_times[2] 
+                                                        + kernel_execution_times[3] << " ns\n" << std::endl;
+    }
+
 
     cl_mem imageBuffer = nullptr;
     cl_mem averageBuffer = nullptr;
@@ -170,6 +192,14 @@ public:
 private:
     
     std::unique_ptr<OCL_Base>& _ocl_base;
+
+    cl_event _event;
+
+    // 0 - grayscale
+    // 1 - resize
+    // 2 - average
+    // 3 - standard deviation
+    unsigned long kernel_execution_times[4] = {0, 0, 0, 0};
 };
 
 class OCL_Phase4
@@ -404,15 +434,20 @@ public:
 
     void print_kernel_execution_times()
     {
-        printf("ZNCC image0 execution time: %lu microseconds \n", kernel_execution_times[0]);
-        printf("ZNCC image1 execution time: %lu microseconds \n", kernel_execution_times[1]);
-        printf("Cross check execution time: %lu microseconds \n", kernel_execution_times[2]);
-        printf("Occlusion fill execution time: %lu microseconds \n", kernel_execution_times[3]);
+        std::cout << "Image0:\n";
+        img0->print_kernel_execution_times();
+        std::cout << "Image1:\n";
+        img1->print_kernel_execution_times();
 
-        printf("Total execution time: %lu microseconds \n\n", kernel_execution_times[0] 
-                                                            + kernel_execution_times[1] 
-                                                            + kernel_execution_times[2] 
-                                                            + kernel_execution_times[3]);
+        std::cout << "ZNCC image0: " << kernel_execution_times[0] << " ns\n";
+        std::cout << "ZNCC image1: " << kernel_execution_times[1] << " ns\n";
+        std::cout << "Cross check: " << kernel_execution_times[2] << " ns\n";
+        std::cout << "Occlusion fill: " << kernel_execution_times[3] << " ns\n";
+
+        std::cout << "Total: " << kernel_execution_times[0] 
+                                    + kernel_execution_times[1] 
+                                    + kernel_execution_times[2] 
+                                    + kernel_execution_times[3] << " ns\n" << std::endl;
     }
 
     std::unique_ptr<OCL_image> img0;
