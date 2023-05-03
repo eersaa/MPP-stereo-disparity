@@ -235,6 +235,41 @@ public:
                                         NULL,
                                         NULL);
 
+
+
+        cl_mem znccBuffer2 = clCreateBuffer(_ocl_base->context,
+                                        CL_MEM_READ_WRITE,
+                                        width * height * sizeof(unsigned char),
+                                        NULL,
+                                        NULL);
+
+        leftToRight = 2;
+        status = clSetKernelArg(_ocl_base->GetKernel(4), 0, sizeof(cl_mem), (void *)&img1->imageBuffer);
+        status = clSetKernelArg(_ocl_base->GetKernel(4), 1, sizeof(cl_mem), (void *)&img0->imageBuffer);
+        status = clSetKernelArg(_ocl_base->GetKernel(4), 2, sizeof(cl_mem), (void *)&img1->averageBuffer);
+        status = clSetKernelArg(_ocl_base->GetKernel(4), 3, sizeof(cl_mem), (void *)&img0->averageBuffer);
+        status = clSetKernelArg(_ocl_base->GetKernel(4), 4, sizeof(cl_mem), (void *)&img1->stdDeviationBuffer);
+        status = clSetKernelArg(_ocl_base->GetKernel(4), 5, sizeof(cl_mem), (void *)&img0->stdDeviationBuffer);
+        status = clSetKernelArg(_ocl_base->GetKernel(4), 6, sizeof(cl_mem), (void *)&znccBuffer2);
+        status = clSetKernelArg(_ocl_base->GetKernel(4), 7, sizeof(int), &windowSize);
+        status = clSetKernelArg(_ocl_base->GetKernel(4), 8, sizeof(int), &leftToRight);
+        status = clSetKernelArg(_ocl_base->GetKernel(4), 9, sizeof(int), &maxDisparity);
+
+        size_t global_work_size2[2];
+        global_work_size2[0] = width * sizeof(unsigned char);
+        global_work_size2[1] = height * sizeof(unsigned char);
+
+        status = clEnqueueNDRangeKernel(_ocl_base->commandQueue,
+                                        _ocl_base->GetKernel(4),
+                                        2,
+                                        NULL,
+                                        global_work_size2,
+                                        NULL,
+                                        0,
+                                        NULL,
+                                        NULL);
+
+        
         status = clEnqueueCopyBuffer(_ocl_base->commandQueue,
                                     znccBuffer,
                                     img0->imageBuffer,
@@ -244,6 +279,17 @@ public:
                                     0,
                                     NULL,
                                     NULL);
+
+        status = clEnqueueCopyBuffer(_ocl_base->commandQueue,
+                                    znccBuffer2,
+                                    img1->imageBuffer,
+                                    0,
+                                    0,
+                                    width * height * sizeof(unsigned char),
+                                    0,
+                                    NULL,
+                                    NULL);
+
 
         return (unsigned)status;
     }
@@ -322,6 +368,7 @@ struct ZNCCResizedImage : public IProgram
         ocl_phase4.ZNCC(windowSize, maxDisparity);
 
         ocl_phase4.img0->save_image("../../output-img/im0_grey_resized_zncc.png");
+        ocl_phase4.img1->save_image("../../output-img/im1_grey_resized_zncc.png");
 
         return 0;
     }
