@@ -181,6 +181,7 @@ public:
         prog_average = _ocl_base->CreateProgramFromFile("kernels/p4-average.cl");
         prog_stdDeviation = _ocl_base->CreateProgramFromFile("kernels/p4-standard-deviation.cl");
         prog_ZNCC = _ocl_base->CreateProgramFromFile("kernels/p4-zncc-max.cl");
+        prog_cc_of = _ocl_base->CreateProgramFromFile("kernels/p4-cc-of.cl");
     }
 
     void init_kernels()
@@ -190,6 +191,8 @@ public:
         _ocl_base->CreateKernelFromProgram(prog_average, "average");
         _ocl_base->CreateKernelFromProgram(prog_stdDeviation, "standardDeviation");
         _ocl_base->CreateKernelFromProgram(prog_ZNCC, "znccMax");
+        _ocl_base->CreateKernelFromProgram(prog_cc_of, "cross_check");
+        _ocl_base->CreateKernelFromProgram(prog_cc_of, "occlusion_fill");
     }
 
     unsigned ZNCC(int windowSize, int maxDisparity)
@@ -293,6 +296,50 @@ public:
 
         return (unsigned)status;
     }
+
+    unsigned crossCheck_Images(int threshold)
+    {
+        int width = img0->get_width();
+        int height = img0->get_height();
+
+        cl_mem ccBuffer = clCreateBuffer(_ocl_base->context,
+                                        CL_MEM_READ_WRITE,
+                                        width * height * sizeof(unsigned char),
+                                        NULL,
+                                        NULL);
+
+        cl_int status;
+        status = clSetKernelArg(_ocl_base->GetKernel(5), 0, sizeof(cl_mem), (void *)&img0->imageBuffer);
+        status = clSetKernelArg(_ocl_base->GetKernel(5), 1, sizeof(cl_mem), (void *)&img1->imageBuffer);
+        status = clSetKernelArg(_ocl_base->GetKernel(5), 2, sizeof(int), &threshold);
+        status = clSetKernelArg(_ocl_base->GetKernel(5), 3, sizeof(cl_mem), (void *)&ccBuffer);
+
+        size_t global_work_size[2];
+        global_work_size[0] = width * sizeof(unsigned char);
+        global_work_size[1] = height * sizeof(unsigned char);
+
+        status = clEnqueueNDRangeKernel(_ocl_base->commandQueue,
+                                        _ocl_base->GetKernel(5),
+                                        2,
+                                        NULL,
+                                        global_work_size,
+                                        NULL,
+                                        0,
+                                        NULL,
+                                        NULL);
+
+        status = clEnqueueCopyBuffer(_ocl_base->commandQueue,
+                                    ccBuffer,
+                                    img0->imageBuffer,
+                                    0,
+                                    0,
+                                    width * height * sizeof(unsigned char),
+                                    0,
+                                    NULL,
+                                    NULL);
+
+        return (unsigned)status;
+    }
     
     std::unique_ptr<OCL_image> img0;
     std::unique_ptr<OCL_image> img1;
@@ -304,6 +351,7 @@ private:
     cl_program prog_average;
     cl_program prog_stdDeviation;
     cl_program prog_ZNCC;
+    cl_program prog_cc_of;
 
 };
 
@@ -374,30 +422,20 @@ struct ZNCCResizedImage : public IProgram
     }
 };
 
-// struct CrosscheckImage : public IProgram
-// {
-//     int run() override
-//     {
-//         unsigned char * t_img0 = (unsigned char*)malloc(img0.get_width() * img0.get_height());
-                                                        
-//         unsigned char * t_img1 = (unsigned char*)malloc(img1.get_width() * img1.get_height());
 
-//         unsigned char * t_combinedImg = (unsigned char*)malloc(img1.get_width() * img1.get_height());
 
-//         img0.clone_image(t_img0);
-//         img1.clone_image(t_img1);
+struct CrosscheckImage : public IProgram
+{
+    int run() override
+    {
+        int threshold = 50;
+        ocl_phase4.crossCheck_Images(threshold);
 
-//         crossCheckTwoImages(t_img0, t_img1, 50, t_combinedImg, img0.get_width() * img0.get_height());
-//         combinedImage.set_image(t_combinedImg, img0.get_width(), img0.get_height(), GREY_CHANNELS);
+        ocl_phase4.img0->save_image("../../output-img/im0_grey_resized_zncc_cc.png");
 
-//         unsigned error = combinedImage.save_image("../../output-img/im_cc.png");
-//         free(t_img0);
-//         free(t_img1);
-//         free(t_combinedImg);
-
-//         return (int) error;
-//     }
-// };
+        return 0;
+    }
+};
 
 // struct OcclusionFilterImage : public IProgram
 // {
@@ -431,7 +469,7 @@ int main()
     TransformToGreyscale transformToGreyscale;
     SaveGreyscaleImage saveGreyscaleImage;
     ZNCCResizedImage ZNCCResizedImage;
-    // CrosscheckImage crosscheckImage;
+    CrosscheckImage crosscheckImage;
     // OcclusionFilterImage occlusionFilterImage;
 
 
@@ -459,9 +497,9 @@ int main()
     std::cout << "ZNCC filter and save resized images return result: " << result << std::endl;
     std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
-    // result = Program_sw.runProgram(crosscheckImage);
-    // std::cout << "crosscheck and save resized image return result: " << result << std::endl;
-    // std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
+    result = Program_sw.runProgram(crosscheckImage);
+    std::cout << "crosscheck and save resized image return result: " << result << std::endl;
+    std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
     // result = Program_sw.runProgram(occlusionFilterImage);
     // std::cout << "Occlusion fill and save resized image return result: " << result << std::endl;

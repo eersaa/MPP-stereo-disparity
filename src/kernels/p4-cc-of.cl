@@ -6,7 +6,7 @@ __kernel void cross_check(__global char* image1, __global char* image2, int thre
   int height = get_global_size(1);
   int pixel_index = (row*width + col);
 
-  outputImage[pixel_index] = crossCheck(image1[pixel_index], image2[pixel_index], threshold);
+  outImage[pixel_index] = crossCheck(image1[pixel_index], image2[pixel_index], threshold);
 }
 
 __kernel void occlusion_fill(__global char* image, __global char* outImage, int windowSize)
