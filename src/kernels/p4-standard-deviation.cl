@@ -1,4 +1,4 @@
-__kernel void standardDeviation(__global char *image, __global float *out,
+__kernel void standardDeviation(__global unsigned char *image, __global float *out,
                                 __global float *avg, int windowSize) {
   int col = get_global_id(0);
   int row = get_global_id(1);

@@ -1,7 +1,7 @@
-__kernel void znccMax(__global char *img1, __global char *img2,
+__kernel void znccMax(__global unsigned char *img1, __global unsigned char *img2,
                       __global float *avg1, __global float *avg2,
                       __global float *std1, __global float *std2,
-                      __global char *DispMaxOut, int windowSize,
+                      __global unsigned char *DispMaxOut, int windowSize,
                       int leftToRight, int maxDisp) {
 
   int col = get_global_id(0);

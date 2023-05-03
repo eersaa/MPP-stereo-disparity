@@ -1,16 +1,16 @@
 //occlusion fill prototypes
-int getNearestFillPixelValue(int pixel_index, int pix_x, int pix_y, __global char *image, int width, int height);
+int getNearestFillPixelValue(int pixel_index, int pix_x, int pix_y, __global unsigned char *image, int width, int height);
 int pixelRow(int pixel_index, int width);
 int verDistance(int pixel_index, int row_index, int width);
 int pixelColumn(int pixel_index, int width);
 int horDistance(int pixel_index, int column_index, int width);
 int euclideanDistanceBetweenTwoPixels(int pixel1_index, int pixel2_x_index, int pixel2_y_index, int image_width);
-int getPixelValueFromImage(int pixel_x_index, int pixel_y_index, __global char *image, int width);
+int getPixelValueFromImage(int pixel_x_index, int pixel_y_index, __global unsigned char *image, int width);
 bool pixelIsZero(int pixel_value);
 bool pixelDistanceIsLessThanLastMinimum(int distance, int last_min_distance);
 
 
-__kernel void occlusion_fill(__global char* image, __global char* outImage)
+__kernel void occlusion_fill(__global unsigned char* image, __global unsigned char* outImage)
 {
   int col = get_global_id(0);
   int row = get_global_id(1);
@@ -33,7 +33,7 @@ __kernel void occlusion_fill(__global char* image, __global char* outImage)
 }
 
 //occlusion fill functions
-int getNearestFillPixelValue(int pixel_index, int pix_x, int pix_y, __global char *image, int width, int height)
+int getNearestFillPixelValue(int pixel_index, int pix_x, int pix_y, __global unsigned char *image, int width, int height)
 {
     int fillPixelValue = 0;
     int pixelValue = 0;
@@ -91,7 +91,7 @@ int euclideanDistanceBetweenTwoPixels(int pixel1_index, int pixel2_x_index, int 
     return sqrt(pow((float)horDistance(pixel1_index, pixel2_x_index, image_width), 2) + pow((float)verDistance(pixel1_index, pixel2_y_index, image_width), 2));
 }
 
-int getPixelValueFromImage(int pixel_x_index, int pixel_y_index, __global char *image, int width)
+int getPixelValueFromImage(int pixel_x_index, int pixel_y_index, __global unsigned char *image, int width)
 {
     return *(image + pixel_x_index + pixel_y_index * width);
 }

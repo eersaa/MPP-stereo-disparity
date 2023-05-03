@@ -1,4 +1,4 @@
-__kernel void average(__global char *image, __global float *out,
+__kernel void average(__global unsigned char *image, __global float *out,
                       int windowSize) {
   int col = get_global_id(0);
   int row = get_global_id(1);

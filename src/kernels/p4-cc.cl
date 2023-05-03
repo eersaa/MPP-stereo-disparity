@@ -1,7 +1,7 @@
-unsigned char crossCheck(char pixel1, char pixel2, int threshold);
-bool differenceIsOverThreshold(char pixel1, char pixel2, int threshold);
+unsigned char crossCheck(unsigned char pixel1,unsigned char pixel2, int threshold);
+bool differenceIsOverThreshold(unsigned char pixel1,unsigned char pixel2, int threshold);
 
-__kernel void cross_check(__global char* image1, __global char* image2, int threshold, __global char* outImage)
+__kernel void cross_check(__global unsigned char* image1, __global unsigned char* image2, int threshold, __global unsigned char* outImage)
 {
   int col = get_global_id(0);
   int row = get_global_id(1);
@@ -14,12 +14,12 @@ __kernel void cross_check(__global char* image1, __global char* image2, int thre
 }
 
 //cross check functions
-bool differenceIsOverThreshold(char pixel1, char pixel2, int threshold)
+bool differenceIsOverThreshold(unsigned char pixel1, unsigned char pixel2, int threshold)
 {
     return abs(pixel1 - pixel2) > threshold;
 }
 
-unsigned char crossCheck(char pixel1, char pixel2, int threshold)
+unsigned char crossCheck(unsigned char pixel1, unsigned char pixel2, int threshold)
 {
     unsigned char returnValue = 0;
     if (!differenceIsOverThreshold(pixel1, pixel2, threshold))
