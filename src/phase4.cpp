@@ -2,6 +2,20 @@
 
 int scaling_factor = 4;
 
+// Get kernel execution time in microseconds
+unsigned long get_kernel_execution_time(cl_event &event, cl_command_queue &command_queue)
+{
+    clFinish(command_queue);
+
+    cl_ulong time_start;
+    cl_ulong time_end;
+
+    clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_START, sizeof(time_start), &time_start, NULL);
+    clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_END, sizeof(time_end), &time_end, NULL);
+
+    return (time_end - time_start) / 1000;
+}
+
 class OCL_image : public lodepng_wrapper::LodepngWrapper
 {
 public:
@@ -386,20 +400,6 @@ public:
                                     NULL);
 
         return (unsigned)status;
-    }
-
-    // Get kernel execution time in microseconds
-    unsigned long get_kernel_execution_time(cl_event &event, cl_command_queue &command_queue)
-    {
-        clFinish(command_queue);
-
-        cl_ulong time_start;
-        cl_ulong time_end;
-
-        clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_START, sizeof(time_start), &time_start, NULL);
-        clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_END, sizeof(time_end), &time_end, NULL);
-
-        return (time_end - time_start) / 1000;
     }
 
     void print_kernel_execution_times()
