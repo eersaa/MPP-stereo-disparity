@@ -6,9 +6,18 @@ __kernel void cross_check(__global char* image1, __global char* image2, int thre
   int height = get_global_size(1);
   int pixel_index = (row*width + col);
 
-  outImage[pixel_index] = crossCheck(image1[pixel_index], image2[pixel_index], threshold);
-}
+  //outImage[pixel_index] = crossCheck(image1[pixel_index], image2[pixel_index], threshold);
 
+  // test code without functions
+    unsigned char returnValue = 0;
+    if (!(abs(image1[pixel_index] - image2[pixel_index]) > threshold))
+    {
+        returnValue = image1[pixel_index];
+    }
+
+    outImage[pixel_index] = returnValue;
+}
+/*
 __kernel void occlusion_fill(__global char* image, __global char* outImage, int windowSize)
 {
   int col = get_global_id(0);
@@ -118,3 +127,4 @@ bool pixelDistanceIsLessThanLastMinimum(int distance, int last_min_distance)
 {
     return distance < last_min_distance;
 }
+*/

@@ -192,7 +192,6 @@ public:
         _ocl_base->CreateKernelFromProgram(prog_stdDeviation, "standardDeviation");
         _ocl_base->CreateKernelFromProgram(prog_ZNCC, "znccMax");
         _ocl_base->CreateKernelFromProgram(prog_cc_of, "cross_check");
-        _ocl_base->CreateKernelFromProgram(prog_cc_of, "occlusion_fill");
     }
 
     unsigned ZNCC(int windowSize, int maxDisparity)
@@ -293,7 +292,6 @@ public:
                                     NULL,
                                     NULL);
 
-
         return (unsigned)status;
     }
 
@@ -352,7 +350,6 @@ private:
     cl_program prog_stdDeviation;
     cl_program prog_ZNCC;
     cl_program prog_cc_of;
-
 };
 
 OCL_Phase4 ocl_phase4;
@@ -421,8 +418,6 @@ struct ZNCCResizedImage : public IProgram
         return 0;
     }
 };
-
-
 
 struct CrosscheckImage : public IProgram
 {
