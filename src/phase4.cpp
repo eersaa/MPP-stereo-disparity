@@ -229,6 +229,8 @@ public:
         global_work_size[0] = width * sizeof(unsigned char);
         global_work_size[1] = height * sizeof(unsigned char);
 
+        cl_event event;
+
         status = clEnqueueNDRangeKernel(_ocl_base->commandQueue,
                                         _ocl_base->GetKernel(4),
                                         2,
@@ -237,9 +239,19 @@ public:
                                         NULL,
                                         0,
                                         NULL,
-                                        NULL);
+                                        &event);
 
+        clFinish(_ocl_base->commandQueue);
 
+        cl_ulong time_start;
+        cl_ulong time_end;
+
+        status = clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_START, sizeof(time_start), &time_start, NULL);
+        status = clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_END, sizeof(time_end), &time_end, NULL);
+
+        unsigned long nanoSeconds = time_end - time_start;
+
+        printf("First disparity execution time: %0.3f milliseconds \n", nanoSeconds / 1000000.0);
 
         cl_mem znccBuffer2 = clCreateBuffer(_ocl_base->context,
                                         CL_MEM_READ_WRITE,
@@ -271,8 +283,16 @@ public:
                                         NULL,
                                         0,
                                         NULL,
-                                        NULL);
+                                        &event);
 
+        clFinish(_ocl_base->commandQueue);
+
+        status = clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_START, sizeof(time_start), &time_start, NULL);
+        status = clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_END, sizeof(time_end), &time_end, NULL);
+
+        nanoSeconds = time_end - time_start;
+
+        printf("Second disparity execution time: %0.3f milliseconds \n", nanoSeconds / 1000000.0);
         
         status = clEnqueueCopyBuffer(_ocl_base->commandQueue,
                                     znccBuffer,
