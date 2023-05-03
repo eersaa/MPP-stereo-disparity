@@ -130,7 +130,7 @@ void OCL_Base::Init()
     context = clCreateContext(NULL, 1, devices, NULL, NULL, NULL);
 
     /*Step 4: Creating command queue associate with the context.*/
-    commandQueue = clCreateCommandQueue(context, devices[0], 0, NULL);
+    commandQueue = clCreateCommandQueue(context, devices[0], CL_QUEUE_PROFILING_ENABLE, NULL);
 
 }
 
