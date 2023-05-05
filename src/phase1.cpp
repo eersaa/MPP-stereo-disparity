@@ -23,30 +23,10 @@ unsigned long get_kernel_execution_time(cl_event &event, cl_command_queue &comma
     return (time_end - time_start) / 1000;
 }
 
-class OCL_image : public lodepng_wrapper::LodepngWrapper
+class OCL_Phase1
 {
 public:
-    OCL_image(std::unique_ptr<OCL_Base>& ocl_base)
-        : _ocl_base(ocl_base)
-    {
-    }
-
-    ~OCL_image()
-    {
-    }
-
-private:
-    
-    std::unique_ptr<OCL_Base>& _ocl_base;
-
-    cl_event _event;
-
-};
-
-class OCL_Phase4
-{
-public:
-    OCL_Phase4()
+    OCL_Phase1()
     {
         _ocl_base.reset(new OCL_Base());
         
@@ -54,7 +34,7 @@ public:
         init_kernels();
     }
 
-    ~OCL_Phase4()
+    ~OCL_Phase1()
     {
     }
 
@@ -144,7 +124,7 @@ private:
     unsigned long kernel_execution_times[5] = {0, 0, 0, 0, 0};
 };
 
-OCL_Phase4 ocl_phase4;
+OCL_Phase1 ocl_phase1;
 
     struct LoadImage : public IProgram
     {
@@ -245,7 +225,7 @@ OCL_Phase4 ocl_phase4;
     {
         int run() override
         {
-            ocl_phase4.matrix_addition();
+            ocl_phase1.matrix_addition();
 
             unsigned error = 0;
             return (int) error;
@@ -369,7 +349,7 @@ int main()
     sw.saveEndPoint();
     std::cout << "Total elapsed time: " << sw.getElapsedTime() << " us\n" << std::endl;
 
-    ocl_phase4.print_kernel_execution_times();
+    ocl_phase1.print_kernel_execution_times();
 
     free(matrixA);
     free(matrixB);
