@@ -1,7 +1,7 @@
 #include "phase1.h"
 
-    lodepng_wrapper::LodepngWrapper img0;
-    lodepng_wrapper::LodepngWrapper img0_1;
+lodepng_wrapper::LodepngWrapper img0;
+
 
     struct LoadImage : public IProgram
     {
@@ -25,7 +25,19 @@
     {
         int run() override
         {
-            img0.apply_filter(movingAvgFilter, 5);
+            unsigned char * img0_fi = (unsigned char*)malloc(img0.get_width() * img0.get_height());
+            img0.clone_image(img0_fi);
+
+            unsigned char * img0_fo = (unsigned char*)malloc(img0.get_width() * img0.get_height());
+            img0.clone_image(img0_fo);
+
+            movingAvgFilter(img0_fo, img0_fi, img0.get_width(), img0.get_height(), 5);
+
+            img0.set_image(img0_fo, img0.get_width(), img0.get_height(), GREY_CHANNELS);
+
+            free(img0_fi);
+            free(img0_fo);
+
             return 0;
         }
     };
@@ -34,26 +46,21 @@
     {
         int run() override
         {
-            unsigned error = img0.save_greyimage("../../output-img/im0_grey.png");
+            unsigned error = img0.save_image("../../output-img/im0_grey.png");
             return (int) error;
         }
     };
 
-    struct CloneAndSaveImage : public IProgram
+    struct SaveFilteredImage : public IProgram
     {
         int run() override
         {
-            unsigned char* dest = 0;
-            unsigned width = img0.get_width();
-            unsigned height = img0.get_height();
-            dest = (unsigned char*) malloc(width * height * sizeof(unsigned char));
-            img0.clone_greyimage(dest);
-            img0_1.set_greyimage(dest, width, height);
-            img0_1.apply_filter(movingAvgFilter, 30);
-            unsigned error = img0_1.save_greyimage("../../output-img/im0_1_grey.png");
+            unsigned error = img0.save_image("../../output-img/im0_grey_average_filtered.png");
             return (int) error;
         }
     };
+
+
     
 
 int main()
@@ -70,7 +77,7 @@ int main()
     TransformToGreyscale transformToGreyscale;
     ApplyFilter applyFilter;
     SaveGreyscaleImage saveGreyscaleImage;
-    CloneAndSaveImage cloneAndSaveImage;
+    SaveFilteredImage saveFilteredImage;
 
     int result = Program_sw.runProgram(loadImage);
     std::cout << "Load image return result: " << result << std::endl;
@@ -80,12 +87,16 @@ int main()
     std::cout << "Transform to greyscale return result: " << result << std::endl;
     std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
+    result = Program_sw.runProgram(saveGreyscaleImage);
+    std::cout << "Save greyscale image return result: " << result << std::endl;
+    std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
+
     result = Program_sw.runProgram(applyFilter);
     std::cout << "Apply filter return result: " << result << std::endl;
     std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
-    result = Program_sw.runProgram(saveGreyscaleImage);
-    std::cout << "Save greyscale image return result: " << result << std::endl;
+    result = Program_sw.runProgram(saveFilteredImage);
+    std::cout << "Save filtered image return result: " << result << std::endl;
     std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
     // result = Program_sw.runProgram(cloneAndSaveImage);

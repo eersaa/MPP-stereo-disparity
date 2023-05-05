@@ -103,7 +103,7 @@ int printPlatformProfile(bool print_extras)
   }
 
 
-void movingAvgFilter(unsigned char* image, unsigned width, unsigned height, unsigned windowSize) {
+void movingAvgFilter(unsigned char* imageOut, unsigned char* image, unsigned width, unsigned height, unsigned windowSize) {
   unsigned char* imageCopy = (unsigned char*)malloc(sizeof(unsigned char) * width * height);
   int windowSizeHalf = windowSize / 2;
 
@@ -133,7 +133,7 @@ void movingAvgFilter(unsigned char* image, unsigned width, unsigned height, unsi
   }
 
   // Copy the image back
-  memcpy(image, imageCopy, sizeof(unsigned char) * width * height);
+  memcpy(imageOut, imageCopy, sizeof(unsigned char) * width * height);
 
   // Free the memory
   free(imageCopy);
