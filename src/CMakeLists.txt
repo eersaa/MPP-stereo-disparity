@@ -21,7 +21,9 @@ target_link_libraries(phase1
   lodepng_wrapper
   utilities
   stopwatches
+  occlusion_fill
   opencl_base
+  compiler_flags
   )
 
 add_executable(phase2 phase2.cpp)
