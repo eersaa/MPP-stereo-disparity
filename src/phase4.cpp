@@ -2,6 +2,20 @@
 
 int scaling_factor = 4;
 
+// Get kernel execution time in microseconds
+unsigned long get_kernel_execution_time(cl_event &event, cl_command_queue &command_queue)
+{
+    clFinish(command_queue);
+
+    cl_ulong time_start;
+    cl_ulong time_end;
+
+    clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_START, sizeof(time_start), &time_start, NULL);
+    clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_END, sizeof(time_end), &time_end, NULL);
+
+    return (time_end - time_start) / 1000;
+}
+
 class OCL_image : public lodepng_wrapper::LodepngWrapper
 {
 public:
@@ -29,7 +43,9 @@ public:
 
         size_t global_work_size[1] = {_width * _height * 4 * sizeof(unsigned char)};
         clEnqueueNDRangeKernel(_ocl_base->commandQueue, _ocl_base->GetKernel(0), 1, NULL,
-                            global_work_size, NULL, 0, NULL, NULL);
+                            global_work_size, NULL, 0, NULL, &_event);
+
+        kernel_execution_times[0] = get_kernel_execution_time(_event, _ocl_base->commandQueue);
 
         clReleaseMemObject(inputBuffer);
 
@@ -59,7 +75,10 @@ public:
         global_work_size[1] = _height * sizeof(unsigned char);
 
         clEnqueueNDRangeKernel(_ocl_base->commandQueue, _ocl_base->GetKernel(1), 2, NULL,
-                            global_work_size, NULL, 0, NULL, NULL);
+                            global_work_size, NULL, 0, NULL, &_event);
+
+        kernel_execution_times[1] = get_kernel_execution_time(_event, _ocl_base->commandQueue);
+
         return (unsigned)status;
     }
 
@@ -88,7 +107,9 @@ public:
                                         NULL,
                                         0,
                                         NULL,
-                                        NULL);
+                                        &_event);
+
+        kernel_execution_times[2] = get_kernel_execution_time(_event, _ocl_base->commandQueue);
 
         return (unsigned)status;
     }
@@ -119,7 +140,9 @@ public:
                                         NULL,
                                         0,
                                         NULL,
-                                        NULL);
+                                        &_event);
+
+        kernel_execution_times[3] = get_kernel_execution_time(_event, _ocl_base->commandQueue);
 
         return (unsigned)status;
     }
@@ -149,6 +172,19 @@ public:
         return _height;
     }
 
+    void print_kernel_execution_times()
+    {
+        std::cout << "Grayscale kernel execution time: " << kernel_execution_times[0] << " us\n";
+        std::cout << "Resize kernel execution time: " << kernel_execution_times[1] << " us\n";
+        std::cout << "Average kernel execution time: " << kernel_execution_times[2] << " us\n";
+        std::cout << "Standard deviation kernel execution time: " << kernel_execution_times[3] << " us\n";
+
+        std::cout << "Total kernel execution time: " << kernel_execution_times[0] 
+                                                        + kernel_execution_times[1] 
+                                                        + kernel_execution_times[2] 
+                                                        + kernel_execution_times[3] << " us\n" << std::endl;
+    }
+
 
     cl_mem imageBuffer = nullptr;
     cl_mem averageBuffer = nullptr;
@@ -156,6 +192,14 @@ public:
 private:
     
     std::unique_ptr<OCL_Base>& _ocl_base;
+
+    cl_event _event;
+
+    // 0 - grayscale
+    // 1 - resize
+    // 2 - average
+    // 3 - standard deviation
+    unsigned long kernel_execution_times[4] = {0, 0, 0, 0};
 };
 
 class OCL_Phase4
@@ -237,9 +281,9 @@ public:
                                         NULL,
                                         0,
                                         NULL,
-                                        NULL);
+                                        &_event);
 
-
+        kernel_execution_times[0] = get_kernel_execution_time(_event, _ocl_base->commandQueue);
 
         cl_mem znccBuffer2 = clCreateBuffer(_ocl_base->context,
                                         CL_MEM_READ_WRITE,
@@ -271,8 +315,9 @@ public:
                                         NULL,
                                         0,
                                         NULL,
-                                        NULL);
+                                        &_event);
 
+        kernel_execution_times[1] = get_kernel_execution_time(_event, _ocl_base->commandQueue);
         
         status = clEnqueueCopyBuffer(_ocl_base->commandQueue,
                                     znccBuffer,
@@ -326,7 +371,9 @@ public:
                                         NULL,
                                         0,
                                         NULL,
-                                        NULL);
+                                        &_event);
+
+        kernel_execution_times[2] = get_kernel_execution_time(_event, _ocl_base->commandQueue);
 
         status = clEnqueueCopyBuffer(_ocl_base->commandQueue,
                                     ccBuffer,
@@ -368,7 +415,9 @@ public:
                                         NULL,
                                         0,
                                         NULL,
-                                        NULL);
+                                        &_event);
+
+        kernel_execution_times[3] = get_kernel_execution_time(_event, _ocl_base->commandQueue);
 
         status = clEnqueueCopyBuffer(_ocl_base->commandQueue,
                                     ofBuffer,
@@ -382,7 +431,25 @@ public:
 
         return (unsigned)status;
     }
-    
+
+    void print_kernel_execution_times()
+    {
+        std::cout << "Image0:\n";
+        img0->print_kernel_execution_times();
+        std::cout << "Image1:\n";
+        img1->print_kernel_execution_times();
+
+        std::cout << "ZNCC image0: " << kernel_execution_times[0] << " us\n";
+        std::cout << "ZNCC image1: " << kernel_execution_times[1] << " us\n";
+        std::cout << "Cross check: " << kernel_execution_times[2] << " us\n";
+        std::cout << "Occlusion fill: " << kernel_execution_times[3] << " us\n";
+
+        std::cout << "Total: " << kernel_execution_times[0] 
+                                    + kernel_execution_times[1] 
+                                    + kernel_execution_times[2] 
+                                    + kernel_execution_times[3] << " us\n" << std::endl;
+    }
+
     std::unique_ptr<OCL_image> img0;
     std::unique_ptr<OCL_image> img1;
 
@@ -395,6 +462,14 @@ private:
     cl_program prog_ZNCC;
     cl_program prog_cc;
     cl_program prog_of;
+
+    cl_event _event;
+
+    // 0 - ZNCC image0
+    // 1 - ZNCC image1
+    // 2 - cross check
+    // 3 - occlusion fill
+    unsigned long kernel_execution_times[4] = {0, 0, 0, 0};
 };
 
 OCL_Phase4 ocl_phase4;
@@ -546,6 +621,7 @@ int main()
     sw.saveEndPoint();
     std::cout << "Total elapsed time: " << sw.getElapsedTime() << " us\n" << std::endl;
 
+    ocl_phase4.print_kernel_execution_times();
     printPlatformProfile(false);
     return 0;
 }
