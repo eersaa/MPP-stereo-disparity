@@ -2,6 +2,11 @@
 
 lodepng_wrapper::LodepngWrapper img0;
 
+int matwidth = 100;
+int matheight = 100;
+int* matrixR;
+
+/*
 class OCL_Phase1
 {
 public:
@@ -73,6 +78,7 @@ private:
 };
 
 OCL_Phase1 ocl_phase1;
+*/
 
     struct LoadImage : public IProgram
     {
@@ -136,64 +142,22 @@ OCL_Phase1 ocl_phase1;
         int run() override
         {
 
-            int matSize = 100;
-            float **matrixA;
-            float **matrixB;
-            float **matrixR;
+            int* matrixA = (int*)malloc((matwidth * matheight) * sizeof(int));
+            int* matrixB = (int*)malloc((matwidth * matheight) * sizeof(int));
+            matrixR = (int*)malloc((matwidth * matheight) * sizeof(int));
 
-            // Allocate memory for each vector on host
-            matrixA = (float**)malloc(matSize * sizeof(float*));
-            matrixB = (float**)malloc(matSize * sizeof(float*));
-            matrixR = (float**)malloc(matSize * sizeof(float*));
-
-            int i = 0;
-            int j = 0;
-            float sum = 0;
-
-            for (i = 0; i < matSize; i++) {
-                matrixA[i] = (float *)malloc(matSize * sizeof(float*));
-            }   
-
-            for (i = 0; i < matSize; i++){
-                matrixB[i] = (float *)malloc(matSize * sizeof(float*));
-            }
-
-            for (i = 0; i < matSize; i++){
-                matrixR[i] = (float *)malloc(matSize * sizeof(float*));
-            }
-            
-
-            //fill matrices
-            for (i=0; i<matSize; i++) {
-                for (j=0; j<matSize; j++) {
-                    matrixA[i][j] = i + 1;
-                    matrixB[i][j] = j + 2;
-                }
-            }
-            
-            float sum = 0;
-
-            //calculate result matrix
-            for (int i=0; i<matSize; i++) {
-                for (int j=0; j<matSize; j++) {
-                    matrixR[i][j] = matrixA[i][j] + matrixB[i][j];
+            for (int i=0; i<matheight; i++) {
+                for (int j=0; j<matwidth; j++) {
+                    matrixA[i * matwidth + j] = i + 1;
+                    matrixB[i * matwidth + j] = j + 2;
                 }
             }
 
-            std::ofstream output_file("../../output-img/example.txt");
-
-            std::vector<std::vector<int> > vec {
-            {1, 2, 3, 4},
-            {4, 5, 6, 5}};
-
-            for(const auto& row : vec) {
-                std::copy(row.cbegin(), row.cend(), std::ostream_iterator<float>(output_file, " "));
-            output_file << '\n';
+            for (int i=0; i<matheight; i++) {
+                for (int j=0; j<matwidth; j++) {
+                    matrixR[i * matwidth + j] = matrixA[i * matwidth + j] + matrixB[i * matwidth + j];
+                }
             }
-
-            free(matrixA);
-            free(matrixB);
-            free(matrixR);
 
             unsigned error = 0;
             return (int) error;
@@ -211,6 +175,68 @@ OCL_Phase1 ocl_phase1;
 
             std::ostream_iterator<std::string> output_iterator(output_file, "\n");
             std::copy(std::begin(example), std::end(example), output_iterator);
+
+            unsigned error = 0;
+            return (int) error;
+        }
+    };
+
+    struct SaveMatrixCpp : public IProgram
+    {
+        int run() override
+        {
+
+            FILE *f = fopen("../../output-img/p1-matAddCpp.txt", "w");
+            if (f == NULL)
+            {
+                printf("Error opening file!\n");
+                exit(1);
+            }
+
+            /* print integers and floats 
+            int i = 1;
+            float pi= 3.1415927;
+            fprintf(f, "Integer: %d, float: %f\n", i, pi);*/
+
+            for (int i=0; i<matheight; i++) {
+                for (int j=0; j<matwidth; j++) {
+                    fprintf(f, "%d ", matrixR[i * matwidth + j]);
+                }
+                fprintf(f, "\n");
+            }
+
+            fclose(f);
+
+            unsigned error = 0;
+            return (int) error;
+        }
+    };
+
+    struct SaveMatrixOCL : public IProgram
+    {
+        int run() override
+        {
+
+            FILE *fp = fopen("../../output-img/p1-matAddCpp.txt", "w");
+            if (fp == NULL)
+            {
+                printf("Error opening file!\n");
+                exit(1);
+            }
+
+            /* print integers and floats 
+            int i = 1;
+            float pi= 3.1415927;
+            fprintf(f, "Integer: %d, float: %f\n", i, pi);*/
+
+            for (int i=0; i<matheight; i++) {
+                for (int j=0; j<matwidth; j++) {
+                    fprintf(fp, "%d ", matrixR[i * matwidth + j]);
+                }
+                fprintf(fp, "\n");
+            }
+
+            fclose(fp);
 
             unsigned error = 0;
             return (int) error;
@@ -235,6 +261,8 @@ int main()
     SaveFilteredImage saveFilteredImage;
     MatrixAdditionC matrixAdditionC;
     MatrixAdditionOCL matrixAdditionOCL;
+    SaveMatrixCpp saveMatrixCpp;
+    SaveMatrixOCL saveMatrixOCL;
 
     int result = Program_sw.runProgram(loadImage);
     std::cout << "Load image return result: " << result << std::endl;
@@ -257,7 +285,11 @@ int main()
     std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
     result = Program_sw.runProgram(matrixAdditionC);
-    std::cout << "C++ matrix addition: " << result << std::endl;
+    std::cout << "C++ matrix creation and addition: " << result << std::endl;
+    std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
+
+    result = Program_sw.runProgram(saveMatrixCpp);
+    std::cout << "C++ matrix save: " << result << std::endl;
     std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
     // result = Program_sw.runProgram(cloneAndSaveImage);
