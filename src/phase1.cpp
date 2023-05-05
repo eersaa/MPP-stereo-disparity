@@ -4,6 +4,8 @@ lodepng_wrapper::LodepngWrapper img0;
 
 int matwidth = 100;
 int matheight = 100;
+int* matrixA;
+int* matrixB;
 int* matrixR;
 
 /*
@@ -137,6 +139,33 @@ OCL_Phase1 ocl_phase1;
         }
     };
 
+    struct CreateMatrices : public IProgram
+    {
+        int run() override
+        {
+
+            matrixA = (int*)malloc((matwidth * matheight) * sizeof(int));
+            matrixB = (int*)malloc((matwidth * matheight) * sizeof(int));
+            matrixR = (int*)malloc((matwidth * matheight) * sizeof(int));
+
+            for (int i=0; i<matheight; i++) {
+                for (int j=0; j<matwidth; j++) {
+                    matrixA[i * matwidth + j] = i + 1;
+                    matrixB[i * matwidth + j] = j + 2;
+                }
+            }
+
+            for (int i=0; i<matheight; i++) {
+                for (int j=0; j<matwidth; j++) {
+                    matrixR[i * matwidth + j] = matrixA[i * matwidth + j] + matrixB[i * matwidth + j];
+                }
+            }
+
+            unsigned error = 0;
+            return (int) error;
+        }
+    };
+
     struct MatrixAdditionC : public IProgram
     {
         int run() override
@@ -193,11 +222,6 @@ OCL_Phase1 ocl_phase1;
                 exit(1);
             }
 
-            /* print integers and floats 
-            int i = 1;
-            float pi= 3.1415927;
-            fprintf(f, "Integer: %d, float: %f\n", i, pi);*/
-
             for (int i=0; i<matheight; i++) {
                 for (int j=0; j<matwidth; j++) {
                     fprintf(f, "%d ", matrixR[i * matwidth + j]);
@@ -217,17 +241,12 @@ OCL_Phase1 ocl_phase1;
         int run() override
         {
 
-            FILE *fp = fopen("../../output-img/p1-matAddCpp.txt", "w");
+            FILE *fp = fopen("../../output-img/p1-matAddOcl.txt", "w");
             if (fp == NULL)
             {
                 printf("Error opening file!\n");
                 exit(1);
             }
-
-            /* print integers and floats 
-            int i = 1;
-            float pi= 3.1415927;
-            fprintf(f, "Integer: %d, float: %f\n", i, pi);*/
 
             for (int i=0; i<matheight; i++) {
                 for (int j=0; j<matwidth; j++) {
@@ -259,6 +278,7 @@ int main()
     ApplyFilter applyFilter;
     SaveGreyscaleImage saveGreyscaleImage;
     SaveFilteredImage saveFilteredImage;
+    CreateMatrices createMatrices;
     MatrixAdditionC matrixAdditionC;
     MatrixAdditionOCL matrixAdditionOCL;
     SaveMatrixCpp saveMatrixCpp;
@@ -298,6 +318,10 @@ int main()
 
     sw.saveEndPoint();
     std::cout << "Total elapsed time: " << sw.getElapsedTime() << " us\n" << std::endl;
+
+    free(matrixA);
+    free(matrixB);
+    free(matrixR);
 
     printPlatformProfile(false);
     return 0;
