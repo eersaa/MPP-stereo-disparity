@@ -63,3 +63,4 @@ add_custom_target(copy_kernels ALL
   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/kernels
   )
 add_dependencies(phase4 copy_kernels)
+add_dependencies(phase1 copy_kernels)
