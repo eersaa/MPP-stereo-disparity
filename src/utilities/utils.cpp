@@ -271,6 +271,13 @@ void ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* imageOut2, uns
   unsigned char* imageCopy = (unsigned char*)malloc(sizeof(unsigned char) * width * height);
   unsigned char* imageCopy2 = (unsigned char*)malloc(sizeof(unsigned char) * width * height);
 
+  for (unsigned y = 0; y < height; y++) {
+    for (unsigned x = 0; x < width; x++) {
+      imageCopy[y * width + x] = 0;
+      imageCopy2[y * width + x] = 0;
+    }
+  }
+
   float* avgMat = (float*)malloc(sizeof(float) * width * height);
   float* avgMat2 = (float*)malloc(sizeof(float) * width * height);
 
