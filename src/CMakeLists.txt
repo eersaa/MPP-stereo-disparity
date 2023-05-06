@@ -55,6 +55,17 @@ target_link_libraries(phase4
   compiler_flags
   )
 
+add_executable(phase5 phase5.cpp)
+target_link_libraries(phase5
+  PRIVATE
+  lodepng_wrapper
+  utilities
+  stopwatches
+  occlusion_fill
+  opencl_base
+  compiler_flags
+  )
+
 # Copy all opencl kernels to the build directory
 add_custom_target(copy_kernels ALL
   COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -62,5 +73,7 @@ add_custom_target(copy_kernels ALL
   ${CMAKE_CURRENT_BINARY_DIR}/kernels
   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/kernels
   )
-add_dependencies(phase4 copy_kernels)
 add_dependencies(phase1 copy_kernels)
+add_dependencies(phase4 copy_kernels)
+add_dependencies(phase5 copy_kernels)
+
