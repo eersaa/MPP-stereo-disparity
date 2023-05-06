@@ -532,6 +532,14 @@ OCL_Phase1 ocl_phase1;
         int run() override
         {
             ocl_phase1.img1->average(avg_window_size);
+            return 0;
+        }
+    };
+
+    struct OclSaveFilteredImage : public IProgram
+    {
+        int run() override
+        {
             ocl_phase1.img1->save_image("../../output-img/im1_grey_average_filtered.png");
             return 0;
         }
@@ -571,6 +579,7 @@ int main()
     OclResizeImage oclResizeImage;
     OclSaveResizedImage oclSaveResizedImage;
     OclAverage oclAverage;
+    OclSaveFilteredImage oclSaveFilteredImage;
 
     int result = Program_sw.runProgram(loadImage);
     //Step 1
@@ -650,7 +659,11 @@ int main()
     std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
     result = Program_sw.runProgram(oclAverage);
-    std::cout << "OpenCl: Calculate average and save image result: " << result << std::endl;
+    std::cout << "OpenCl: Calculate average result: " << result << std::endl;
+    std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
+
+    result = Program_sw.runProgram(oclSaveFilteredImage);
+    std::cout << "OpenCl: Save image result: " << result << std::endl;
     std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl << std::endl;
 
     sw.saveEndPoint();
