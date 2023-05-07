@@ -512,14 +512,6 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* imageOut2,
   float* stdMat = (float*)malloc(sizeof(float) * width * height);
   float* stdMat2 = (float*)malloc(sizeof(float) * width * height);
 
-  int leftToRight = 1;
-
-  int windowSizeHalf = windowSize / 2;
-
-  int minDisp = 0;
-  int maxDisp = 65;
-  int dispRange = maxDisp - minDisp;
-
   #pragma omp parallel
   {
 
@@ -532,6 +524,8 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* imageOut2,
       float sum2 = 0;
       int count = 0;
       int x2r = 0;
+
+      int windowSizeHalf = windowSize / 2;
 
         // Loop through the window to get the average value
         for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
@@ -594,13 +588,18 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* imageOut2,
   for (unsigned y = 0; y < height; y++) {
     for (unsigned x = 0; x < width; x++) {
       
+      int leftToRight = 1;
       float zncc = 0;
       float znccVal = 0;
       int x2mr = 0;
       int x2r = 0;
+      int maxDisp = 65;
+      int minDisp = 0;
+      int dispRange = maxDisp - minDisp;
+      int windowSizeHalf = windowSize / 2;
 
       for (int d = minDisp; d < maxDisp; d++) {
-        int sum = 0;
+        float sum = 0;
 
           // Loop through the window to get the ZNCC value
           for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
@@ -647,24 +646,23 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* imageOut2,
       // Set the pixel value
     }
   }
-  
-
-  // Copy the image back
-  memcpy(imageOut, imageCopy, sizeof(unsigned char) * width * height);
-
-  float znccVal = 0;
-  int x2mr = 0;
-  leftToRight = 0;
 
   #pragma omp for
   for (unsigned y = 0; y < height; y++) {
     for (unsigned x = 0; x < width; x++) {
       
+      int leftToRight = 0;
       float zncc = 0;
+      float znccVal = 0;
+      int x2mr = 0;
       int x2r = 0;
+      int maxDisp = 65;
+      int minDisp = 0;
+      int dispRange = maxDisp - minDisp;
+      int windowSizeHalf = windowSize / 2;
 
       for (int d = minDisp; d < maxDisp; d++) {
-        int sum = 0;
+        float sum = 0;
 
           // Loop through the window to get the ZNCC value
           for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
@@ -712,10 +710,13 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* imageOut2,
     }
   }
 
-  // Copy the image back
-  memcpy(imageOut2, imageCopy2, sizeof(unsigned char) * width * height);
+
 
   }
+
+  // Copy the image back
+  memcpy(imageOut, imageCopy, sizeof(unsigned char) * width * height);
+  memcpy(imageOut2, imageCopy2, sizeof(unsigned char) * width * height);
   
   // Free the memory
   free(imageCopy);
