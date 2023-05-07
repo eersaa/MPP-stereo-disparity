@@ -206,7 +206,7 @@ public:
 
     void init_programs()
     {
-        prog = _ocl_base->CreateProgramFromFile("kernels/grayscale.cl");
+        prog = _ocl_base->CreateProgramFromFile("kernels/p1-4-5-grayscale-resize.cl");
         prog_average = _ocl_base->CreateProgramFromFile("kernels/p1-moving-avg.cl");
         prog_ma = _ocl_base->CreateProgramFromFile("kernels/p1-ma.cl");
     }
