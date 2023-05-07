@@ -3,7 +3,7 @@ __kernel void average(__global unsigned char *image, __global float *out, int wi
   int col = get_global_id(0);
   int row = get_global_id(1);
 
-  col = col * 4;
+  col = col * 5;
 
   int windowSizeHalf = windowSize / 2;
   float sum = 0;
