@@ -75,8 +75,7 @@
                                                             img0.get_height());
 
             // run the ZNCC
-            OMP_ZNCCFilterOptimizedC(t_leftToRightImage, t_img0, t_img1, img0.get_width(), img0.get_height(), 9, 1);
-            OMP_ZNCCFilterOptimizedC(t_rightToLeftImage, t_img1, t_img0, img0.get_width(), img0.get_height(), 9, 2);
+            OMP_ZNCCFilterOptimizedC(t_leftToRightImage, t_rightToLeftImage, t_img0, t_img1, img0.get_width(), img0.get_height(), 9);
 
             img0.set_image(t_leftToRightImage, img0.get_width(), img0.get_height(), GREY_CHANNELS);
             img1.set_image(t_rightToLeftImage, img1.get_width(), img1.get_height(), GREY_CHANNELS);

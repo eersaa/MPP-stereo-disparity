@@ -494,8 +494,9 @@ void ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* imageOut2, uns
   free(stdMat2);
 }
 
-void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* image, unsigned char* image2, unsigned width, unsigned height, unsigned windowSize, unsigned leftToRight) {
+void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* imageOut2, unsigned char* image, unsigned char* image2, unsigned width, unsigned height, unsigned windowSize) {
   unsigned char* imageCopy = (unsigned char*)malloc(sizeof(unsigned char) * width * height);
+  unsigned char* imageCopy2 = (unsigned char*)malloc(sizeof(unsigned char) * width * height);
 
   float* avgMat = (float*)malloc(sizeof(float) * width * height);
   float* avgMat2 = (float*)malloc(sizeof(float) * width * height);
@@ -503,11 +504,20 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* image, uns
   float* stdMat = (float*)malloc(sizeof(float) * width * height);
   float* stdMat2 = (float*)malloc(sizeof(float) * width * height);
 
+  for (unsigned y = 0; y < height; y++) {
+    for (unsigned x = 0; x < width; x++) {
+      imageCopy[y * width + x] = 0;
+      imageCopy2[y * width + x] = 0;
+    }
+  }
+
   int windowSizeHalf = windowSize / 2;
 
   int minDisp = 0;
   int maxDisp = 65;
   int dispRange = maxDisp - minDisp;
+
+  int leftToRight = 1;
 
   #pragma omp parallel for  
   // Loop through the image
@@ -638,10 +648,74 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* image, uns
       }
     }
   }
+
+
+
+  leftToRight = 0;
+  for (unsigned y = 0; y < height; y++) {
+    for (unsigned x = 0; x < width; x++) {
+    
+      double zncc = 0;
+      znccVal = 0;
+      x2mr = 0;
+      x2r = 0;
+
+      for (int d = minDisp; d < maxDisp; d++) {
+        int sum = 0;
+
+          // Loop through the window to get the ZNCC value
+          for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
+            for (int j = -windowSizeHalf; j <= windowSizeHalf; j++) {
+              int x2 = x + j;
+              int y2 = y + i;
+
+              if (leftToRight == 1) {
+                x2r = x2 - d;
+                x2mr = x - d;
+              }
+              else {
+                x2r = x2 + d;
+                x2mr = x + d;
+              }
+
+              // Check that the pixel is inside the image
+              if (x2 >= 0 && x2 < (int)width 
+                && x2r >= 0 && x2r < (int)width 
+                && y2 >= 0 && y2 < (int)height 
+                && x2mr >= 0 && x2mr < (int)width) 
+                {
+                sum += (image2[y2 * width + x2] - avgMat2[y * width + x]) 
+                      * (image[y2 * width + x2r] - avgMat[y * width + x2mr]);
+              }
+            }
+          }
+
+          if (leftToRight == 1) {
+            x2mr = x - d;
+          }
+          else {
+            x2mr = x + d;
+          }
+
+          if (x2mr >= 0 && x2mr < (int)width) {
+                znccVal = sum / (stdMat2[y * width + x] * stdMat[y * width + x2mr]);
+              }
+          
+          
+          if (znccVal > zncc) {
+            zncc = znccVal;
+            imageCopy2[y * width + x] = (255*abs(d))/dispRange;
+          }
+        }
+      }
+    }    
+  
+
   }
 
   // Copy the image back
   memcpy(imageOut, imageCopy, sizeof(unsigned char) * width * height);
+  memcpy(imageOut2, imageCopy2, sizeof(unsigned char) * width * height);
 
   // Free the memory
   free(imageCopy);
