@@ -560,8 +560,10 @@ struct OcclusionFilterImage : public IProgram
 {
     int run() override
     {
-        ocl_phase5.occlusion_fill_image();
-
+        for (int i = 0; i < 4; i++) {
+            ocl_phase5.occlusion_fill_image();
+        }
+        
         ocl_phase5.img0->save_image("../../output-img/im0_grey_resized_zncc_cc_of.png");
 
         return 0;
@@ -577,7 +579,6 @@ int main()
 
     sw.saveStartPoint();
 
-    // Step 3
     ProgramStopwatch Program_sw(clock);
     LoadImage loadImage;
     ResizeImage resizeImage;
@@ -615,7 +616,7 @@ int main()
     std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
     result = Program_sw.runProgram(crosscheckImage);
-    std::cout << "crosscheck and save resized image return result: " << result << std::endl;
+    std::cout << "Crosscheck and save resized image return result: " << result << std::endl;
     std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
     result = Program_sw.runProgram(occlusionFilterImage);

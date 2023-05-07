@@ -37,7 +37,7 @@ int getNearestFillPixelValue(int pixel_index, int pix_x, int pix_y, __global uns
 {
     int fillPixelValue = 0;
     int pixelValue = 0;
-    int windowSizeHalf = 34;
+    int windowSizeHalf = 10;
 
     int minDist = width + height;
 
