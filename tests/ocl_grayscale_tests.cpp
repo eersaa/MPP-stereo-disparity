@@ -138,9 +138,6 @@ using namespace testing;
 class OCL_Grayscale : public OCL_Base
 {
 public:
-    void Run() override
-    {
-    }
 
     void Convert_RGBA(unsigned char *image, unsigned char *result_image, int pixels)
     {
@@ -250,7 +247,7 @@ TEST_F(OCL_GrayscaleTwoPixelTests, ShouldKeepAlphaChannelTheSame)
 TEST(OCL_GrayscaleRealImage, ShouldReturnGrayscaledImage)
 {
     lodepng_wrapper::LodepngWrapper img0;
-    unsigned error = img0.load_image("../../source-img/im0.png");
+    img0.load_image("../../source-img/im0.png");
     unsigned width = img0.get_width();
     unsigned height = img0.get_height();
     unsigned char *image = (unsigned char *)malloc(width * height * 4 * sizeof(unsigned char));
@@ -261,8 +258,8 @@ TEST(OCL_GrayscaleRealImage, ShouldReturnGrayscaledImage)
     ocl_grayscale.Convert_RGBA(image, result_image, width * height);
 
     lodepng_wrapper::LodepngWrapper img1;
-    img1.set_image(result_image, width, height);
-    img1.save_RGBAimage("../../output-img/ocl_grayscale.png");
+    img1.set_image(result_image, width, height, 4);
+    img1.save_image("../../output-img/ocl_grayscale.png");
 
     free(image);
     free(result_image);
