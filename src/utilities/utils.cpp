@@ -495,14 +495,9 @@ void ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* imageOut2, uns
 }
 
 void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* imageOut2, unsigned char* image, unsigned char* image2, unsigned width, unsigned height, unsigned windowSize) {
+
   unsigned char* imageCopy = (unsigned char*)malloc(sizeof(unsigned char) * width * height);
   unsigned char* imageCopy2 = (unsigned char*)malloc(sizeof(unsigned char) * width * height);
-
-  float* avgMat = (float*)malloc(sizeof(float) * width * height);
-  float* avgMat2 = (float*)malloc(sizeof(float) * width * height);
-
-  float* stdMat = (float*)malloc(sizeof(float) * width * height);
-  float* stdMat2 = (float*)malloc(sizeof(float) * width * height);
 
   for (unsigned y = 0; y < height; y++) {
     for (unsigned x = 0; x < width; x++) {
@@ -511,21 +506,32 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* imageOut2,
     }
   }
 
+  float* avgMat = (float*)malloc(sizeof(float) * width * height);
+  float* avgMat2 = (float*)malloc(sizeof(float) * width * height);
+
+  float* stdMat = (float*)malloc(sizeof(float) * width * height);
+  float* stdMat2 = (float*)malloc(sizeof(float) * width * height);
+
+  int leftToRight = 1;
+
   int windowSizeHalf = windowSize / 2;
 
   int minDisp = 0;
   int maxDisp = 65;
   int dispRange = maxDisp - minDisp;
 
-  int leftToRight = 1;
+  #pragma omp parallel
+  {
 
-  #pragma omp parallel for  
+  //#pragma omp parallel for  
+  #pragma omp for
   // Loop through the image
   for (unsigned y = 0; y < height; y++) {
     for (unsigned x = 0; x < width; x++) {
       float sum = 0;
       float sum2 = 0;
       int count = 0;
+      int x2r = 0;
 
         // Loop through the window to get the average value
         for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
@@ -534,7 +540,7 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* imageOut2,
             int y2 = y + i;
 
             // Check that the pixel is inside the image
-            if (x2 >= 0 && x2 < (int)width && y2 >= 0 && y2 < (int)height) {
+            if (x2 >= 0 && x2 < (int)width && x2r >= 0 && x2r < (int)width && y2 >= 0 && y2 < (int)height) {
               sum += image[y2 * width + x2];
               sum2 += image2[y2 * width + x2];
 
@@ -564,8 +570,7 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* imageOut2,
             int y2 = y + i;
 
             // Check that the pixel is inside the image
-            if (x2 >= 0 && x2 < (int)width && y2 >= 0 && y2 < (int)height) 
-            {
+            if (x2 >= 0 && x2 < (int)width && x2r >= 0 && x2r < (int)width && y2 >= 0 && y2 < (int)height) {
               sum += pow((image[y2 * width + x2] - avg), 2);
               sum2 += pow((image2[y2 * width + x2] - avg2), 2);
 
@@ -581,25 +586,23 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* imageOut2,
 
         count = 0;
         sum = 0;
-
     }
   }
 
 
-  #pragma omp parallel
-  {
-  float znccVal = 0;
-  int x2mr = 0;
-  int x2r = 0;
 
   #pragma omp for
   for (unsigned y = 0; y < height; y++) {
     for (unsigned x = 0; x < width; x++) {
       
-      double zncc = 0;
+      float zncc = 0;
+      float znccVal = 0;
+      int x2mr = 0;
+      int x2r = 0;
 
       for (int d = minDisp; d < maxDisp; d++) {
         int sum = 0;
+        int count = 0;
 
           // Loop through the window to get the ZNCC value
           for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
@@ -617,13 +620,10 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* imageOut2,
               }
 
               // Check that the pixel is inside the image
-              if (x2 >= 0 && x2 < (int)width 
-                && x2r >= 0 && x2r < (int)width 
-                && y2 >= 0 && y2 < (int)height 
-                && x2mr >= 0 && x2mr < (int)width) 
-                {
-                sum += (image[y2 * width + x2] - avgMat[y * width + x]) 
-                      * (image2[y2 * width + x2r] - avgMat2[y * width + x2mr]);
+              if (x2 >= 0 && x2 < (int)width && x2r >= 0 && x2r < (int)width && y2 >= 0 && y2 < (int)height && x2mr >= 0 && x2mr < (int)width) {
+                sum += (image[y2 * width + x2] - avgMat[y * width + x]) * (image2[y2 * width + x2r] - avgMat2[y * width + x2mr]);
+
+                count++;
               }
             }
           }
@@ -645,23 +645,30 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* imageOut2,
             imageCopy[y * width + x] = (255*abs(d))/dispRange;
           }
 
-      }
+        }
+      
+      // Set the pixel value
     }
   }
+  
 
+  // Copy the image back
+  memcpy(imageOut, imageCopy, sizeof(unsigned char) * width * height);
 
-
+  float znccVal = 0;
+  int x2mr = 0;
   leftToRight = 0;
+
+  #pragma omp for
   for (unsigned y = 0; y < height; y++) {
     for (unsigned x = 0; x < width; x++) {
-    
-      double zncc = 0;
-      znccVal = 0;
-      x2mr = 0;
-      x2r = 0;
+      
+      float zncc = 0;
+      int x2r = 0;
 
       for (int d = minDisp; d < maxDisp; d++) {
         int sum = 0;
+        int count = 0;
 
           // Loop through the window to get the ZNCC value
           for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
@@ -679,13 +686,10 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* imageOut2,
               }
 
               // Check that the pixel is inside the image
-              if (x2 >= 0 && x2 < (int)width 
-                && x2r >= 0 && x2r < (int)width 
-                && y2 >= 0 && y2 < (int)height 
-                && x2mr >= 0 && x2mr < (int)width) 
-                {
-                sum += (image2[y2 * width + x2] - avgMat2[y * width + x]) 
-                      * (image[y2 * width + x2r] - avgMat[y * width + x2mr]);
+              if (x2 >= 0 && x2 < (int)width && x2r >= 0 && x2r < (int)width && y2 >= 0 && y2 < (int)height && x2mr >= 0 && x2mr < (int)width) {
+                sum += (image2[y2 * width + x2] - avgMat2[y * width + x]) * (image[y2 * width + x2r] - avgMat[y * width + x2mr]);
+
+                count++;
               }
             }
           }
@@ -706,24 +710,25 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* imageOut2,
             zncc = znccVal;
             imageCopy2[y * width + x] = (255*abs(d))/dispRange;
           }
-        }
-      }
-    }    
-  
 
+        }
+      
+      // Set the pixel value
+    }
   }
 
   // Copy the image back
-  memcpy(imageOut, imageCopy, sizeof(unsigned char) * width * height);
   memcpy(imageOut2, imageCopy2, sizeof(unsigned char) * width * height);
 
+  }
+  
   // Free the memory
   free(imageCopy);
+  free(imageCopy2);
   free(avgMat);
   free(avgMat2);
   free(stdMat);
   free(stdMat2);
-
 }
 
 bool differenceIsOverThreshold(unsigned char pixel1, unsigned char pixel2, int threshold)
