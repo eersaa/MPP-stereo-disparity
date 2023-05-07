@@ -93,11 +93,13 @@ public:
         cl_int status;
         status = clSetKernelArg(_ocl_base->GetKernel(2), 0, sizeof(cl_mem), (void *)&imageBuffer);
         status = clSetKernelArg(_ocl_base->GetKernel(2), 1, sizeof(cl_mem), (void *)&averageBuffer);
-        status = clSetKernelArg(_ocl_base->GetKernel(2), 2, sizeof(int), &windowSize);
+        status = clSetKernelArg(_ocl_base->GetKernel(2), 2, sizeof(int), &_width);
+        status = clSetKernelArg(_ocl_base->GetKernel(2), 3, sizeof(int), &_height);
+        status = clSetKernelArg(_ocl_base->GetKernel(2), 4, sizeof(int), &windowSize);
 
         size_t global_work_size[2];
-        global_work_size[0] = _width * sizeof(unsigned char);
-        global_work_size[1] = _height * sizeof(unsigned char);
+        global_work_size[0] = ((_width / 4) + 1);
+        global_work_size[1] = (_height);
 
         status = clEnqueueNDRangeKernel(_ocl_base->commandQueue,
                                         _ocl_base->GetKernel(2),
@@ -126,11 +128,13 @@ public:
         status = clSetKernelArg(_ocl_base->GetKernel(3), 0, sizeof(cl_mem), (void *)&imageBuffer);
         status = clSetKernelArg(_ocl_base->GetKernel(3), 1, sizeof(cl_mem), (void *)&stdDeviationBuffer);
         status = clSetKernelArg(_ocl_base->GetKernel(3), 2, sizeof(cl_mem), (void *)&averageBuffer);
-        status = clSetKernelArg(_ocl_base->GetKernel(3), 3, sizeof(int), &windowSize);
+        status = clSetKernelArg(_ocl_base->GetKernel(3), 3, sizeof(int), &_width);
+        status = clSetKernelArg(_ocl_base->GetKernel(3), 4, sizeof(int), &_height);
+        status = clSetKernelArg(_ocl_base->GetKernel(3), 5, sizeof(int), &windowSize);
 
         size_t global_work_size[2];
-        global_work_size[0] = _width * sizeof(unsigned char);
-        global_work_size[1] = _height * sizeof(unsigned char);
+        global_work_size[0] = ((_width / 4) + 1);
+        global_work_size[1] = _height;
 
         status = clEnqueueNDRangeKernel(_ocl_base->commandQueue,
                                         _ocl_base->GetKernel(3),
