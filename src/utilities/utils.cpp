@@ -574,7 +574,6 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* imageOut2,
               sum += pow((image[y2 * width + x2] - avg), 2);
               sum2 += pow((image2[y2 * width + x2] - avg2), 2);
 
-              count++;
             }
           }
         }
@@ -602,7 +601,6 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* imageOut2,
 
       for (int d = minDisp; d < maxDisp; d++) {
         int sum = 0;
-        int count = 0;
 
           // Loop through the window to get the ZNCC value
           for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
@@ -623,7 +621,6 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* imageOut2,
               if (x2 >= 0 && x2 < (int)width && x2r >= 0 && x2r < (int)width && y2 >= 0 && y2 < (int)height && x2mr >= 0 && x2mr < (int)width) {
                 sum += (image[y2 * width + x2] - avgMat[y * width + x]) * (image2[y2 * width + x2r] - avgMat2[y * width + x2mr]);
 
-                count++;
               }
             }
           }
@@ -668,7 +665,6 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* imageOut2,
 
       for (int d = minDisp; d < maxDisp; d++) {
         int sum = 0;
-        int count = 0;
 
           // Loop through the window to get the ZNCC value
           for (int i = -windowSizeHalf; i <= windowSizeHalf; i++) {
@@ -689,7 +685,6 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* imageOut2,
               if (x2 >= 0 && x2 < (int)width && x2r >= 0 && x2r < (int)width && y2 >= 0 && y2 < (int)height && x2mr >= 0 && x2mr < (int)width) {
                 sum += (image2[y2 * width + x2] - avgMat2[y * width + x]) * (image[y2 * width + x2r] - avgMat[y * width + x2mr]);
 
-                count++;
               }
             }
           }
