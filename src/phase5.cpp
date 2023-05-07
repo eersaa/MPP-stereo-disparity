@@ -637,11 +637,11 @@ int main()
     std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
     result = Program_sw.runProgram(ZNCCResizedImage);
-    std::cout << "ZNCC filter and save resized images return result: " << result << std::endl;
+    std::cout << "ZNCC filter resized images return result: " << result << std::endl;
     std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
     result = Program_sw.runProgram(saveZNCCImage);
-    std::cout << "ZNCC filterresized images return result: " << result << std::endl;
+    std::cout << "Save ZNCC images return result: " << result << std::endl;
     std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
     result = Program_sw.runProgram(crosscheckImage);

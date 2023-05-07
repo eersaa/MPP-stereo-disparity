@@ -92,6 +92,16 @@
         }
     };
 
+    struct SaveZNCCImage : public IProgram
+    {
+        int run() override
+        {
+            img0.save_image("../../output-img/im0_grey_resized_zncc.png");
+            img1.save_image("../../output-img/im1_grey_resized_zncc.png");
+            return 0;
+        }
+    };
+
     struct CrosscheckImage : public IProgram
     {
         int run() override
@@ -108,14 +118,23 @@
             crossCheckTwoImages(t_img0, t_img1, 50, t_combinedImg, img0.get_width() * img0.get_height());
             combinedImage.set_image(t_combinedImg, img0.get_width(), img0.get_height(), GREY_CHANNELS);
 
-            unsigned error = combinedImage.save_image("../../output-img/im_cc.png");
             free(t_img0);
             free(t_img1);
             free(t_combinedImg);
 
-            return (int) error;
+            return 0;
         }
     };
+
+    struct SaveCrosscheckImage : public IProgram
+    {
+        int run() override
+        {
+            unsigned error = combinedImage.save_image("../../output-img/im_cc.png");
+            return error;
+        }
+    };
+
 
     struct OcclusionFilterImage : public IProgram
     {
@@ -126,7 +145,16 @@
             combinedImage.occlusion_fill(fillZeroPixels);
             //img0.occlusion_fill(occFillOptimizedC);
 
-            error = combinedImage.save_image("../../output-img/im_of.png");
+            return (int) error;
+        }
+    };
+
+    struct SaveOcclusionImage : public IProgram
+    {
+        int run() override
+        {
+
+            unsigned error = combinedImage.save_image("../../output-img/im_of.png");
             return (int) error;
         }
     };
@@ -151,7 +179,10 @@ int main()
     ZNCCResizedImage ZNCCResizedImage;
     CrosscheckImage crosscheckImage;
     OcclusionFilterImage occlusionFilterImage;
-
+    
+    SaveZNCCImage saveZNCCImage;
+    SaveCrosscheckImage saveCrosscheckImage;
+    SaveOcclusionImage saveOcclusionImage;
 
     int result = Program_sw.runProgram(loadImage);
     std::cout << "Load image return result: " << result << std::endl;
@@ -174,15 +205,27 @@ int main()
     std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
     result = Program_sw.runProgram(ZNCCResizedImage);
-    std::cout << "ZNCC filter and save resized images return result: " << result << std::endl;
+    std::cout << "ZNCC filter resized images return result: " << result << std::endl;
+    std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
+
+    result = Program_sw.runProgram(saveZNCCImage);
+    std::cout << "Save ZNCC images return result: " << result << std::endl;
     std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
     result = Program_sw.runProgram(crosscheckImage);
-    std::cout << "crosscheck and save resized image return result: " << result << std::endl;
+    std::cout << "crosscheck image return result: " << result << std::endl;
+    std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
+
+    result = Program_sw.runProgram(saveCrosscheckImage);
+    std::cout << "Save crosschecked image return result: " << result << std::endl;
     std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
     result = Program_sw.runProgram(occlusionFilterImage);
-    std::cout << "Occlusion fill and save resized image return result: " << result << std::endl;
+    std::cout << "Occlusion fill image return result: " << result << std::endl;
+    std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
+
+    result = Program_sw.runProgram(saveOcclusionImage);
+    std::cout << "Save occlusion filled image return result: " << result << std::endl;
     std::cout << "Elapsed time: " << Program_sw.getElapsedTime() << " us" << std::endl;
 
     sw.saveEndPoint();
