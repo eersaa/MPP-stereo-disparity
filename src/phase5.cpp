@@ -367,12 +367,15 @@ public:
         global_work_size[0] = width * sizeof(unsigned char);
         global_work_size[1] = height * sizeof(unsigned char);
 
+        size_t local_work_size[1];
+        local_work_size[0] = 64000;
+
         status = clEnqueueNDRangeKernel(_ocl_base->commandQueue,
                                         _ocl_base->GetKernel(5),
                                         2,
                                         NULL,
                                         global_work_size,
-                                        NULL,
+                                        NULL, // local work size
                                         0,
                                         NULL,
                                         &_event);

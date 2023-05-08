@@ -582,7 +582,9 @@ void OMP_ZNCCFilterOptimizedC(unsigned char* imageOut, unsigned char* imageOut2,
     }
   }
 
-
+  }
+  #pragma omp parallel
+  {
 
   #pragma omp for
   for (unsigned y = 0; y < height; y++) {

@@ -80,12 +80,8 @@ __kernel void average(__global unsigned char *image, __global float *out, int wi
 
   // Check that the pixel is inside the image
     out[row * width + col] = avg;
-  if ((col + 1) < width) {
     out[row * width + col + 1] = avg3;
-  }
-  if ((col + 2) < width) {
     out[row * width + col + 2] = avg4;
-  }
   if ((col + 3) < width) {
     out[row * width + col + 3] = avg5;
   }
