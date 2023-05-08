@@ -133,7 +133,7 @@ public:
         status = clSetKernelArg(_ocl_base->GetKernel(3), 5, sizeof(int), &windowSize);
 
         size_t global_work_size[2];
-        global_work_size[0] = ((_width / 5));
+        global_work_size[0] = ((_width / 4) + 1);
         global_work_size[1] = _height;
 
         status = clEnqueueNDRangeKernel(_ocl_base->commandQueue,
