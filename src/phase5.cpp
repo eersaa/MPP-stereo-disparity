@@ -225,7 +225,7 @@ public:
 
     void init_programs()
     {
-        prog = _ocl_base->CreateProgramFromFile("kernels/grayscale.cl");
+        prog = _ocl_base->CreateProgramFromFile("kernels/p1-4-5-grayscale-resize.cl");
         prog_average = _ocl_base->CreateProgramFromFile("kernels/p5-average.cl");
         prog_stdDeviation = _ocl_base->CreateProgramFromFile("kernels/p5-standard-deviation.cl");
         prog_ZNCC = _ocl_base->CreateProgramFromFile("kernels/p5-zncc-max.cl");
