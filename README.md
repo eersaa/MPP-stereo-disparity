@@ -10,6 +10,6 @@ Project is built with following tools
 - VScode
 - CMake
 - Compiled with GNU C/C++
-- [Intel SDK For OpenCl][1]
+- [Intel SDK For OpenCL][1]
 
 [1]: https://www.intel.com/content/www/us/en/developer/tools/opencl-sdk/overview.html
