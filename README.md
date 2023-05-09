@@ -3,34 +3,13 @@
 Project goal is to implement Zero-mean Normalized Cross
 Correlation (ZNCC) algorithm for calculating depth map for stereo images taking advantage of OpenCL and parallel computing.
 
-## Status
+## Project tools
 
-----------
+Project is built with following tools
 
-## Todo - C/C++
+- VScode
+- CMake
+- Compiled with GNU C/C++
+- [Intel SDK For OpenCl][1]
 
-
-
-## Done - C/C++
-
-- Normalization for depth map to range from 0 to 255.
-  - Depth map contains values from 0 to *ndisp* and those needs to be normalized to range of grayscale pixel in image.
-- Image resize?
-- Post processing
-  - Cross-check
-  - Occlusion filling
-- Grayscale conversion
-- Applying a filter to image
-- Profiling info
-- Stopwatch
-- Read image
-- Write image
-
-## Todo - OpenCL
-
-- ?
-
-## Done - OpenCL
-
-- Some basic framework setup
-- Grayscale conversion
+[1]: https://www.intel.com/content/www/us/en/developer/tools/opencl-sdk/overview.html
